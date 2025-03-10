@@ -5,6 +5,7 @@ import Countdown from './Countdown';
 import MapLocation from './MapLocation';
 import { Calendar, Music, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import PhoneIcon from './PhoneIcon';
 
 interface DashboardProps {
   open: boolean;
@@ -111,12 +112,12 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
                       
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <Phone size={16} className="text-gold-light mr-2" />
+                          <PhoneIcon size={16} className="text-gold-light mr-2" />
                           <span className="text-cream">Priya's Family: </span>
                           <a href="tel:+919876543210" className="text-gold-light ml-2 hover:underline">+91 9876 543 210</a>
                         </div>
                         <div className="flex items-center">
-                          <Phone size={16} className="text-gold-light mr-2" />
+                          <PhoneIcon size={16} className="text-gold-light mr-2" />
                           <span className="text-cream">Vijay's Family: </span>
                           <a href="tel:+919876543211" className="text-gold-light ml-2 hover:underline">+91 9876 543 211</a>
                         </div>
