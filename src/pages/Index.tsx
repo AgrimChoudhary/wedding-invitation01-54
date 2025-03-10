@@ -11,6 +11,7 @@ import PhoneIcon from '@/components/PhoneIcon';
 
 const Index = () => {
   const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [petalsActive, setPetalsActive] = useState(false);
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -18,12 +19,72 @@ const Index = () => {
     return cleanup;
   }, [isMobile]);
 
+  // Create petals for the interactive element
+  const createPetal = () => {
+    if (!petalsActive) return;
+    
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    
+    // Randomize petal properties
+    const size = Math.random() * 20 + 10;
+    const rotation = Math.random() * 360;
+    const xPos = Math.random() * window.innerWidth;
+    const fallDuration = Math.random() * 5 + 3;
+    
+    // Set petal style
+    petal.style.width = `${size}px`;
+    petal.style.height = `${size * 1.5}px`;
+    petal.style.left = `${xPos}px`;
+    petal.style.top = '-20px';
+    petal.style.transform = `rotate(${rotation}deg)`;
+    petal.style.background = 'linear-gradient(135deg, #FFA07A, #FF6347)';
+    petal.style.borderRadius = '50% 10% 50% 10%';
+    petal.style.position = 'fixed';
+    petal.style.zIndex = '5';
+    petal.style.opacity = '0.8';
+    petal.style.animation = `fall ${fallDuration}s linear forwards, sway ${fallDuration / 3}s ease-in-out infinite alternate`;
+    
+    document.body.appendChild(petal);
+    
+    // Remove petal after animation
+    setTimeout(() => {
+      document.body.removeChild(petal);
+    }, fallDuration * 1000);
+  };
+  
+  useEffect(() => {
+    if (petalsActive) {
+      // Add required keyframes to document
+      const style = document.createElement('style');
+      style.innerHTML = `
+        @keyframes fall {
+          0% { top: -20px; }
+          100% { top: 100vh; }
+        }
+        @keyframes sway {
+          0% { transform: translateX(-10px) rotate(0deg); }
+          100% { transform: translateX(10px) rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Create petals at interval
+      const petalInterval = setInterval(createPetal, 300);
+      
+      return () => {
+        clearInterval(petalInterval);
+        document.head.removeChild(style);
+      };
+    }
+  }, [petalsActive]);
+
   const events = [
     {
       title: "Mehndi Ceremony",
       date: "19 March 2025",
       time: "10:00 AM - 2:00 PM",
-      description: "A beautiful celebration where the bride's hands and feet are adorned with intricate henna designs, symbolizing beauty and joy.",
+      venue: "Garden Court, The Royal Celebration Hall, Wedding City",
       icon: <Paintbrush size={24} className="text-maroon" />,
       images: [
         "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
@@ -35,7 +96,7 @@ const Index = () => {
       title: "Sangeet Night",
       date: "19 March 2025",
       time: "7:00 PM - 11:00 PM",
-      description: "An evening filled with music, dance, and celebration where both families come together to rejoice in the upcoming union.",
+      venue: "Grand Pavilion, The Royal Celebration Hall, Wedding City",
       icon: <Music size={24} className="text-maroon" />,
       images: [
         "https://images.unsplash.com/photo-1500673922987-e212871fec22",
@@ -47,7 +108,7 @@ const Index = () => {
       title: "Haldi Ceremony",
       date: "20 March 2025",
       time: "11:00 AM - 2:00 PM",
-      description: "A golden blessing of purity where turmeric paste is applied to the bride and groom, bringing a natural glow before the wedding.",
+      venue: "Courtyard, The Royal Celebration Hall, Wedding City",
       icon: <Sparkles size={24} className="text-maroon" />,
       images: [
         "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb",
@@ -59,7 +120,7 @@ const Index = () => {
       title: "Wedding Ceremony",
       date: "21 March 2025",
       time: "5:00 PM - 8:00 PM",
-      description: "The sacred union of Priya and Vijay, celebrating love, commitment, and the beginning of their journey together.",
+      venue: "Main Hall, The Royal Celebration Hall, Wedding City",
       icon: <Heart size={24} className="text-maroon" />,
       images: [
         "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
@@ -133,6 +194,24 @@ const Index = () => {
               </span>
             </div>
           </div>
+          
+          {/* Interactive Marigold Button */}
+          <div className="mt-8">
+            <button 
+              className={cn(
+                "relative px-6 py-3 rounded-full transition-all duration-300",
+                "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
+                "overflow-hidden",
+                petalsActive && "bg-opacity-100"
+              )}
+              onClick={() => setPetalsActive(!petalsActive)}
+            >
+              <span className="relative z-10 flex items-center">
+                {petalsActive ? "Stop Petals" : "Shower Marigold Petals"} 
+                <Flower className="ml-2" size={18} />
+              </span>
+            </button>
+          </div>
         </div>
       </header>
       
@@ -178,6 +257,65 @@ const Index = () => {
                 <EventCard {...event} />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Interactive Rangoli Pattern */}
+      <section className="py-10 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-6">
+            Create Your Blessing
+          </h2>
+          
+          <p className="text-cream/80 mb-6">Click or tap below to create your own pattern of good wishes</p>
+          
+          <div 
+            className="relative h-60 bg-maroon/30 rounded-xl gold-border overflow-hidden cursor-pointer mb-8"
+            onClick={(e) => {
+              // Create a spark at mouse position
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              
+              const spark = document.createElement('div');
+              const size = Math.random() * 20 + 10;
+              const angle = Math.random() * 360;
+              
+              spark.style.position = 'absolute';
+              spark.style.width = `${size}px`;
+              spark.style.height = `${size}px`;
+              spark.style.left = `${x - size/2}px`;
+              spark.style.top = `${y - size/2}px`;
+              spark.style.borderRadius = '50%';
+              spark.style.background = 'radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%)';
+              spark.style.transform = `rotate(${angle}deg)`;
+              spark.style.animation = 'spark-fade 2s forwards';
+              
+              const style = document.createElement('style');
+              style.innerHTML = `
+                @keyframes spark-fade {
+                  0% { transform: scale(0); opacity: 0; }
+                  50% { transform: scale(1); opacity: 1; }
+                  100% { transform: scale(1.5); opacity: 0; }
+                }
+              `;
+              
+              if (!document.head.querySelector('style[data-spark]')) {
+                style.setAttribute('data-spark', 'true');
+                document.head.appendChild(style);
+              }
+              
+              e.currentTarget.appendChild(spark);
+              
+              setTimeout(() => {
+                e.currentTarget.removeChild(spark);
+              }, 2000);
+            }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center text-cream/30 font-cormorant text-2xl pointer-events-none">
+              Click anywhere to create your blessing
+            </div>
           </div>
         </div>
       </section>

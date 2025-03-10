@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 
 interface EventCardProps {
   title: string;
   date: string;
   time: string;
-  description: string;
+  venue: string;
   icon: React.ReactNode;
   images?: string[];
   className?: string;
@@ -17,7 +17,7 @@ const EventCard: React.FC<EventCardProps> = ({
   title,
   date,
   time,
-  description,
+  venue,
   icon,
   images = [],
   className,
@@ -54,7 +54,10 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
         
-        <p className="text-cream/80 mb-3 font-opensans">{description}</p>
+        <div className="flex items-center text-cream/80 mb-3 font-opensans">
+          <MapPin size={16} className="text-gold-light mr-2 flex-shrink-0" />
+          <p>{venue}</p>
+        </div>
         
         <div className="flex justify-center">
           {expanded ? (
