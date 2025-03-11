@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Clock } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Star, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Diya from '@/components/Diya';
 import EventCard from '@/components/EventCard';
@@ -28,8 +29,12 @@ const Index = () => {
       navigate('/');
     }
     
-    const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
-    return cleanup;
+    // Disable cursor/touch glitter to simplify the UI
+    // const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
+    // return cleanup;
+    
+    // No automatic effects, let user control them
+    return () => {};
   }, [isMobile, navigate]);
 
   const weddingDate = new Date("2025-03-21T17:00:00");
@@ -100,34 +105,36 @@ const Index = () => {
     { position: 'left', className: 'top-1/3', delay: 1 },
     { position: 'right', className: 'top-1/3', delay: 1.5 },
     { position: 'left', className: 'top-2/3', delay: 2 },
-    { position: 'right', className: 'top-2/3', delay: 2.5 },
-    { position: 'left', className: 'bottom-20', delay: 3 }
+    { position: 'right', className: 'top-2/3', delay: 2.5 }
   ];
   
   return (
     <div className="min-h-screen relative overflow-hidden">
       {guestName && (
-        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
+        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in z-20 relative">
           <p className="font-cormorant text-lg">
             Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
           </p>
         </div>
       )}
       
-      {diyaPositions.map((diya, index) => (
-        <Diya 
-          key={index} 
-          position={diya.position as 'left' | 'right'} 
-          className={diya.className}
-          delay={diya.delay}
-        />
-      ))}
+      {/* Diyas positioned at sides */}
+      <div className="invitation-background">
+        {diyaPositions.map((diya, index) => (
+          <Diya 
+            key={index} 
+            position={diya.position as 'left' | 'right'} 
+            className={diya.className}
+            delay={diya.delay}
+          />
+        ))}
+      </div>
       
-      <div className="pt-6 px-4">
+      <div className="invitation-content pt-6 px-4">
         <GaneshaHeader />
       </div>
       
-      <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
+      <header className="invitation-content pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
             <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
@@ -154,7 +161,7 @@ const Index = () => {
           </div>
           
           <div className="mt-8 animate-fade-in flex justify-center">
-            <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
+            <div className="enhanced-gold-border bg-maroon/50 px-6 py-3 rounded-lg inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
               <span className="font-cormorant text-xl md:text-2xl gold-text">
                 21 March 2025
@@ -172,10 +179,10 @@ const Index = () => {
         </div>
       </header>
       
-      <section className="py-10 px-4">
+      <section className="invitation-content py-10 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left">
+            <div className="enhanced-gold-border bg-maroon/40 rounded-xl p-6 animate-fade-in-left">
               <div className="flex justify-center mb-4">
                 <Flower className="text-gold-light" size={28} />
               </div>
@@ -183,7 +190,7 @@ const Index = () => {
               <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
             </div>
             
-            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right">
+            <div className="enhanced-gold-border bg-maroon/40 rounded-xl p-6 animate-fade-in-right">
               <div className="flex justify-center mb-4">
                 <Star className="text-gold-light" size={28} />
               </div>
@@ -194,7 +201,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-4" id="events">
+      <section className="invitation-content py-10 px-4" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
             Celebration Events
@@ -216,7 +223,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-2 md:px-4">
+      <section className="invitation-content py-10 px-2 md:px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
@@ -226,7 +233,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-4 relative overflow-hidden">
+      <section className="invitation-content py-10 px-4 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Join Our Celebration
@@ -262,22 +269,22 @@ const Index = () => {
               50% { transform: rotate(-5deg); }
             }
             .animate-dance-slow {
-              animation: dance-slow 2s ease-in-out infinite;
+              animation: dance-slow 3s ease-in-out infinite;
               transform-origin: bottom center;
             }
             .animate-dance-medium {
-              animation: dance-medium 1.8s ease-in-out infinite;
+              animation: dance-medium 2.5s ease-in-out infinite;
               transform-origin: bottom center;
             }
           `}</style>
         </div>
       </section>
       
-      <section className="py-10 px-4 text-center">
+      <section className="invitation-content py-10 px-4 text-center">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setDashboardOpen(true)}
-            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
+            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 enhanced-gold-border"
           >
             <span className="relative z-10 font-cormorant font-bold">Enter Event Dashboard</span>
             <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
@@ -287,7 +294,7 @@ const Index = () => {
         </div>
       </section>
       
-      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30">
+      <footer className="invitation-content py-10 px-4 relative mt-10 border-t border-gold-light/30">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
         <div className="max-w-4xl mx-auto text-center">
@@ -319,4 +326,3 @@ const Index = () => {
 };
 
 export default Index;
-

@@ -14,118 +14,75 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({
   interactive = true 
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [animateHearts, setAnimateHearts] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
+  const haloRef = useRef<{ remove: () => void } | null>(null);
   
   useEffect(() => {
+    // Set loaded state with slight delay for animation
     setTimeout(() => setIsLoaded(true), 500);
     
-    // Periodically show heart animation
-    const heartInterval = setInterval(() => {
-      setAnimateHearts(true);
-      setTimeout(() => setAnimateHearts(false), 2000);
-    }, 8000);
-    
-    // Add halo effect to the couple image
-    let haloEffect: { remove: () => void } | null = null;
-    
-    if (imageRef.current && interactive) {
-      haloEffect = createHaloEffect(imageRef.current);
-    }
-    
     return () => {
-      clearInterval(heartInterval);
-      if (haloEffect) haloEffect.remove();
+      if (haloRef.current) {
+        haloRef.current.remove();
+      }
     };
-  }, [interactive]);
+  }, []);
   
   const handleClick = () => {
     if (!interactive) return;
     
     setIsClicked(true);
     
-    // Create larger heart burst animation on click
+    // Toggle halo effect on click
     if (imageRef.current) {
-      const heartBurst = () => {
-        const burst = document.createElement('div');
-        burst.className = 'heart-burst';
-        burst.style.position = 'absolute';
-        burst.style.inset = '0';
-        burst.style.zIndex = '20';
-        burst.style.pointerEvents = 'none';
+      if (haloRef.current) {
+        haloRef.current.remove();
+        haloRef.current = null;
+      } else {
+        haloRef.current = createHaloEffect(imageRef.current);
+      }
+    }
+    
+    // Show subtle heart animation
+    if (imageRef.current && !haloRef.current) {
+      const createSubtleHeartEffect = () => {
+        const heart = document.createElement('div');
+        heart.className = 'absolute opacity-0';
+        heart.style.top = '50%';
+        heart.style.left = '50%';
+        heart.style.transform = 'translate(-50%, -50%)';
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '20';
+        heart.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="#FFD700" stroke="none">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+        </svg>`;
         
-        for (let i = 0; i < 20; i++) {
-          const heart = document.createElement('div');
-          const size = Math.random() * 25 + 15;
-          const angle = Math.random() * Math.PI * 2;
-          const distance = Math.random() * 120 + 50;
-          const duration = Math.random() * 1.5 + 1;
-          const delay = Math.random() * 0.3;
-          
-          heart.style.position = 'absolute';
-          heart.style.width = `${size}px`;
-          heart.style.height = `${size}px`;
-          heart.style.backgroundColor = 'transparent';
-          heart.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD700' stroke='none'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E")`;
-          heart.style.backgroundSize = 'contain';
-          heart.style.backgroundRepeat = 'no-repeat';
-          heart.style.left = '50%';
-          heart.style.top = '50%';
-          heart.style.transform = 'translate(-50%, -50%)';
-          heart.style.opacity = '0';
-          
-          heart.style.animation = `
-            heart-burst ${duration}s ease-out ${delay}s forwards
-          `;
-          
-          const keyframes = `
-            @keyframes heart-burst {
-              0% {
-                transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
-                opacity: 0;
-              }
-              20% {
-                opacity: 1;
-              }
-              100% {
-                transform: 
-                  translate(
-                    calc(-50% + ${Math.cos(angle) * distance}px), 
-                    calc(-50% + ${Math.sin(angle) * distance}px)
-                  )
-                  scale(0.8)
-                  rotate(${Math.random() * 180 - 90}deg);
-                opacity: 0;
-              }
-            }
-          `;
-          
-          if (!document.getElementById('heart-burst-animation')) {
-            const style = document.createElement('style');
-            style.id = 'heart-burst-animation';
-            style.innerHTML = keyframes;
-            document.head.appendChild(style);
-          }
-          
-          burst.appendChild(heart);
-        }
+        // Animate the heart growing and fading
+        heart.animate([
+          { opacity: 0, transform: 'translate(-50%, -50%) scale(0.5)' },
+          { opacity: 1, transform: 'translate(-50%, -50%) scale(1.5)' },
+          { opacity: 0, transform: 'translate(-50%, -50%) scale(2)' }
+        ], {
+          duration: 1500,
+          easing: 'ease-out'
+        });
         
-        imageRef.current?.appendChild(burst);
+        imageRef.current?.appendChild(heart);
         
         setTimeout(() => {
-          if (imageRef.current?.contains(burst)) {
-            imageRef.current.removeChild(burst);
+          if (imageRef.current?.contains(heart)) {
+            imageRef.current.removeChild(heart);
           }
-        }, 3000);
+        }, 1500);
       };
       
-      heartBurst();
+      createSubtleHeartEffect();
     }
     
     // Reset the clicked state after animation
-    setTimeout(() => setIsClicked(false), 3000);
+    setTimeout(() => setIsClicked(false), 300);
   };
   
   return (
@@ -136,56 +93,27 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({
         className
       )}
     >
-      {/* Golden ornamental frame */}
-      <div className="absolute inset-0 rounded-full border-4 border-gold-gradient opacity-20"></div>
+      {/* Ornamental frame with improved aesthetics */}
+      <div className="absolute inset-[-8px] rounded-full border-4 border-gold-gradient opacity-20"></div>
       
-      {/* Decorative corner elements */}
+      {/* Subtle corner accents */}
       {[0, 90, 180, 270].map((angle, index) => (
         <div 
           key={index}
-          className="absolute w-10 h-10"
+          className="absolute w-6 h-6"
           style={{
-            top: angle === 0 || angle === 90 ? '-5px' : 'auto',
-            bottom: angle === 180 || angle === 270 ? '-5px' : 'auto',
-            left: angle === 180 || angle === 90 ? '-5px' : 'auto',
-            right: angle === 0 || angle === 270 ? '-5px' : 'auto',
+            top: angle === 0 || angle === 90 ? '-3px' : 'auto',
+            bottom: angle === 180 || angle === 270 ? '-3px' : 'auto',
+            left: angle === 180 || angle === 90 ? '-3px' : 'auto',
+            right: angle === 0 || angle === 270 ? '-3px' : 'auto',
           }}
         >
           <div 
-            className="absolute w-full h-full bg-gold-gradient rounded-full opacity-50"
-            style={{ animation: `pulse-glow 3s infinite ${index * 0.5}s` }}
+            className="absolute w-full h-full bg-gold-gradient rounded-full opacity-40"
+            style={{ animation: `pulse-glow 4s infinite ${index * 0.5}s` }}
           ></div>
         </div>
       ))}
-      
-      {/* Heart animations when triggered */}
-      {animateHearts && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(12)].map((_, i) => {
-            const size = Math.random() * 15 + 10;
-            const left = Math.random() * 100;
-            const delay = Math.random() * 2;
-            const duration = Math.random() * 3 + 2;
-            return (
-              <div 
-                key={i}
-                className="absolute"
-                style={{
-                  left: `${left}%`,
-                  bottom: '-20px',
-                  animation: `float-up ${duration}s ease-out forwards ${delay}s`
-                }}
-              >
-                <Heart 
-                  size={size} 
-                  className="text-gold-light fill-gold-light/30" 
-                  style={{ transform: `rotate(${Math.random() * 40 - 20}deg)` }}
-                />
-              </div>
-            );
-          })}
-        </div>
-      )}
       
       {/* Main couple image */}
       <div 
@@ -216,21 +144,28 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({
         {interactive && isHovered && (
           <div className="absolute inset-0 bg-gold-gradient opacity-10"></div>
         )}
+        
+        {/* Click hint */}
+        {interactive && isHovered && (
+          <div className="absolute bottom-4 left-0 right-0 text-center text-gold-light/80 text-sm font-cormorant">
+            Click for blessing
+          </div>
+        )}
       </div>
       
-      {/* Sparkle effects */}
+      {/* Subtle sparkle accents */}
       {isLoaded && (
         <div className="absolute inset-0 pointer-events-none">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <Sparkles 
               key={i}
               className="absolute text-gold-light" 
-              size={16 + i * 4}
+              size={12 + i * 2}
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                opacity: 0.7,
-                animation: `twinkle 2s infinite ${i * 0.4}s`
+                top: `${10 + Math.random() * 80}%`,
+                left: `${10 + Math.random() * 80}%`,
+                opacity: 0.6,
+                animation: `twinkle 3s infinite ${i * 0.8}s`
               }}
             />
           ))}
@@ -238,26 +173,19 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({
       )}
       
       <style>{`
-        @keyframes float-up {
-          0% { transform: translateY(0) scale(0); opacity: 0; }
-          10% { opacity: 1; }
-          100% { transform: translateY(-100px) scale(1); opacity: 0; }
-        }
-        
         @keyframes twinkle {
-          0%, 100% { transform: scale(1); opacity: 0.7; }
-          50% { transform: scale(1.5); opacity: 1; }
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.3); opacity: 0.9; }
         }
         
         @keyframes wiggle {
           0%, 100% { transform: rotate(0); }
-          25% { transform: rotate(5deg); }
-          50% { transform: rotate(-5deg); }
-          75% { transform: rotate(3deg); }
+          25% { transform: rotate(3deg); }
+          75% { transform: rotate(-3deg); }
         }
         
         .animate-wiggle {
-          animation: wiggle 0.5s ease-in-out;
+          animation: wiggle 0.3s ease-in-out;
         }
       `}</style>
     </div>

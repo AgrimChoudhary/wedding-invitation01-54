@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Heart, Sparkles, Flower, PartyPopper } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createParticleAnimation, addFloatingElements } from '@/utils/weddingAnimations';
+import { createParticleAnimation, createHaloEffect } from '@/utils/weddingAnimations';
 
 interface InteractiveEffectsProps {
   className?: string;
@@ -11,9 +11,7 @@ interface InteractiveEffectsProps {
 const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) => {
   const [activeEffect, setActiveEffect] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [floatingElements, setFloatingElements] = useState<{
-    remove: () => void;
-  } | null>(null);
+  const [isGlowing, setIsGlowing] = useState(false);
   
   // Clear any active effect when component unmounts
   useEffect(() => {
@@ -21,11 +19,8 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
       if (activeEffect && containerRef.current) {
         setActiveEffect(null);
       }
-      if (floatingElements) {
-        floatingElements.remove();
-      }
     };
-  }, [activeEffect, floatingElements]);
+  }, [activeEffect]);
   
   const toggleEffect = (effectType: string) => {
     if (containerRef.current) {
@@ -44,17 +39,14 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
       
       // Trigger the actual animation effect
       switch (effectType) {
-        case 'hearts':
-          createParticleAnimation('hearts', containerRef.current);
-          break;
         case 'sparkles':
-          createParticleAnimation('sparkles', containerRef.current);
+          createParticleAnimation('sparkles', containerRef.current, {
+            count: 30,
+            duration: 3
+          });
           break;
-        case 'flowers':
-          createParticleAnimation('flowers', containerRef.current);
-          break;
-        case 'confetti':
-          createParticleAnimation('confetti', containerRef.current);
+        case 'blessing':
+          createHaloEffect(containerRef.current);
           break;
         default:
           break;
@@ -62,17 +54,8 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
     }
   };
   
-  const toggleFloatingElements = () => {
-    if (containerRef.current) {
-      if (floatingElements) {
-        floatingElements.remove();
-        setFloatingElements(null);
-      } else {
-        // Add floating elements
-        const elements = addFloatingElements(containerRef.current, 15);
-        setFloatingElements(elements);
-      }
-    }
+  const toggleGlow = () => {
+    setIsGlowing(!isGlowing);
   };
   
   return (
@@ -87,21 +70,6 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
           className={cn(
             "relative px-5 py-2 rounded-full transition-all duration-300",
             "overflow-hidden transform hover:scale-105",
-            activeEffect === 'hearts' 
-              ? "bg-[#FF5E5B] text-white" 
-              : "bg-maroon/60 border border-gold-light/70 text-gold-light"
-          )}
-          onClick={() => toggleEffect('hearts')}
-        >
-          <span className="relative z-10 flex items-center">
-            Shower Hearts <Heart className="ml-1.5" size={16} />
-          </span>
-        </button>
-        
-        <button
-          className={cn(
-            "relative px-5 py-2 rounded-full transition-all duration-300",
-            "overflow-hidden transform hover:scale-105",
             activeEffect === 'sparkles' 
               ? "bg-[#FFD700] text-maroon" 
               : "bg-maroon/60 border border-gold-light/70 text-gold-light"
@@ -109,7 +77,7 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
           onClick={() => toggleEffect('sparkles')}
         >
           <span className="relative z-10 flex items-center">
-            Gold Sparkles <Sparkles className="ml-1.5" size={16} />
+            Auspicious Blessings <Sparkles className="ml-1.5" size={16} />
           </span>
         </button>
         
@@ -117,47 +85,23 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
           className={cn(
             "relative px-5 py-2 rounded-full transition-all duration-300",
             "overflow-hidden transform hover:scale-105",
-            activeEffect === 'flowers' 
-              ? "bg-[#FF6B6B] text-white" 
+            isGlowing
+              ? "bg-[#FFD700] text-maroon" 
               : "bg-maroon/60 border border-gold-light/70 text-gold-light"
           )}
-          onClick={() => toggleEffect('flowers')}
+          onClick={toggleGlow}
         >
           <span className="relative z-10 flex items-center">
-            Rose Petals <Flower className="ml-1.5" size={16} />
-          </span>
-        </button>
-        
-        <button
-          className={cn(
-            "relative px-5 py-2 rounded-full transition-all duration-300",
-            "overflow-hidden transform hover:scale-105",
-            activeEffect === 'confetti' 
-              ? "bg-gradient-to-r from-[#FF6B6B] to-[#FFD700] text-maroon" 
-              : "bg-maroon/60 border border-gold-light/70 text-gold-light"
-          )}
-          onClick={() => toggleEffect('confetti')}
-        >
-          <span className="relative z-10 flex items-center">
-            Celebration Confetti <PartyPopper className="ml-1.5" size={16} />
-          </span>
-        </button>
-        
-        <button
-          className={cn(
-            "relative px-5 py-2 rounded-full transition-all duration-300",
-            "overflow-hidden transform hover:scale-105",
-            floatingElements 
-              ? "bg-[#91A6FF] text-maroon" 
-              : "bg-maroon/60 border border-gold-light/70 text-gold-light"
-          )}
-          onClick={toggleFloatingElements}
-        >
-          <span className="relative z-10 flex items-center">
-            {floatingElements ? "Hide" : "Show"} Floating Elements <Sparkles className="ml-1.5" size={16} />
+            {isGlowing ? "Dim" : "Illuminate"} Celebrations <Sparkles className="ml-1.5" size={16} />
           </span>
         </button>
       </div>
+      
+      {isGlowing && (
+        <div className="fixed inset-0 pointer-events-none z-0 bg-gold-light/5 animate-pulse-slow">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold-light/10 via-transparent to-transparent"></div>
+        </div>
+      )}
     </div>
   );
 };
