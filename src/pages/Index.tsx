@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -7,6 +6,8 @@ import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import Dashboard from '@/components/Dashboard';
 import Countdown from '@/components/Countdown';
+import GaneshaHeader from '@/components/GaneshaHeader';
+import CoupleIllustration from '@/components/CoupleIllustration';
 import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
@@ -14,7 +15,6 @@ import PhoneIcon from '@/components/PhoneIcon';
 const Index = () => {
   const [dashboardOpen, setDashboardOpen] = useState(false);
   const [petalsActive, setPetalsActive] = useState(false);
-  const [rangoliPattern, setRangoliPattern] = useState<{x: number, y: number, size: number, angle: number}[]>([]);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   
@@ -116,17 +116,6 @@ const Index = () => {
     }
   }, [petalsActive]);
 
-  // Create rangoli pattern
-  const addRangoliDot = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const size = Math.random() * 20 + 10;
-    const angle = Math.random() * 360;
-    
-    setRangoliPattern(prev => [...prev, {x, y, size, angle}]);
-  };
-
   // Calculate wedding date for countdown
   const weddingDate = new Date("2025-03-21T17:00:00");
 
@@ -192,8 +181,8 @@ const Index = () => {
   
   // Position Diyas along the sides
   const diyaPositions = [
-    { position: 'left', className: 'top-20', delay: 0, blessing: "आनन्दं (Joy)" },
-    { position: 'right', className: 'top-20', delay: 0.5, blessing: "प्रेम (Love)" },
+    { position: 'left', className: 'top-24', delay: 0, blessing: "आनन्दं (Joy)" },
+    { position: 'right', className: 'top-24', delay: 0.5, blessing: "प्रेम (Love)" },
     { position: 'left', className: 'top-1/3', delay: 1, blessing: "सौभाग्य (Fortune)" },
     { position: 'right', className: 'top-1/3', delay: 1.5, blessing: "समृद्धि (Prosperity)" },
     { position: 'left', className: 'top-2/3', delay: 2, blessing: "स्वास्थ्य (Health)" },
@@ -203,7 +192,7 @@ const Index = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Floating Diyas */}
+      {/* Floating Diyas - adjusted position to account for Ganesha header */}
       {diyaPositions.map((diya, index) => (
         <Diya 
           key={index} 
@@ -214,8 +203,13 @@ const Index = () => {
         />
       ))}
       
+      {/* Ganesha Header Section - New addition */}
+      <div className="pt-6 px-4">
+        <GaneshaHeader />
+      </div>
+      
       {/* Header Section */}
-      <header className="pt-20 md:pt-24 pb-10 px-4 relative text-center">
+      <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
             <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
@@ -236,6 +230,11 @@ const Index = () => {
           <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
             "A journey written in the stars…"
           </p>
+          
+          {/* Add couple illustration - New addition */}
+          <div className="mt-8 flex justify-center">
+            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
+          </div>
           
           <div className="mt-8 animate-fade-in flex justify-center">
             <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
@@ -340,57 +339,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Interactive Rangoli Pattern */}
-      <section className="py-10 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-6">
-            Create Your Blessing
-          </h2>
-          
-          <p className="text-cream/80 mb-6">Click or tap below to create your own pattern of good wishes</p>
-          
-          <div 
-            className="relative h-60 bg-maroon/30 rounded-xl gold-border overflow-hidden cursor-pointer mb-8"
-            onClick={addRangoliDot}
-          >
-            <div className="absolute inset-0 flex items-center justify-center text-cream/30 font-cormorant text-2xl pointer-events-none">
-              Click anywhere to create your blessing
-            </div>
-            
-            {rangoliPattern.map((dot, index) => (
-              <div 
-                key={index}
-                className="absolute"
-                style={{
-                  width: `${dot.size}px`,
-                  height: `${dot.size}px`,
-                  left: `${dot.x - dot.size/2}px`,
-                  top: `${dot.y - dot.size/2}px`,
-                  background: 'radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%)',
-                  transform: `rotate(${dot.angle}deg)`,
-                  animation: 'spark-fade 2s forwards'
-                }}
-              />
-            ))}
-            
-            <style jsx>{`
-              @keyframes spark-fade {
-                0% { transform: scale(0); opacity: 0; }
-                50% { transform: scale(1); opacity: 1; }
-                100% { transform: scale(1.5); opacity: 0; }
-              }
-            `}</style>
-          </div>
-          
-          <button 
-            className="mt-2 text-gold-light/70 hover:text-gold-light transition-colors"
-            onClick={() => setRangoliPattern([])}
-          >
-            Clear Canvas
-          </button>
-        </div>
-      </section>
-      
       {/* Photo Carousel */}
       <section className="py-10 px-2 md:px-4">
         <div className="max-w-5xl mx-auto">
@@ -429,7 +377,7 @@ const Index = () => {
             "Dance with us as two hearts become one"
           </p>
           
-          <style jsx>{`
+          <style>{`
             @keyframes dance-slow {
               0%, 100% { transform: rotate(-5deg); }
               50% { transform: rotate(5deg); }

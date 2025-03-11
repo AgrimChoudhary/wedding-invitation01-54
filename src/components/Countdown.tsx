@@ -112,7 +112,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate, className }) => {
         ))}
       </div>
       
-      <style jsx>{`
+      <style>{`
         .perspective {
           perspective: 1000px;
         }
