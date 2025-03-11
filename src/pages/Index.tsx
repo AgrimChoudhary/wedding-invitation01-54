@@ -12,12 +12,11 @@ import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
 import { useNavigate } from 'react-router-dom';
+import InteractiveEffects from '@/components/InteractiveEffects';
 
 const Index = () => {
   const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
-  const [petalsActive, setPetalsActive] = useState(false);
-  const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   const [guestName, setGuestName] = useState('');
   
@@ -32,92 +31,6 @@ const Index = () => {
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     return cleanup;
   }, [isMobile, navigate]);
-
-  useEffect(() => {
-    if (isMandalaVisible) {
-      const interval = setInterval(() => {
-        const container = document.getElementById('mandala-container');
-        if (container) {
-          const petal = document.createElement('div');
-          const size = Math.random() * 40 + 20;
-          const x = Math.random() * container.offsetWidth;
-          const y = Math.random() * container.offsetHeight;
-          const hue = Math.random() * 30 + 30; // gold-ish colors
-          
-          petal.className = 'absolute rounded-full animate-float';
-          petal.style.width = `${size}px`;
-          petal.style.height = `${size}px`;
-          petal.style.left = `${x}px`;
-          petal.style.top = `${y}px`;
-          petal.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.8), hsla(${hue}, 100%, 50%, 0))`;
-          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
-          petal.style.animation = 'float 3s ease-in-out infinite, fade-out 3s forwards';
-          
-          container.appendChild(petal);
-          
-          setTimeout(() => {
-            container?.contains(petal) && container.removeChild(petal);
-          }, 3000);
-        }
-      }, 100);
-      
-      return () => clearInterval(interval);
-    }
-  }, [isMandalaVisible]);
-
-  const createPetal = () => {
-    if (!petalsActive) return;
-    
-    const petal = document.createElement('div');
-    petal.className = 'petal';
-    
-    const size = Math.random() * 20 + 10;
-    const rotation = Math.random() * 360;
-    const xPos = Math.random() * window.innerWidth;
-    const fallDuration = Math.random() * 5 + 3;
-    
-    petal.style.width = `${size}px`;
-    petal.style.height = `${size * 1.5}px`;
-    petal.style.left = `${xPos}px`;
-    petal.style.top = '-20px';
-    petal.style.transform = `rotate(${rotation}deg)`;
-    petal.style.background = 'linear-gradient(135deg, #FFA07A, #FF6347)';
-    petal.style.borderRadius = '50% 10% 50% 10%';
-    petal.style.position = 'fixed';
-    petal.style.zIndex = '5';
-    petal.style.opacity = '0.8';
-    petal.style.animation = `fall ${fallDuration}s linear forwards, sway ${fallDuration / 3}s ease-in-out infinite alternate`;
-    
-    document.body.appendChild(petal);
-    
-    setTimeout(() => {
-      document.body.removeChild(petal);
-    }, fallDuration * 1000);
-  };
-  
-  useEffect(() => {
-    if (petalsActive) {
-      const style = document.createElement('style');
-      style.innerHTML = `
-        @keyframes fall {
-          0% { top: -20px; }
-          100% { top: 100vh; }
-        }
-        @keyframes sway {
-          0% { transform: translateX(-10px) rotate(0deg); }
-          100% { transform: translateX(10px) rotate(360deg); }
-        }
-      `;
-      document.head.appendChild(style);
-      
-      const petalInterval = setInterval(createPetal, 300);
-      
-      return () => {
-        clearInterval(petalInterval);
-        document.head.removeChild(style);
-      };
-    }
-  }, [petalsActive]);
 
   const weddingDate = new Date("2025-03-21T17:00:00");
 
@@ -237,7 +150,7 @@ const Index = () => {
           </p>
           
           <div className="mt-8 flex justify-center">
-            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
+            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" interactive={true} />
           </div>
           
           <div className="mt-8 animate-fade-in flex justify-center">
@@ -253,46 +166,11 @@ const Index = () => {
             <Countdown targetDate={weddingDate} className="animate-fade-in" />
           </div>
           
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <button 
-              className={cn(
-                "relative px-6 py-3 rounded-full transition-all duration-300",
-                "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
-                "overflow-hidden",
-                petalsActive && "bg-opacity-100"
-              )}
-              onClick={() => setPetalsActive(!petalsActive)}
-            >
-              <span className="relative z-10 flex items-center">
-                {petalsActive ? "Stop Petals" : "Shower Marigold Petals"} 
-                <Flower className="ml-2" size={18} />
-              </span>
-            </button>
-            
-            <button 
-              className={cn(
-                "relative px-6 py-3 rounded-full transition-all duration-300",
-                "border-2 border-gold-light text-gold-light font-bold",
-                "overflow-hidden hover:bg-gold-light/10",
-                isMandalaVisible && "bg-gold-light/10"
-              )}
-              onClick={() => setIsMandalaVisible(!isMandalaVisible)}
-            >
-              <span className="relative z-10 flex items-center">
-                {isMandalaVisible ? "Hide Mandala" : "Show Mandala Effect"} 
-                <Sparkles className="ml-2" size={18} />
-              </span>
-            </button>
+          <div className="mt-8">
+            <InteractiveEffects />
           </div>
         </div>
       </header>
-      
-      {isMandalaVisible && (
-        <div 
-          id="mandala-container"
-          className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
-        ></div>
-      )}
       
       <section className="py-10 px-4">
         <div className="max-w-4xl mx-auto">
@@ -441,3 +319,4 @@ const Index = () => {
 };
 
 export default Index;
+
