@@ -23,6 +23,13 @@ const EventCard: React.FC<EventCardProps> = ({
   className,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [isSparkle, setIsSparkle] = useState(false);
+
+  const handleSparkle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSparkle(true);
+    setTimeout(() => setIsSparkle(false), 1000);
+  };
 
   return (
     <div 
@@ -41,7 +48,13 @@ const EventCard: React.FC<EventCardProps> = ({
       
       <div className="relative">
         <div className="flex items-center mb-4">
-          <div className="mr-4 bg-gold-gradient p-2 rounded-full">
+          <div 
+            className={cn(
+              "mr-4 bg-gold-gradient p-2 rounded-full transition-all duration-300",
+              isSparkle && "animate-ping"
+            )}
+            onClick={handleSparkle}
+          >
             {icon}
           </div>
           <div>
@@ -56,7 +69,7 @@ const EventCard: React.FC<EventCardProps> = ({
         
         <div className="flex items-center text-cream/80 mb-3 font-opensans">
           <MapPin size={16} className="text-gold-light mr-2 flex-shrink-0" />
-          <p>{venue}</p>
+          <p className="animate-pulse-slow">{venue}</p>
         </div>
         
         <div className="flex justify-center">
@@ -81,6 +94,31 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         )}
       </div>
+
+      {isSparkle && (
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(10)].map((_, i) => {
+            const size = Math.random() * 10 + 5;
+            const top = Math.random() * 100;
+            const left = Math.random() * 100;
+            const duration = Math.random() * 1 + 0.5;
+            return (
+              <div 
+                key={i}
+                className="absolute bg-gold-light rounded-full animate-ping"
+                style={{
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  top: `${top}%`,
+                  left: `${left}%`,
+                  opacity: Math.random() * 0.7 + 0.3,
+                  animationDuration: `${duration}s`
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

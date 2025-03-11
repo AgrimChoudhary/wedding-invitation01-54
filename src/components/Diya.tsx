@@ -18,9 +18,11 @@ const Diya: React.FC<DiyaProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
   
   const handleClick = () => {
     setIsClicked(true);
+    setClickCount(prev => prev + 1);
     setTimeout(() => setIsClicked(false), 2000);
   };
   
@@ -67,6 +69,21 @@ const Diya: React.FC<DiyaProps> = ({
                 size={64}
               />
             )}
+            
+            {/* Radiating rings on click */}
+            {isClicked && (
+              <div className="absolute inset-0 pointer-events-none">
+                {[...Array(3)].map((_, i) => (
+                  <div 
+                    key={i}
+                    className="absolute inset-0 rounded-full border border-gold-light"
+                    style={{
+                      animation: `ring-expand 1.5s ease-out forwards ${i * 0.3}s`
+                    }}
+                  ></div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         
@@ -77,7 +94,21 @@ const Diya: React.FC<DiyaProps> = ({
             </div>
           </div>
         )}
+        
+        {/* Blessing count */}
+        {clickCount > 0 && (
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-gold-light/80 bg-maroon/80 px-2 py-0.5 rounded-full gold-border">
+            {clickCount}
+          </div>
+        )}
       </div>
+      
+      <style jsx>{`
+        @keyframes ring-expand {
+          0% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(3); opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import Diya from '@/components/Diya';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import Dashboard from '@/components/Dashboard';
+import Countdown from '@/components/Countdown';
 import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
@@ -12,12 +14,47 @@ import PhoneIcon from '@/components/PhoneIcon';
 const Index = () => {
   const [dashboardOpen, setDashboardOpen] = useState(false);
   const [petalsActive, setPetalsActive] = useState(false);
+  const [rangoliPattern, setRangoliPattern] = useState<{x: number, y: number, size: number, angle: number}[]>([]);
+  const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     return cleanup;
   }, [isMobile]);
+
+  // Create mandala effect
+  useEffect(() => {
+    if (isMandalaVisible) {
+      const interval = setInterval(() => {
+        const container = document.getElementById('mandala-container');
+        if (container) {
+          const petal = document.createElement('div');
+          const size = Math.random() * 40 + 20;
+          const x = Math.random() * container.offsetWidth;
+          const y = Math.random() * container.offsetHeight;
+          const hue = Math.random() * 30 + 30; // gold-ish colors
+          
+          petal.className = 'absolute rounded-full animate-float';
+          petal.style.width = `${size}px`;
+          petal.style.height = `${size}px`;
+          petal.style.left = `${x}px`;
+          petal.style.top = `${y}px`;
+          petal.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.8), hsla(${hue}, 100%, 50%, 0))`;
+          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+          petal.style.animation = 'float 3s ease-in-out infinite, fade-out 3s forwards';
+          
+          container.appendChild(petal);
+          
+          setTimeout(() => {
+            container?.contains(petal) && container.removeChild(petal);
+          }, 3000);
+        }
+      }, 100);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isMandalaVisible]);
 
   // Create petals for the interactive element
   const createPetal = () => {
@@ -78,6 +115,20 @@ const Index = () => {
       };
     }
   }, [petalsActive]);
+
+  // Create rangoli pattern
+  const addRangoliDot = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const size = Math.random() * 20 + 10;
+    const angle = Math.random() * 360;
+    
+    setRangoliPattern(prev => [...prev, {x, y, size, angle}]);
+  };
+
+  // Calculate wedding date for countdown
+  const weddingDate = new Date("2025-03-21T17:00:00");
 
   const events = [
     {
@@ -195,8 +246,13 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Interactive Marigold Button */}
-          <div className="mt-8">
+          {/* Countdown Component */}
+          <div className="mt-10">
+            <Countdown targetDate={weddingDate} className="animate-fade-in" />
+          </div>
+          
+          {/* Interactive Buttons */}
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
             <button 
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
@@ -211,9 +267,32 @@ const Index = () => {
                 <Flower className="ml-2" size={18} />
               </span>
             </button>
+            
+            <button 
+              className={cn(
+                "relative px-6 py-3 rounded-full transition-all duration-300",
+                "border-2 border-gold-light text-gold-light font-bold",
+                "overflow-hidden hover:bg-gold-light/10",
+                isMandalaVisible && "bg-gold-light/10"
+              )}
+              onClick={() => setIsMandalaVisible(!isMandalaVisible)}
+            >
+              <span className="relative z-10 flex items-center">
+                {isMandalaVisible ? "Hide Mandala" : "Show Mandala Effect"} 
+                <Sparkles className="ml-2" size={18} />
+              </span>
+            </button>
           </div>
         </div>
       </header>
+      
+      {/* Mandala Container */}
+      {isMandalaVisible && (
+        <div 
+          id="mandala-container"
+          className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
+        ></div>
+      )}
       
       {/* Parents Section */}
       <section className="py-10 px-4">
@@ -272,51 +351,43 @@ const Index = () => {
           
           <div 
             className="relative h-60 bg-maroon/30 rounded-xl gold-border overflow-hidden cursor-pointer mb-8"
-            onClick={(e) => {
-              // Create a spark at mouse position
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              
-              const spark = document.createElement('div');
-              const size = Math.random() * 20 + 10;
-              const angle = Math.random() * 360;
-              
-              spark.style.position = 'absolute';
-              spark.style.width = `${size}px`;
-              spark.style.height = `${size}px`;
-              spark.style.left = `${x - size/2}px`;
-              spark.style.top = `${y - size/2}px`;
-              spark.style.borderRadius = '50%';
-              spark.style.background = 'radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%)';
-              spark.style.transform = `rotate(${angle}deg)`;
-              spark.style.animation = 'spark-fade 2s forwards';
-              
-              const style = document.createElement('style');
-              style.innerHTML = `
-                @keyframes spark-fade {
-                  0% { transform: scale(0); opacity: 0; }
-                  50% { transform: scale(1); opacity: 1; }
-                  100% { transform: scale(1.5); opacity: 0; }
-                }
-              `;
-              
-              if (!document.head.querySelector('style[data-spark]')) {
-                style.setAttribute('data-spark', 'true');
-                document.head.appendChild(style);
-              }
-              
-              e.currentTarget.appendChild(spark);
-              
-              setTimeout(() => {
-                e.currentTarget.removeChild(spark);
-              }, 2000);
-            }}
+            onClick={addRangoliDot}
           >
             <div className="absolute inset-0 flex items-center justify-center text-cream/30 font-cormorant text-2xl pointer-events-none">
               Click anywhere to create your blessing
             </div>
+            
+            {rangoliPattern.map((dot, index) => (
+              <div 
+                key={index}
+                className="absolute"
+                style={{
+                  width: `${dot.size}px`,
+                  height: `${dot.size}px`,
+                  left: `${dot.x - dot.size/2}px`,
+                  top: `${dot.y - dot.size/2}px`,
+                  background: 'radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%)',
+                  transform: `rotate(${dot.angle}deg)`,
+                  animation: 'spark-fade 2s forwards'
+                }}
+              />
+            ))}
+            
+            <style jsx>{`
+              @keyframes spark-fade {
+                0% { transform: scale(0); opacity: 0; }
+                50% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(1.5); opacity: 0; }
+              }
+            `}</style>
           </div>
+          
+          <button 
+            className="mt-2 text-gold-light/70 hover:text-gold-light transition-colors"
+            onClick={() => setRangoliPattern([])}
+          >
+            Clear Canvas
+          </button>
         </div>
       </section>
       
@@ -328,6 +399,54 @@ const Index = () => {
           </h2>
           
           <PhotoCarousel photos={photos} />
+        </div>
+      </section>
+      
+      {/* Dancing Animation */}
+      <section className="py-10 px-4 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+            Join Our Celebration
+          </h2>
+          
+          <div className="relative h-40 md:h-60">
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex items-end justify-center gap-4 md:gap-10">
+              <div className="w-10 h-20 md:w-16 md:h-32 bg-gold-gradient rounded-t-full animate-dance-slow">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
+                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
+                </div>
+              </div>
+              
+              <div className="w-10 h-24 md:w-16 md:h-40 bg-gold-gradient rounded-t-full animate-dance-medium">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
+                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-cream/80 mt-8 font-cormorant text-xl italic">
+            "Dance with us as two hearts become one"
+          </p>
+          
+          <style jsx>{`
+            @keyframes dance-slow {
+              0%, 100% { transform: rotate(-5deg); }
+              50% { transform: rotate(5deg); }
+            }
+            @keyframes dance-medium {
+              0%, 100% { transform: rotate(5deg); }
+              50% { transform: rotate(-5deg); }
+            }
+            .animate-dance-slow {
+              animation: dance-slow 2s ease-in-out infinite;
+              transform-origin: bottom center;
+            }
+            .animate-dance-medium {
+              animation: dance-medium 1.8s ease-in-out infinite;
+              transform-origin: bottom center;
+            }
+          `}</style>
         </div>
       </section>
       
