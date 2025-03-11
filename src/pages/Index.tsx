@@ -11,19 +11,28 @@ import CoupleIllustration from '@/components/CoupleIllustration';
 import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
   const [petalsActive, setPetalsActive] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
+  const [guestName, setGuestName] = useState('');
   
   useEffect(() => {
+    const savedName = localStorage.getItem('guestName');
+    if (savedName) {
+      setGuestName(savedName);
+    } else {
+      navigate('/');
+    }
+    
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     return cleanup;
-  }, [isMobile]);
+  }, [isMobile, navigate]);
 
-  // Create mandala effect
   useEffect(() => {
     if (isMandalaVisible) {
       const interval = setInterval(() => {
@@ -56,20 +65,17 @@ const Index = () => {
     }
   }, [isMandalaVisible]);
 
-  // Create petals for the interactive element
   const createPetal = () => {
     if (!petalsActive) return;
     
     const petal = document.createElement('div');
     petal.className = 'petal';
     
-    // Randomize petal properties
     const size = Math.random() * 20 + 10;
     const rotation = Math.random() * 360;
     const xPos = Math.random() * window.innerWidth;
     const fallDuration = Math.random() * 5 + 3;
     
-    // Set petal style
     petal.style.width = `${size}px`;
     petal.style.height = `${size * 1.5}px`;
     petal.style.left = `${xPos}px`;
@@ -84,7 +90,6 @@ const Index = () => {
     
     document.body.appendChild(petal);
     
-    // Remove petal after animation
     setTimeout(() => {
       document.body.removeChild(petal);
     }, fallDuration * 1000);
@@ -92,7 +97,6 @@ const Index = () => {
   
   useEffect(() => {
     if (petalsActive) {
-      // Add required keyframes to document
       const style = document.createElement('style');
       style.innerHTML = `
         @keyframes fall {
@@ -106,7 +110,6 @@ const Index = () => {
       `;
       document.head.appendChild(style);
       
-      // Create petals at interval
       const petalInterval = setInterval(createPetal, 300);
       
       return () => {
@@ -116,7 +119,6 @@ const Index = () => {
     }
   }, [petalsActive]);
 
-  // Calculate wedding date for countdown
   const weddingDate = new Date("2025-03-21T17:00:00");
 
   const events = [
@@ -179,36 +181,39 @@ const Index = () => {
     { src: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb", alt: "Couple photo 6" }
   ];
   
-  // Position Diyas along the sides
   const diyaPositions = [
-    { position: 'left', className: 'top-24', delay: 0, blessing: "आनन्दं (Joy)" },
-    { position: 'right', className: 'top-24', delay: 0.5, blessing: "प्रेम (Love)" },
-    { position: 'left', className: 'top-1/3', delay: 1, blessing: "सौभाग्य (Fortune)" },
-    { position: 'right', className: 'top-1/3', delay: 1.5, blessing: "समृद्धि (Prosperity)" },
-    { position: 'left', className: 'top-2/3', delay: 2, blessing: "स्वास्थ्य (Health)" },
-    { position: 'right', className: 'top-2/3', delay: 2.5, blessing: "शांति (Peace)" },
-    { position: 'left', className: 'bottom-20', delay: 3, blessing: "विश्वास (Faith)" }
+    { position: 'left', className: 'top-24', delay: 0 },
+    { position: 'right', className: 'top-24', delay: 0.5 },
+    { position: 'left', className: 'top-1/3', delay: 1 },
+    { position: 'right', className: 'top-1/3', delay: 1.5 },
+    { position: 'left', className: 'top-2/3', delay: 2 },
+    { position: 'right', className: 'top-2/3', delay: 2.5 },
+    { position: 'left', className: 'bottom-20', delay: 3 }
   ];
   
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Floating Diyas - adjusted position to account for Ganesha header */}
+      {guestName && (
+        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
+          <p className="font-cormorant text-lg">
+            Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
+          </p>
+        </div>
+      )}
+      
       {diyaPositions.map((diya, index) => (
         <Diya 
           key={index} 
           position={diya.position as 'left' | 'right'} 
           className={diya.className}
           delay={diya.delay}
-          blessing={diya.blessing}
         />
       ))}
       
-      {/* Ganesha Header Section - New addition */}
       <div className="pt-6 px-4">
         <GaneshaHeader />
       </div>
       
-      {/* Header Section */}
       <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
@@ -231,7 +236,6 @@ const Index = () => {
             "A journey written in the stars…"
           </p>
           
-          {/* Add couple illustration - New addition */}
           <div className="mt-8 flex justify-center">
             <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
           </div>
@@ -245,12 +249,10 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Countdown Component */}
           <div className="mt-10">
             <Countdown targetDate={weddingDate} className="animate-fade-in" />
           </div>
           
-          {/* Interactive Buttons */}
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <button 
               className={cn(
@@ -285,7 +287,6 @@ const Index = () => {
         </div>
       </header>
       
-      {/* Mandala Container */}
       {isMandalaVisible && (
         <div 
           id="mandala-container"
@@ -293,7 +294,6 @@ const Index = () => {
         ></div>
       )}
       
-      {/* Parents Section */}
       <section className="py-10 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
@@ -316,7 +316,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Event Timeline */}
       <section className="py-10 px-4" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
@@ -339,7 +338,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Photo Carousel */}
       <section className="py-10 px-2 md:px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
@@ -350,7 +348,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Dancing Animation */}
       <section className="py-10 px-4 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
@@ -398,7 +395,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Dashboard Button */}
       <section className="py-10 px-4 text-center">
         <div className="max-w-3xl mx-auto">
           <button
@@ -413,7 +409,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Footer */}
       <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
@@ -428,7 +423,7 @@ const Index = () => {
           
           <div className="text-cream/80">
             <p className="mb-2">The Royal Celebration Hall, Wedding City</p>
-            <p className="flex justify-center gap-4">
+            <p className="flex flex-wrap justify-center gap-4">
               <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
                 <PhoneIcon className="mr-1" />
                 Priya's Family

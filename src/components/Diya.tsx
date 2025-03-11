@@ -6,23 +6,19 @@ import { cn } from '@/lib/utils';
 interface DiyaProps {
   className?: string;
   position?: 'left' | 'right';
-  blessing?: string;
   delay?: number;
 }
 
 const Diya: React.FC<DiyaProps> = ({
   className,
   position = 'left',
-  blessing = "आनन्दं (Joy)",
   delay = 0
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
   
   const handleClick = () => {
     setIsClicked(true);
-    setClickCount(prev => prev + 1);
     setTimeout(() => setIsClicked(false), 2000);
   };
   
@@ -86,21 +82,6 @@ const Diya: React.FC<DiyaProps> = ({
             )}
           </div>
         </div>
-        
-        {isClicked && (
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full">
-            <div className="relative gold-text font-cormorant font-bold text-xl animate-fade-in py-1 px-3 rounded-lg bg-maroon/90 border border-gold-light/40">
-              {blessing}
-            </div>
-          </div>
-        )}
-        
-        {/* Blessing count */}
-        {clickCount > 0 && (
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-gold-light/80 bg-maroon/80 px-2 py-0.5 rounded-full gold-border">
-            {clickCount}
-          </div>
-        )}
       </div>
       
       <style>{`
