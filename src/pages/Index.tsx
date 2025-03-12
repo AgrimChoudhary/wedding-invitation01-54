@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Star, Clock, Paintbrush, Sparkles } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Diya from '@/components/Diya';
 import EventCard from '@/components/EventCard';
@@ -12,11 +12,12 @@ import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
 import { useNavigate } from 'react-router-dom';
-import InteractiveEffects from '@/components/InteractiveEffects';
 
 const Index = () => {
   const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [petalsActive, setPetalsActive] = useState(false);
+  const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   const [guestName, setGuestName] = useState('');
   
@@ -28,8 +29,95 @@ const Index = () => {
       navigate('/');
     }
     
-    return () => {};
+    const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
+    return cleanup;
   }, [isMobile, navigate]);
+
+  useEffect(() => {
+    if (isMandalaVisible) {
+      const interval = setInterval(() => {
+        const container = document.getElementById('mandala-container');
+        if (container) {
+          const petal = document.createElement('div');
+          const size = Math.random() * 40 + 20;
+          const x = Math.random() * container.offsetWidth;
+          const y = Math.random() * container.offsetHeight;
+          const hue = Math.random() * 30 + 30; // gold-ish colors
+          
+          petal.className = 'absolute rounded-full animate-float';
+          petal.style.width = `${size}px`;
+          petal.style.height = `${size}px`;
+          petal.style.left = `${x}px`;
+          petal.style.top = `${y}px`;
+          petal.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.8), hsla(${hue}, 100%, 50%, 0))`;
+          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+          petal.style.animation = 'float 3s ease-in-out infinite, fade-out 3s forwards';
+          
+          container.appendChild(petal);
+          
+          setTimeout(() => {
+            container?.contains(petal) && container.removeChild(petal);
+          }, 3000);
+        }
+      }, 100);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isMandalaVisible]);
+
+  const createPetal = () => {
+    if (!petalsActive) return;
+    
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    
+    const size = Math.random() * 20 + 10;
+    const rotation = Math.random() * 360;
+    const xPos = Math.random() * window.innerWidth;
+    const fallDuration = Math.random() * 5 + 3;
+    
+    petal.style.width = `${size}px`;
+    petal.style.height = `${size * 1.5}px`;
+    petal.style.left = `${xPos}px`;
+    petal.style.top = '-20px';
+    petal.style.transform = `rotate(${rotation}deg)`;
+    petal.style.background = 'linear-gradient(135deg, #FFA07A, #FF6347)';
+    petal.style.borderRadius = '50% 10% 50% 10%';
+    petal.style.position = 'fixed';
+    petal.style.zIndex = '5';
+    petal.style.opacity = '0.8';
+    petal.style.animation = `fall ${fallDuration}s linear forwards, sway ${fallDuration / 3}s ease-in-out infinite alternate`;
+    
+    document.body.appendChild(petal);
+    
+    setTimeout(() => {
+      document.body.removeChild(petal);
+    }, fallDuration * 1000);
+  };
+  
+  useEffect(() => {
+    if (petalsActive) {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        @keyframes fall {
+          0% { top: -20px; }
+          100% { top: 100vh; }
+        }
+        @keyframes sway {
+          0% { transform: translateX(-10px) rotate(0deg); }
+          100% { transform: translateX(10px) rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      const petalInterval = setInterval(createPetal, 300);
+      
+      return () => {
+        clearInterval(petalInterval);
+        document.head.removeChild(style);
+      };
+    }
+  }, [petalsActive]);
 
   const weddingDate = new Date("2025-03-21T17:00:00");
 
@@ -99,36 +187,34 @@ const Index = () => {
     { position: 'left', className: 'top-1/3', delay: 1 },
     { position: 'right', className: 'top-1/3', delay: 1.5 },
     { position: 'left', className: 'top-2/3', delay: 2 },
-    { position: 'right', className: 'top-2/3', delay: 2.5 }
+    { position: 'right', className: 'top-2/3', delay: 2.5 },
+    { position: 'left', className: 'bottom-20', delay: 3 }
   ];
   
   return (
     <div className="min-h-screen relative overflow-hidden">
       {guestName && (
-        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in z-20 relative">
+        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
           <p className="font-cormorant text-lg">
             Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
           </p>
         </div>
       )}
       
-      {/* Diyas positioned at sides */}
-      <div className="invitation-background pointer-events-none">
-        {diyaPositions.map((diya, index) => (
-          <Diya 
-            key={index} 
-            position={diya.position as 'left' | 'right'} 
-            className={diya.className}
-            delay={diya.delay}
-          />
-        ))}
-      </div>
+      {diyaPositions.map((diya, index) => (
+        <Diya 
+          key={index} 
+          position={diya.position as 'left' | 'right'} 
+          className={diya.className}
+          delay={diya.delay}
+        />
+      ))}
       
-      <div className="invitation-content pt-6 px-4 relative z-10">
+      <div className="pt-6 px-4">
         <GaneshaHeader />
       </div>
       
-      <header className="invitation-content pt-10 md:pt-12 pb-10 px-4 relative text-center z-10">
+      <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
             <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
@@ -151,11 +237,11 @@ const Index = () => {
           </p>
           
           <div className="mt-8 flex justify-center">
-            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" interactive={true} />
+            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
           </div>
           
           <div className="mt-8 animate-fade-in flex justify-center">
-            <div className="enhanced-gold-border bg-maroon/50 px-6 py-3 rounded-lg inline-block">
+            <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
               <span className="font-cormorant text-xl md:text-2xl gold-text">
                 21 March 2025
@@ -167,16 +253,51 @@ const Index = () => {
             <Countdown targetDate={weddingDate} className="animate-fade-in" />
           </div>
           
-          <div className="mt-8">
-            <InteractiveEffects />
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <button 
+              className={cn(
+                "relative px-6 py-3 rounded-full transition-all duration-300",
+                "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
+                "overflow-hidden",
+                petalsActive && "bg-opacity-100"
+              )}
+              onClick={() => setPetalsActive(!petalsActive)}
+            >
+              <span className="relative z-10 flex items-center">
+                {petalsActive ? "Stop Petals" : "Shower Marigold Petals"} 
+                <Flower className="ml-2" size={18} />
+              </span>
+            </button>
+            
+            <button 
+              className={cn(
+                "relative px-6 py-3 rounded-full transition-all duration-300",
+                "border-2 border-gold-light text-gold-light font-bold",
+                "overflow-hidden hover:bg-gold-light/10",
+                isMandalaVisible && "bg-gold-light/10"
+              )}
+              onClick={() => setIsMandalaVisible(!isMandalaVisible)}
+            >
+              <span className="relative z-10 flex items-center">
+                {isMandalaVisible ? "Hide Mandala" : "Show Mandala Effect"} 
+                <Sparkles className="ml-2" size={18} />
+              </span>
+            </button>
           </div>
         </div>
       </header>
       
-      <section className="invitation-content py-10 px-4 z-10 relative">
+      {isMandalaVisible && (
+        <div 
+          id="mandala-container"
+          className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
+        ></div>
+      )}
+      
+      <section className="py-10 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-            <div className="enhanced-gold-border bg-maroon/40 rounded-xl p-6 animate-fade-in-left">
+            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left">
               <div className="flex justify-center mb-4">
                 <Flower className="text-gold-light" size={28} />
               </div>
@@ -184,7 +305,7 @@ const Index = () => {
               <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
             </div>
             
-            <div className="enhanced-gold-border bg-maroon/40 rounded-xl p-6 animate-fade-in-right">
+            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right">
               <div className="flex justify-center mb-4">
                 <Star className="text-gold-light" size={28} />
               </div>
@@ -195,7 +316,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4 z-10 relative" id="events">
+      <section className="py-10 px-4" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
             Celebration Events
@@ -217,7 +338,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-2 md:px-4 z-10 relative">
+      <section className="py-10 px-2 md:px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
@@ -227,7 +348,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4 relative overflow-hidden z-10">
+      <section className="py-10 px-4 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Join Our Celebration
@@ -263,22 +384,22 @@ const Index = () => {
               50% { transform: rotate(-5deg); }
             }
             .animate-dance-slow {
-              animation: dance-slow 3s ease-in-out infinite;
+              animation: dance-slow 2s ease-in-out infinite;
               transform-origin: bottom center;
             }
             .animate-dance-medium {
-              animation: dance-medium 2.5s ease-in-out infinite;
+              animation: dance-medium 1.8s ease-in-out infinite;
               transform-origin: bottom center;
             }
           `}</style>
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4 text-center z-10 relative">
+      <section className="py-10 px-4 text-center">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setDashboardOpen(true)}
-            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 enhanced-gold-border"
+            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
           >
             <span className="relative z-10 font-cormorant font-bold">Enter Event Dashboard</span>
             <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
@@ -288,7 +409,7 @@ const Index = () => {
         </div>
       </section>
       
-      <footer className="invitation-content py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
+      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
         <div className="max-w-4xl mx-auto text-center">
