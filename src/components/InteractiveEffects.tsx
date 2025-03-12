@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createParticleAnimation, createHaloEffect } from '@/utils/weddingAnimations';
 
@@ -41,7 +41,7 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
       switch (effectType) {
         case 'sparkles':
           createParticleAnimation('sparkles', containerRef.current, {
-            count: 30,
+            count: 15,
             duration: 3
           });
           break;
@@ -69,14 +69,15 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
         <button
           className={cn(
             "relative px-5 py-2 rounded-full transition-all duration-300",
-            "overflow-hidden transform hover:scale-105",
+            "overflow-hidden transform hover:scale-105 shadow-sm",
             activeEffect === 'sparkles' 
-              ? "bg-[#FFD700] text-maroon" 
-              : "bg-maroon/60 border border-gold-light/70 text-gold-light"
+              ? "bg-gold-light/90 text-maroon" 
+              : "bg-maroon/80 border border-gold-light/50 text-gold-light"
           )}
           onClick={() => toggleEffect('sparkles')}
+          aria-label="Show auspicious blessings effect"
         >
-          <span className="relative z-10 flex items-center">
+          <span className="relative z-10 flex items-center text-sm md:text-base">
             Auspicious Blessings <Sparkles className="ml-1.5" size={16} />
           </span>
         </button>
@@ -84,15 +85,16 @@ const InteractiveEffects: React.FC<InteractiveEffectsProps> = ({ className }) =>
         <button
           className={cn(
             "relative px-5 py-2 rounded-full transition-all duration-300",
-            "overflow-hidden transform hover:scale-105",
+            "overflow-hidden transform hover:scale-105 shadow-sm",
             isGlowing
-              ? "bg-[#FFD700] text-maroon" 
-              : "bg-maroon/60 border border-gold-light/70 text-gold-light"
+              ? "bg-gold-light/90 text-maroon" 
+              : "bg-maroon/80 border border-gold-light/50 text-gold-light"
           )}
           onClick={toggleGlow}
+          aria-label={isGlowing ? "Dim celebrations" : "Illuminate celebrations"}
         >
-          <span className="relative z-10 flex items-center">
-            {isGlowing ? "Dim" : "Illuminate"} Celebrations <Sparkles className="ml-1.5" size={16} />
+          <span className="relative z-10 flex items-center text-sm md:text-base">
+            {isGlowing ? "Dim" : "Illuminate"} Celebrations <Sun className="ml-1.5" size={16} />
           </span>
         </button>
       </div>

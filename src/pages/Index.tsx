@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Star, Clock } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Star, Clock, Paintbrush, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Diya from '@/components/Diya';
 import EventCard from '@/components/EventCard';
@@ -29,11 +28,6 @@ const Index = () => {
       navigate('/');
     }
     
-    // Disable cursor/touch glitter to simplify the UI
-    // const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
-    // return cleanup;
-    
-    // No automatic effects, let user control them
     return () => {};
   }, [isMobile, navigate]);
 
@@ -119,7 +113,7 @@ const Index = () => {
       )}
       
       {/* Diyas positioned at sides */}
-      <div className="invitation-background">
+      <div className="invitation-background pointer-events-none">
         {diyaPositions.map((diya, index) => (
           <Diya 
             key={index} 
@@ -130,11 +124,11 @@ const Index = () => {
         ))}
       </div>
       
-      <div className="invitation-content pt-6 px-4">
+      <div className="invitation-content pt-6 px-4 relative z-10">
         <GaneshaHeader />
       </div>
       
-      <header className="invitation-content pt-10 md:pt-12 pb-10 px-4 relative text-center">
+      <header className="invitation-content pt-10 md:pt-12 pb-10 px-4 relative text-center z-10">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
             <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
@@ -179,7 +173,7 @@ const Index = () => {
         </div>
       </header>
       
-      <section className="invitation-content py-10 px-4">
+      <section className="invitation-content py-10 px-4 z-10 relative">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div className="enhanced-gold-border bg-maroon/40 rounded-xl p-6 animate-fade-in-left">
@@ -201,7 +195,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4" id="events">
+      <section className="invitation-content py-10 px-4 z-10 relative" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
             Celebration Events
@@ -223,7 +217,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-2 md:px-4">
+      <section className="invitation-content py-10 px-2 md:px-4 z-10 relative">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
@@ -233,7 +227,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4 relative overflow-hidden">
+      <section className="invitation-content py-10 px-4 relative overflow-hidden z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Join Our Celebration
@@ -280,7 +274,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="invitation-content py-10 px-4 text-center">
+      <section className="invitation-content py-10 px-4 text-center z-10 relative">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setDashboardOpen(true)}
@@ -294,7 +288,7 @@ const Index = () => {
         </div>
       </section>
       
-      <footer className="invitation-content py-10 px-4 relative mt-10 border-t border-gold-light/30">
+      <footer className="invitation-content py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
         <div className="max-w-4xl mx-auto text-center">

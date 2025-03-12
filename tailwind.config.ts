@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -132,6 +131,10 @@ export default {
 				'heart-beat': {
 					'0%, 100%': { transform: 'scale(1)' },
 					'50%': { transform: 'scale(1.1)' }
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '0.05' },
+					'50%': { opacity: '0.15' }
 				}
 			},
 			animation: {
@@ -145,7 +148,8 @@ export default {
 				'fade-in-right': 'fade-in-right 0.8s ease-out',
 				'scale-up': 'scale-up 0.5s ease-out',
 				'particles': 'particles 3s ease-out forwards',
-				'heart-beat': 'heart-beat 1.5s ease-in-out infinite'
+				'heart-beat': 'heart-beat 1.5s ease-in-out infinite',
+				'pulse-slow': 'pulse-slow 4s infinite ease-in-out'
 			},
 			boxShadow: {
 				'gold': '0 0 10px rgba(255, 215, 0, 0.5)',
