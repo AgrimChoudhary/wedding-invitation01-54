@@ -1,5 +1,5 @@
 
-export const createGlitter = (e: MouseEvent) => {
+export const createGlitter = (e: MouseEvent | Touch) => {
   const glitter = document.createElement('div');
   glitter.className = 'glitter';
   
@@ -7,13 +7,19 @@ export const createGlitter = (e: MouseEvent) => {
   glitter.style.width = `${size}px`;
   glitter.style.height = `${size}px`;
   
-  glitter.style.left = `${e.pageX - size / 2}px`;
-  glitter.style.top = `${e.pageY - size / 2}px`;
+  // For touches, we need pageX and pageY
+  const pageX = 'pageX' in e ? e.pageX : e.clientX + document.documentElement.scrollLeft;
+  const pageY = 'pageY' in e ? e.pageY : e.clientY + document.documentElement.scrollTop;
+  
+  glitter.style.left = `${pageX - size / 2}px`;
+  glitter.style.top = `${pageY - size / 2}px`;
   
   document.body.appendChild(glitter);
   
   setTimeout(() => {
-    document.body.removeChild(glitter);
+    if (document.body.contains(glitter)) {
+      document.body.removeChild(glitter);
+    }
   }, 2000);
 };
 
@@ -39,13 +45,45 @@ export const initCursorGlitter = () => {
 
 export const initTouchGlitter = () => {
   const handleTouch = (e: TouchEvent) => {
-    const touch = e.touches[0];
-    createGlitter(touch as unknown as MouseEvent);
+    if (e.touches.length > 0) {
+      createGlitter(e.touches[0]);
+    }
   };
   
-  document.addEventListener('touchmove', handleTouch);
+  document.addEventListener('touchmove', handleTouch, { passive: true });
   
   return () => {
     document.removeEventListener('touchmove', handleTouch);
   };
+};
+
+// Helper function to optimize image loading
+export const preloadImages = (srcs: string[]) => {
+  srcs.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+};
+
+// Create a function for lazy loading images
+export const setupLazyLoading = () => {
+  if ('IntersectionObserver' in window) {
+    const lazyImageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target as HTMLImageElement;
+          if (lazyImage.dataset.src) {
+            lazyImage.src = lazyImage.dataset.src;
+            lazyImage.classList.add('loaded');
+            lazyImageObserver.unobserve(lazyImage);
+          }
+        }
+      });
+    });
+
+    const lazyImages = document.querySelectorAll('.lazy-image');
+    lazyImages.forEach(lazyImage => {
+      lazyImageObserver.observe(lazyImage);
+    });
+  }
 };

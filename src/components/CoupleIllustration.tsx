@@ -9,120 +9,134 @@ interface CoupleIllustrationProps {
 
 const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [animateHearts, setAnimateHearts] = useState(false);
+  const [isGlowing, setIsGlowing] = useState(false);
+  const [showEffects, setShowEffects] = useState(false);
   
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 500);
     
-    // Periodically show heart animation
-    const heartInterval = setInterval(() => {
-      setAnimateHearts(true);
-      setTimeout(() => setAnimateHearts(false), 2000);
+    // Periodically show glow animation
+    const glowInterval = setInterval(() => {
+      setIsGlowing(true);
+      setTimeout(() => setIsGlowing(false), 2000);
     }, 5000);
     
-    return () => clearInterval(heartInterval);
+    return () => clearInterval(glowInterval);
   }, []);
+  
+  const handleClick = () => {
+    setShowEffects(true);
+    setTimeout(() => setShowEffects(false), 3000);
+  };
   
   return (
     <div 
       className={cn(
-        "relative flex justify-center items-center transition-all duration-1000",
+        "relative flex justify-center items-center transition-all duration-1000 cursor-pointer",
         isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95",
         className
       )}
+      onClick={handleClick}
     >
       {/* Golden ornamental frame */}
       <div className="absolute inset-0 rounded-full border-4 border-gold-gradient opacity-20"></div>
       
-      {/* Decorative corner elements */}
-      {[0, 90, 180, 270].map((angle, index) => (
-        <div 
-          key={index}
-          className="absolute w-10 h-10"
-          style={{
-            top: angle === 0 || angle === 90 ? '-5px' : 'auto',
-            bottom: angle === 180 || angle === 270 ? '-5px' : 'auto',
-            left: angle === 180 || angle === 90 ? '-5px' : 'auto',
-            right: angle === 0 || angle === 270 ? '-5px' : 'auto',
-          }}
-        >
-          <div 
-            className="absolute w-full h-full bg-gold-gradient rounded-full opacity-50"
-            style={{ animation: `pulse-glow 3s infinite ${index * 0.5}s` }}
-          ></div>
-        </div>
-      ))}
-      
-      {/* Heart animations when triggered */}
-      {animateHearts && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(12)].map((_, i) => {
-            const size = Math.random() * 15 + 10;
-            const left = Math.random() * 100;
-            const delay = Math.random() * 2;
-            const duration = Math.random() * 3 + 2;
-            return (
-              <div 
-                key={i}
-                className="absolute"
-                style={{
-                  left: `${left}%`,
-                  bottom: '-20px',
-                  animation: `float-up ${duration}s ease-out forwards ${delay}s`
-                }}
-              >
-                <Heart 
-                  size={size} 
-                  className="text-gold-light fill-gold-light/30" 
-                  style={{ transform: `rotate(${Math.random() * 40 - 20}deg)` }}
-                />
-              </div>
-            );
-          })}
-        </div>
-      )}
-      
-      {/* Main couple image */}
+      {/* Main couple image with interactive effects */}
       <div className="relative rounded-full overflow-hidden w-64 h-64 md:w-80 md:h-80 gold-border">
         <img 
-          src="/lovable-uploads/5afd7a5a-50bd-433d-8e23-7e0d3aa5b16f.png" 
+          src="/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png" 
           alt="Bride and Groom" 
-          className="w-full h-full object-contain"
+          className={cn(
+            "w-full h-full object-contain transition-all duration-700",
+            (isGlowing || showEffects) && "scale-105"
+          )}
         />
         
         {/* Subtle gold overlay for warmth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gold-light/5 to-gold-light/10"></div>
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-b from-gold-light/5 to-gold-light/10 transition-opacity duration-500",
+          isGlowing && "opacity-70",
+          !isGlowing && "opacity-30"
+        )}></div>
+        
+        {/* Animated effects on click */}
+        {showEffects && (
+          <>
+            {/* Radial gold rays */}
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+              {[...Array(12)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="absolute h-full w-2 bg-gold-gradient opacity-40"
+                  style={{ 
+                    transform: `rotate(${i * 30}deg)`, 
+                    animation: `ray-expand 2s ease-out forwards`,
+                    transformOrigin: 'center bottom'
+                  }}
+                ></div>
+              ))}
+            </div>
+            
+            {/* Circular ripple */}
+            {[...Array(3)].map((_, i) => (
+              <div 
+                key={i}
+                className="absolute inset-0 border-4 border-gold-light/40 rounded-full"
+                style={{
+                  animation: `circle-expand 2s ease-out forwards ${i * 0.3}s`
+                }}
+              ></div>
+            ))}
+            
+            {/* Sparkles */}
+            {[...Array(8)].map((_, i) => (
+              <Sparkles 
+                key={i}
+                className="absolute text-gold-light" 
+                size={20}
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animation: `sparkle-fade 1.5s ease-out forwards ${i * 0.1}s`
+                }}
+              />
+            ))}
+          </>
+        )}
       </div>
       
-      {/* Sparkle effects */}
-      {isLoaded && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(5)].map((_, i) => (
-            <Sparkles 
-              key={i}
-              className="absolute text-gold-light" 
-              size={16 + i * 4}
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                opacity: 0.7,
-                animation: `twinkle 2s infinite ${i * 0.4}s`
-              }}
-            />
-          ))}
+      {/* Decorative '&' symbol */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+        <div className={cn(
+          "relative font-cormorant text-7xl gold-text font-bold transform -rotate-12 transition-all duration-500",
+          isGlowing ? "scale-110 opacity-90" : "scale-100 opacity-70",
+          showEffects && "scale-125 opacity-100"
+        )}>
+          &
+          <div className={cn(
+            "absolute inset-0 blur-sm bg-gold-gradient bg-clip-text text-transparent transition-opacity duration-500",
+            isGlowing || showEffects ? "opacity-80" : "opacity-0"
+          )}>
+            &
+          </div>
         </div>
-      )}
+      </div>
       
       <style>{`
-        @keyframes float-up {
-          0% { transform: translateY(0) scale(0); opacity: 0; }
-          10% { opacity: 1; }
-          100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        @keyframes ray-expand {
+          0% { height: 0%; opacity: 0.8; }
+          100% { height: 150%; opacity: 0; }
         }
         
-        @keyframes twinkle {
-          0%, 100% { transform: scale(1); opacity: 0.7; }
-          50% { transform: scale(1.5); opacity: 1; }
+        @keyframes circle-expand {
+          0% { transform: scale(0); opacity: 1; }
+          100% { transform: scale(2); opacity: 0; }
+        }
+        
+        @keyframes sparkle-fade {
+          0% { transform: scale(0) rotate(0deg); opacity: 1; }
+          50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+          100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
       `}</style>
     </div>

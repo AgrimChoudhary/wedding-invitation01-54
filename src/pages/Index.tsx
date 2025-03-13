@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Clock } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Diya from '@/components/Diya';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import Dashboard from '@/components/Dashboard';
@@ -16,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 const Index = () => {
   const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
-  const [petalsActive, setPetalsActive] = useState(false);
+  const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   const [guestName, setGuestName] = useState('');
@@ -34,90 +33,41 @@ const Index = () => {
   }, [isMobile, navigate]);
 
   useEffect(() => {
-    if (isMandalaVisible) {
+    if (showHearts) {
       const interval = setInterval(() => {
-        const container = document.getElementById('mandala-container');
-        if (container) {
-          const petal = document.createElement('div');
-          const size = Math.random() * 40 + 20;
-          const x = Math.random() * container.offsetWidth;
-          const y = Math.random() * container.offsetHeight;
-          const hue = Math.random() * 30 + 30; // gold-ish colors
-          
-          petal.className = 'absolute rounded-full animate-float';
-          petal.style.width = `${size}px`;
-          petal.style.height = `${size}px`;
-          petal.style.left = `${x}px`;
-          petal.style.top = `${y}px`;
-          petal.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.8), hsla(${hue}, 100%, 50%, 0))`;
-          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
-          petal.style.animation = 'float 3s ease-in-out infinite, fade-out 3s forwards';
-          
-          container.appendChild(petal);
-          
-          setTimeout(() => {
-            container?.contains(petal) && container.removeChild(petal);
-          }, 3000);
-        }
-      }, 100);
+        createHeart();
+      }, 300);
       
       return () => clearInterval(interval);
     }
-  }, [isMandalaVisible]);
+  }, [showHearts]);
 
-  const createPetal = () => {
-    if (!petalsActive) return;
+  const createHeart = () => {
+    if (!showHearts) return;
     
-    const petal = document.createElement('div');
-    petal.className = 'petal';
-    
-    const size = Math.random() * 20 + 10;
-    const rotation = Math.random() * 360;
+    const heart = document.createElement('div');
+    const size = Math.random() * 30 + 15;
     const xPos = Math.random() * window.innerWidth;
-    const fallDuration = Math.random() * 5 + 3;
+    const rotation = Math.random() * 30 - 15;
+    const duration = Math.random() * 3 + 3;
+    const delay = Math.random();
     
-    petal.style.width = `${size}px`;
-    petal.style.height = `${size * 1.5}px`;
-    petal.style.left = `${xPos}px`;
-    petal.style.top = '-20px';
-    petal.style.transform = `rotate(${rotation}deg)`;
-    petal.style.background = 'linear-gradient(135deg, #FFA07A, #FF6347)';
-    petal.style.borderRadius = '50% 10% 50% 10%';
-    petal.style.position = 'fixed';
-    petal.style.zIndex = '5';
-    petal.style.opacity = '0.8';
-    petal.style.animation = `fall ${fallDuration}s linear forwards, sway ${fallDuration / 3}s ease-in-out infinite alternate`;
+    heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+    heart.className = 'fixed z-50 pointer-events-none text-gold-light';
+    heart.style.width = `${size}px`;
+    heart.style.height = `${size}px`;
+    heart.style.left = `${xPos}px`;
+    heart.style.top = '-50px';
+    heart.style.transform = `rotate(${rotation}deg)`;
+    heart.style.animationDelay = `${delay}s`;
+    heart.style.animation = `float-heart ${duration}s linear forwards`;
     
-    document.body.appendChild(petal);
+    document.body.appendChild(heart);
     
     setTimeout(() => {
-      document.body.removeChild(petal);
-    }, fallDuration * 1000);
+      document.body.removeChild(heart);
+    }, (duration + delay) * 1000);
   };
-  
-  useEffect(() => {
-    if (petalsActive) {
-      const style = document.createElement('style');
-      style.innerHTML = `
-        @keyframes fall {
-          0% { top: -20px; }
-          100% { top: 100vh; }
-        }
-        @keyframes sway {
-          0% { transform: translateX(-10px) rotate(0deg); }
-          100% { transform: translateX(10px) rotate(360deg); }
-        }
-      `;
-      document.head.appendChild(style);
-      
-      const petalInterval = setInterval(createPetal, 300);
-      
-      return () => {
-        clearInterval(petalInterval);
-        document.head.removeChild(style);
-      };
-    }
-  }, [petalsActive]);
 
   const weddingDate = new Date("2025-03-21T17:00:00");
 
@@ -173,22 +123,10 @@ const Index = () => {
   ];
   
   const photos = [
-    { src: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", alt: "Couple photo 1" },
-    { src: "https://images.unsplash.com/photo-1500673922987-e212871fec22", alt: "Couple photo 2" },
-    { src: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb", alt: "Couple photo 3" },
-    { src: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", alt: "Couple photo 4" },
-    { src: "https://images.unsplash.com/photo-1500673922987-e212871fec22", alt: "Couple photo 5" },
-    { src: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb", alt: "Couple photo 6" }
-  ];
-  
-  const diyaPositions = [
-    { position: 'left', className: 'top-24', delay: 0 },
-    { position: 'right', className: 'top-24', delay: 0.5 },
-    { position: 'left', className: 'top-1/3', delay: 1 },
-    { position: 'right', className: 'top-1/3', delay: 1.5 },
-    { position: 'left', className: 'top-2/3', delay: 2 },
-    { position: 'right', className: 'top-2/3', delay: 2.5 },
-    { position: 'left', className: 'bottom-20', delay: 3 }
+    { src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png", alt: "Couple photo 1" },
+    { src: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png", alt: "Couple photo 2" },
+    { src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png", alt: "Couple photo 3" },
+    { src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", alt: "Couple photo 4" }
   ];
   
   return (
@@ -200,15 +138,6 @@ const Index = () => {
           </p>
         </div>
       )}
-      
-      {diyaPositions.map((diya, index) => (
-        <Diya 
-          key={index} 
-          position={diya.position as 'left' | 'right'} 
-          className={diya.className}
-          delay={diya.delay}
-        />
-      ))}
       
       <div className="pt-6 px-4">
         <GaneshaHeader />
@@ -229,7 +158,7 @@ const Index = () => {
           </p>
           
           <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
-            Priya <span className="inline-block mx-1 md:mx-3 animate-float">&</span> Vijay
+            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
           </h1>
           
           <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
@@ -258,30 +187,38 @@ const Index = () => {
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
                 "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
-                "overflow-hidden",
-                petalsActive && "bg-opacity-100"
+                "overflow-hidden group",
+                showHearts && "bg-opacity-100"
               )}
-              onClick={() => setPetalsActive(!petalsActive)}
+              onClick={() => setShowHearts(!showHearts)}
             >
               <span className="relative z-10 flex items-center">
-                {petalsActive ? "Stop Petals" : "Shower Marigold Petals"} 
-                <Flower className="ml-2" size={18} />
+                {showHearts ? "Stop Hearts" : "Shower Love"} 
+                <Heart className={cn(
+                  "ml-2 transition-transform duration-300",
+                  showHearts ? "animate-heart-beat" : "group-hover:scale-125"
+                )} size={18} />
               </span>
+              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
             
             <button 
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
                 "border-2 border-gold-light text-gold-light font-bold",
-                "overflow-hidden hover:bg-gold-light/10",
+                "overflow-hidden hover:bg-gold-light/10 group",
                 isMandalaVisible && "bg-gold-light/10"
               )}
               onClick={() => setIsMandalaVisible(!isMandalaVisible)}
             >
               <span className="relative z-10 flex items-center">
-                {isMandalaVisible ? "Hide Mandala" : "Show Mandala Effect"} 
-                <Sparkles className="ml-2" size={18} />
+                {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
+                <Sparkles className={cn(
+                  "ml-2 transition-transform duration-300",
+                  "group-hover:rotate-12"
+                )} size={18} />
               </span>
+              <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
           </div>
         </div>
@@ -290,11 +227,11 @@ const Index = () => {
       {isMandalaVisible && (
         <div 
           id="mandala-container"
-          className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
+          className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
         ></div>
       )}
       
-      <section className="py-10 px-4">
+      <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left">
@@ -316,7 +253,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-4" id="events">
+      <section className="py-10 px-4 relative z-10" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
             Celebration Events
@@ -338,7 +275,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-2 md:px-4">
+      <section className="py-10 px-2 md:px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
@@ -348,7 +285,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-4 relative overflow-hidden">
+      <section className="py-10 px-4 relative overflow-hidden z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Join Our Celebration
@@ -391,11 +328,25 @@ const Index = () => {
               animation: dance-medium 1.8s ease-in-out infinite;
               transform-origin: bottom center;
             }
+            @keyframes float-heart {
+              0% { 
+                transform: translateY(0) rotate(var(--rotation, 0deg)) scale(0); 
+                opacity: 0; 
+              }
+              10% { 
+                opacity: 0.8; 
+                transform: translateY(10px) rotate(var(--rotation, 0deg)) scale(1); 
+              }
+              100% { 
+                transform: translateY(100vh) rotate(var(--rotation, 0deg)) scale(0.5); 
+                opacity: 0; 
+              }
+            }
           `}</style>
         </div>
       </section>
       
-      <section className="py-10 px-4 text-center">
+      <section className="py-10 px-4 text-center relative z-10">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setDashboardOpen(true)}
@@ -409,7 +360,7 @@ const Index = () => {
         </div>
       </section>
       
-      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30">
+      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
         <div className="max-w-4xl mx-auto text-center">

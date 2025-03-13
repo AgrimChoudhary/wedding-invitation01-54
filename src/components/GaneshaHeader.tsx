@@ -41,34 +41,26 @@ const GaneshaHeader: React.FC = () => {
           <div className="relative w-32 h-32 md:w-40 md:h-40">
             <div className={cn("absolute inset-0 bg-gold-light/10 rounded-full transition-all duration-700", isShimmer && "bg-gold-light/30")}></div>
             
-            {/* Ganesha image - Using the new image */}
+            {/* Ganesha image with better loading performance */}
             <img 
               src="/lovable-uploads/762354ab-cff9-4c6a-9800-94eeefc3c43c.png" 
               alt="Lord Ganesha" 
+              width="160"
+              height="160"
+              loading="eager"
+              fetchpriority="high"
               className={cn(
                 "w-full h-full object-contain drop-shadow-lg transition-all duration-700 transform z-10 relative", 
                 isShimmer && "scale-105"
               )} 
             />
             
-            {/* Animated lotus petals */}
-            {isShimmer && [...Array(8)].map((_, i) => (
-              <div 
-                key={i} 
-                className="absolute w-full h-full top-0 left-0" 
-                style={{
-                  transform: `rotate(${i * 45}deg)`,
-                  animation: `petal-fade 2s ease-out forwards ${i * 0.1}s`
-                }}
-              >
-                <div 
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-10 bg-gold-light/30 rounded-full blur-sm" 
-                  style={{
-                    transformOrigin: 'center 80px'
-                  }}
-                ></div>
+            {/* Interactive shimmer effect */}
+            {isShimmer && (
+              <div className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/40 to-transparent -translate-x-full animate-shimmer"></div>
               </div>
-            ))}
+            )}
           </div>
           
           <div className="text-center md:text-left">
@@ -85,10 +77,13 @@ const GaneshaHeader: React.FC = () => {
       </div>
       
       <style>{`
-        @keyframes petal-fade {
-          0% { opacity: 0; transform: rotate(${Math.random() * 45}deg) scale(0); }
-          50% { opacity: 1; transform: rotate(${Math.random() * 90}deg) scale(1); }
-          100% { opacity: 0; transform: rotate(${Math.random() * 180}deg) scale(1.5); }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        .animate-shimmer {
+          animation: shimmer 1.5s ease-in-out;
         }
       `}</style>
     </div>

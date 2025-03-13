@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +15,30 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
+  const [visiblePhotos, setVisiblePhotos] = useState<number[]>([0, 1, 2]);
+
+  useEffect(() => {
+    // Initial load of first few photos
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.getAttribute('data-index') || '0');
+          if (!visiblePhotos.includes(index) && index < photos.length) {
+            setVisiblePhotos(prev => [...prev, index]);
+          }
+        }
+      });
+    }, { root: scrollContainerRef.current, threshold: 0.1 });
+    
+    const container = scrollContainerRef.current;
+    if (container) {
+      Array.from(container.children).forEach(child => {
+        observer.observe(child);
+      });
+    }
+    
+    return () => observer.disconnect();
+  }, [photos.length]);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -35,6 +59,44 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
       newLiked.delete(index);
     } else {
       newLiked.add(index);
+      
+      // Create heart burst effect
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      for (let i = 0; i < 6; i++) {
+        const heart = document.createElement('div');
+        const size = Math.random() * 15 + 8;
+        const angle = Math.random() * 360;
+        const distance = Math.random() * 60 + 30;
+        
+        heart.className = 'absolute text-gold-light';
+        heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+        heart.style.width = `${size}px`;
+        heart.style.height = `${size}px`;
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+        heart.style.transform = `rotate(${angle}deg)`;
+        heart.style.opacity = '1';
+        heart.style.pointerEvents = 'none';
+        heart.style.transition = 'all 0.8s ease-out';
+        heart.style.zIndex = '100';
+        
+        target.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.style.transform = `translate(${Math.cos(angle * Math.PI / 180) * distance}px, ${Math.sin(angle * Math.PI / 180) * distance}px) rotate(${angle + 20}deg)`;
+          heart.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => {
+          if (target.contains(heart)) {
+            target.removeChild(heart);
+          }
+        }, 800);
+      }
     }
     setLikedPhotos(newLiked);
   };
@@ -69,6 +131,7 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
         {photos.map((photo, index) => (
           <div 
             key={index}
+            data-index={index}
             className={cn(
               'flex-shrink-0 relative group',
               'perspective transform transition-all duration-500',
@@ -84,12 +147,21 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
               activeIndex === index && 'border-gold-light/70'
             )}></div>
             
-            <img 
-              src={photo.src} 
-              alt={photo.alt}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-            />
+            {visiblePhotos.includes(index) ? (
+              <img 
+                src={photo.src} 
+                alt={photo.alt}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                width="240"
+                height="320"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-maroon/50">
+                <div className="w-10 h-10 border-2 border-gold-light border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
             
             <div className={cn(
               'absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-maroon/90',
