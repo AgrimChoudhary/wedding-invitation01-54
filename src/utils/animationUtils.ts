@@ -15,8 +15,8 @@ export const createGlitter = (e: MouseEvent | Touch) => {
     // It's a MouseEvent
     pageX = e.pageX;
     pageY = e.pageY;
-  } else if ('clientX' in e && 'clientY' in e) {
-    // It's a Touch object
+  } else if ('clientX' in e && 'clientY' in e && e instanceof Touch) {
+    // It's a Touch object with clientX and clientY properties
     pageX = e.clientX + document.documentElement.scrollLeft;
     pageY = e.clientY + document.documentElement.scrollTop;
   } else {

@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { preloadImages } from '@/utils/animationUtils';
 
 interface PhotoCarouselProps {
   photos: Array<{
@@ -18,6 +19,9 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
   const [visiblePhotos, setVisiblePhotos] = useState<number[]>([0, 1, 2]);
 
   useEffect(() => {
+    // Preload first few images for faster initial rendering
+    preloadImages(photos.slice(0, 3).map(photo => photo.src));
+    
     // Initial load of first few photos
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -152,10 +156,11 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
                 src={photo.src} 
                 alt={photo.alt}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
+                loading={index < 3 ? "eager" : "lazy"}
                 decoding="async"
                 width="240"
                 height="320"
+                fetchPriority={index < 3 ? "high" : "auto"}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-maroon/50">

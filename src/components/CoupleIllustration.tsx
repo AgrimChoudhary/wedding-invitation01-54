@@ -46,6 +46,10 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
         <img 
           src="/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png" 
           alt="Bride and Groom" 
+          width="320"
+          height="320"
+          loading="eager"
+          fetchPriority="high"
           className={cn(
             "w-full h-full object-contain transition-all duration-700",
             (isGlowing || showEffects) && "scale-105"
@@ -103,23 +107,6 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
             ))}
           </>
         )}
-      </div>
-      
-      {/* Decorative '&' symbol */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-        <div className={cn(
-          "relative font-cormorant text-7xl gold-text font-bold transform -rotate-12 transition-all duration-500",
-          isGlowing ? "scale-110 opacity-90" : "scale-100 opacity-70",
-          showEffects && "scale-125 opacity-100"
-        )}>
-          &
-          <div className={cn(
-            "absolute inset-0 blur-sm bg-gold-gradient bg-clip-text text-transparent transition-opacity duration-500",
-            isGlowing || showEffects ? "opacity-80" : "opacity-0"
-          )}>
-            &
-          </div>
-        </div>
       </div>
       
       <style>{`
