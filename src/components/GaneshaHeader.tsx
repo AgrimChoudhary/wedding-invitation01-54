@@ -48,7 +48,7 @@ const GaneshaHeader: React.FC = () => {
               width="160"
               height="160"
               loading="eager"
-              fetchpriority="high"
+              fetchPriority="high"
               className={cn(
                 "w-full h-full object-contain drop-shadow-lg transition-all duration-700 transform z-10 relative", 
                 isShimmer && "scale-105"

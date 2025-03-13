@@ -7,9 +7,19 @@ export const createGlitter = (e: MouseEvent | Touch) => {
   glitter.style.width = `${size}px`;
   glitter.style.height = `${size}px`;
   
-  // For touches, we need pageX and pageY
-  const pageX = 'pageX' in e ? e.pageX : e.clientX + document.documentElement.scrollLeft;
-  const pageY = 'pageY' in e ? e.pageY : e.clientY + document.documentElement.scrollTop;
+  // Handle both MouseEvent and Touch correctly with proper type guards
+  let pageX: number;
+  let pageY: number;
+  
+  if ('pageX' in e && 'pageY' in e) {
+    // It's a MouseEvent
+    pageX = e.pageX;
+    pageY = e.pageY;
+  } else {
+    // It's a Touch
+    pageX = e.clientX + document.documentElement.scrollLeft;
+    pageY = e.clientY + document.documentElement.scrollTop;
+  }
   
   glitter.style.left = `${pageX - size / 2}px`;
   glitter.style.top = `${pageY - size / 2}px`;
