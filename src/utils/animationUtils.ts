@@ -1,3 +1,4 @@
+
 export const createGlitter = (e: MouseEvent | Touch) => {
   const glitter = document.createElement('div');
   glitter.className = 'glitter';
@@ -14,10 +15,11 @@ export const createGlitter = (e: MouseEvent | Touch) => {
     // It's a MouseEvent
     pageX = e.pageX;
     pageY = e.pageY;
-  } else if ('clientX' in e && 'clientY' in e) {
+  } else if (e && typeof e === 'object' && 'clientX' in e && 'clientY' in e) {
     // It's a Touch object with clientX and clientY properties
-    pageX = e.clientX + document.documentElement.scrollLeft;
-    pageY = e.clientY + document.documentElement.scrollTop;
+    const touch = e as Touch;
+    pageX = touch.clientX + document.documentElement.scrollLeft;
+    pageY = touch.clientY + document.documentElement.scrollTop;
   } else {
     // Fallback values if neither type matches
     pageX = 0;
