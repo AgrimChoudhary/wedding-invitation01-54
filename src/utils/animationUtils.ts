@@ -15,10 +15,14 @@ export const createGlitter = (e: MouseEvent | Touch) => {
     // It's a MouseEvent
     pageX = e.pageX;
     pageY = e.pageY;
-  } else {
+  } else if (e instanceof Touch) {
     // It's a Touch
     pageX = e.clientX + document.documentElement.scrollLeft;
     pageY = e.clientY + document.documentElement.scrollTop;
+  } else {
+    // Fallback values if neither type matches
+    pageX = 0;
+    pageY = 0;
   }
   
   glitter.style.left = `${pageX - size / 2}px`;

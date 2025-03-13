@@ -126,7 +126,8 @@ const Index = () => {
     { src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png", alt: "Couple photo 1" },
     { src: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png", alt: "Couple photo 2" },
     { src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png", alt: "Couple photo 3" },
-    { src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", alt: "Couple photo 4" }
+    { src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", alt: "Couple photo 4" },
+    { src: "/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png", alt: "Bride and Groom Illustration" }
   ];
   
   return (

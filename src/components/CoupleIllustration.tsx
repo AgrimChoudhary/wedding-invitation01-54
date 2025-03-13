@@ -44,7 +44,7 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
       {/* Main couple image with interactive effects */}
       <div className="relative rounded-full overflow-hidden w-64 h-64 md:w-80 md:h-80 gold-border">
         <img 
-          src="/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png" 
+          src="/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png" 
           alt="Bride and Groom" 
           className={cn(
             "w-full h-full object-contain transition-all duration-700",

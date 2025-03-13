@@ -41,9 +41,9 @@ const GaneshaHeader: React.FC = () => {
           <div className="relative w-32 h-32 md:w-40 md:h-40">
             <div className={cn("absolute inset-0 bg-gold-light/10 rounded-full transition-all duration-700", isShimmer && "bg-gold-light/30")}></div>
             
-            {/* Ganesha image with better loading performance */}
+            {/* Ganesha image with better loading performance - updated to new image */}
             <img 
-              src="/lovable-uploads/762354ab-cff9-4c6a-9800-94eeefc3c43c.png" 
+              src="/lovable-uploads/30c38585-d39b-49c0-851d-b6c39d4f17de.png" 
               alt="Lord Ganesha" 
               width="160"
               height="160"
