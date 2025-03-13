@@ -124,6 +124,39 @@
     opacity: 1;
     transform: translateY(0);
   }
+  
+  /* Hover glow effect for images */
+  .photo-hover-glow {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .photo-hover-glow:hover {
+    transform: translateY(-5px);
+  }
+  
+  .photo-hover-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 30px 5px rgba(255, 215, 0, 0.5) inset;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .photo-hover-glow:hover::after {
+    opacity: 1;
+  }
+  
+  /* Lotus flower style for the enhanced Show Magic effect */
+  .lotus-flower {
+    position: absolute;
+    pointer-events: none;
+    animation: float 25s linear infinite;
+    z-index: 1;
+  }
 }
 
 /* Extended animations */
@@ -157,3 +190,4 @@
     opacity: 0; 
   }
 }
+

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -12,6 +13,98 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
 import { useNavigate } from 'react-router-dom';
 import Diya from '@/components/Diya';
+import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+
+const brideFamily: FamilyDetails = {
+  side: "bride",
+  title: "Ramesh & Rameshi Family",
+  description: "The bride's family is known for their warmth and hospitality. They have been residents of Wedding City for three generations and are well-respected in the community.",
+  address: "23 Marigold Lane, Wedding City",
+  members: [
+    {
+      name: "Ramesh Kumar",
+      relation: "Father of the Bride",
+      description: "A respected businessman who loves gardening and classical music in his free time.",
+      phone: "+91 98765 43210",
+      email: "ramesh@example.com",
+      birthdate: "April 15, 1970",
+      location: "Wedding City"
+    },
+    {
+      name: "Rameshi Devi",
+      relation: "Mother of the Bride",
+      description: "A loving homemaker known for her delicious cooking and kind heart.",
+      phone: "+91 98765 43211",
+      email: "rameshi@example.com",
+      birthdate: "June 22, 1972",
+      location: "Wedding City"
+    },
+    {
+      name: "Priya Kumar",
+      relation: "The Bride",
+      description: "A software engineer who loves to paint and travel. She met Vijay during a company hackathon.",
+      phone: "+91 98765 43212",
+      email: "priya@example.com",
+      birthdate: "May 5, 1995",
+      location: "Bangalore"
+    },
+    {
+      name: "Rahul Kumar",
+      relation: "Brother of the Bride",
+      description: "Currently studying medicine and aspires to be a neurosurgeon.",
+      phone: "+91 98765 43213",
+      email: "rahul@example.com",
+      birthdate: "November 12, 1998",
+      location: "Delhi"
+    }
+  ]
+};
+
+const groomFamily: FamilyDetails = {
+  side: "groom",
+  title: "Harkesh & Harkeshi Family",
+  description: "The groom's family has a rich cultural heritage and is known for their contributions to arts and education in the community.",
+  address: "45 Jasmine Road, Wedding City",
+  members: [
+    {
+      name: "Harkesh Singh",
+      relation: "Father of the Groom",
+      description: "A retired professor who now spends his time writing books on history.",
+      phone: "+91 98765 43215",
+      email: "harkesh@example.com",
+      birthdate: "October 7, 1968",
+      location: "Wedding City"
+    },
+    {
+      name: "Harkeshi Kaur",
+      relation: "Mother of the Groom",
+      description: "A talented classical dancer who has taught dance to hundreds of students.",
+      phone: "+91 98765 43216",
+      email: "harkeshi@example.com",
+      birthdate: "January 3, 1970",
+      location: "Wedding City"
+    },
+    {
+      name: "Vijay Singh",
+      relation: "The Groom",
+      description: "A product manager who is passionate about photography and mountain climbing.",
+      phone: "+91 98765 43217",
+      email: "vijay@example.com",
+      birthdate: "July 18, 1993",
+      location: "Bangalore"
+    },
+    {
+      name: "Anita Singh",
+      relation: "Sister of the Groom",
+      description: "An architect who loves designing sustainable buildings.",
+      phone: "+91 98765 43218",
+      email: "anita@example.com",
+      birthdate: "February 25, 1996",
+      location: "Mumbai"
+    }
+  ]
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,6 +113,8 @@ const Index = () => {
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
   const [guestName, setGuestName] = useState('');
+  const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
+  const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   
   useEffect(() => {
     const savedName = localStorage.getItem('guestName');
@@ -80,6 +175,11 @@ const Index = () => {
     setTimeout(() => {
       document.body.removeChild(heart);
     }, (duration + delay) * 1000);
+  };
+
+  const handleFamilyClick = (family: FamilyDetails) => {
+    setSelectedFamily(family);
+    setFamilyDialogOpen(true);
   };
 
   const weddingDate = new Date("2025-03-21T17:00:00");
@@ -160,6 +260,37 @@ const Index = () => {
         <GaneshaHeader />
       </div>
       
+      {/* Decorative elements */}
+      <div className="absolute top-1/3 left-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
+        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,0 Q70,50 50,100 Q30,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
+          <g transform="translate(45, 40)">
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(45, 90)">
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(45, 140)">
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
+          </g>
+        </svg>
+      </div>
+      
+      <div className="absolute top-1/4 right-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
+        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,0 Q30,50 50,100 Q70,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
+          <g transform="translate(55, 40)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(55, 90)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(55, 140)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+        </svg>
+      </div>
+      
       <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
@@ -219,24 +350,38 @@ const Index = () => {
               <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
             
-            <button 
-              className={cn(
-                "relative px-6 py-3 rounded-full transition-all duration-300",
-                "border-2 border-gold-light text-gold-light font-bold",
-                "overflow-hidden hover:bg-gold-light/10 group",
-                isMandalaVisible && "bg-gold-light/10"
-              )}
-              onClick={() => setIsMandalaVisible(!isMandalaVisible)}
-            >
-              <span className="relative z-10 flex items-center">
-                {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
-                <Sparkles className={cn(
-                  "ml-2 transition-transform duration-300",
-                  "group-hover:rotate-12"
-                )} size={18} />
-              </span>
-              <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
-            </button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <button 
+                  className={cn(
+                    "relative px-6 py-3 rounded-full transition-all duration-300",
+                    "border-2 border-gold-light text-gold-light font-bold",
+                    "overflow-hidden hover:bg-gold-light/10 group",
+                    isMandalaVisible && "bg-gold-light/10"
+                  )}
+                  onClick={() => setIsMandalaVisible(!isMandalaVisible)}
+                >
+                  <span className="relative z-10 flex items-center">
+                    {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
+                    <Sparkle className={cn(
+                      "ml-2 transition-transform duration-300",
+                      "group-hover:rotate-12 animate-pulse"
+                    )} size={18} />
+                  </span>
+                  <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+                </button>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-maroon/90 border-gold-light/30 text-cream p-4 w-80">
+                <div className="flex justify-between space-x-4">
+                  <div className="space-y-1">
+                    <h4 className="gold-text text-lg font-cormorant">Experience the Magic</h4>
+                    <p className="text-sm text-cream/80">
+                      Click to reveal a mesmerizing display of sacred symbols and lotus flowers that bring blessings to our union.
+                    </p>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           </div>
         </div>
       </header>
@@ -251,19 +396,31 @@ const Index = () => {
       <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left">
+            <div 
+              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              onClick={() => handleFamilyClick(brideFamily)}
+            >
               <div className="flex justify-center mb-4">
                 <Flower className="text-gold-light" size={28} />
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2">Bride's Parents</h3>
+              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
+                Bride's Parents
+                <Info size={16} className="ml-2 text-gold-light/70" />
+              </h3>
               <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
             </div>
             
-            <div className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right">
+            <div 
+              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              onClick={() => handleFamilyClick(groomFamily)}
+            >
               <div className="flex justify-center mb-4">
                 <Star className="text-gold-light" size={28} />
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2">Groom's Parents</h3>
+              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
+                Groom's Parents
+                <Info size={16} className="ml-2 text-gold-light/70" />
+              </h3>
               <p className="text-center text-cream text-lg font-cormorant">Harkesh & Harkeshi</p>
             </div>
           </div>
@@ -297,6 +454,38 @@ const Index = () => {
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
           </h2>
+          
+          <style jsx>{`
+            .photo-item {
+              transition: all 0.3s ease;
+              position: relative;
+            }
+            
+            .photo-item::before {
+              content: '';
+              position: absolute;
+              inset: 0;
+              border-radius: 0.75rem;
+              padding: 3px;
+              background: linear-gradient(to right, #FFD700, #C5A20A);
+              -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+              -webkit-mask-composite: xor;
+              mask-composite: exclude;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+            }
+            
+            .photo-item:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            }
+            
+            .photo-item:hover::before {
+              opacity: 1;
+            }
+          `}</style>
           
           <PhotoCarousel photos={photos} />
         </div>
@@ -359,6 +548,11 @@ const Index = () => {
                 opacity: 0; 
               }
             }
+            .lotus-flower {
+              position: absolute;
+              pointer-events: none;
+              animation: float 20s linear infinite, spin-slow 40s linear infinite;
+            }
           `}</style>
         </div>
       </section>
@@ -404,6 +598,12 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      <FamilyDetailsDialog 
+        open={familyDialogOpen} 
+        onOpenChange={setFamilyDialogOpen} 
+        familyDetails={selectedFamily} 
+      />
     </div>
   );
 };

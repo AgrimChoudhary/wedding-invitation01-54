@@ -1,4 +1,5 @@
 
+
 export const createGlitter = (e: MouseEvent | Touch) => {
   const glitter = document.createElement('div');
   glitter.className = 'glitter';
@@ -50,6 +51,69 @@ export const createMandalaEffect = () => {
   for (let i = 0; i < 15; i++) {
     createMandala(mandalaContainer);
   }
+
+  // Add floating lotus flowers for enhanced magic effect
+  for (let i = 0; i < 8; i++) {
+    createLotusFlower(mandalaContainer);
+  }
+};
+
+// Create floating lotus flowers for enhanced magical effect
+const createLotusFlower = (container: HTMLElement) => {
+  const lotus = document.createElement('div');
+  
+  // Random properties
+  const size = Math.random() * 50 + 30;
+  const posX = Math.random() * window.innerWidth;
+  const posY = Math.random() * window.innerHeight;
+  const duration = Math.random() * 15 + 15;
+  const delay = Math.random() * 5;
+  const opacity = Math.random() * 0.4 + 0.2;
+  
+  // Create lotus element
+  lotus.className = 'lotus-flower';
+  lotus.style.width = `${size}px`;
+  lotus.style.height = `${size}px`;
+  lotus.style.left = `${posX}px`;
+  lotus.style.top = `${posY}px`;
+  lotus.style.opacity = opacity.toString();
+  lotus.style.animationDelay = `${delay}s`;
+  lotus.style.animationDuration = `${duration}s`;
+  
+  // Add to container
+  container.appendChild(lotus);
+  
+  // Create SVG pattern inside
+  const svgPattern = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svgPattern.setAttribute('viewBox', '0 0 100 100');
+  svgPattern.style.width = '100%';
+  svgPattern.style.height = '100%';
+  
+  // Create petals
+  const colors = ['#FFD700', '#FFC107', '#FFB74D'];
+  
+  for (let i = 0; i < 8; i++) {
+    const angle = i * 45;
+    const petal = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    petal.setAttribute('cx', '50');
+    petal.setAttribute('cy', '50');
+    petal.setAttribute('rx', '20');
+    petal.setAttribute('ry', '30');
+    petal.setAttribute('fill', colors[i % colors.length]);
+    petal.setAttribute('fill-opacity', '0.8');
+    petal.setAttribute('transform', `rotate(${angle} 50 50)`);
+    svgPattern.appendChild(petal);
+  }
+  
+  // Create center
+  const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  center.setAttribute('cx', '50');
+  center.setAttribute('cy', '50');
+  center.setAttribute('r', '10');
+  center.setAttribute('fill', '#FFD700');
+  svgPattern.appendChild(center);
+  
+  lotus.appendChild(svgPattern);
 };
 
 const createMandala = (container: HTMLElement) => {
@@ -191,3 +255,4 @@ export const initTouchGlitter = () => {
     document.removeEventListener('touchmove', handleTouch);
   };
 };
+
