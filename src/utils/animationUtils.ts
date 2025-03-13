@@ -1,4 +1,3 @@
-
 export const createGlitter = (e: MouseEvent | Touch) => {
   const glitter = document.createElement('div');
   glitter.className = 'glitter';
@@ -7,7 +6,7 @@ export const createGlitter = (e: MouseEvent | Touch) => {
   glitter.style.width = `${size}px`;
   glitter.style.height = `${size}px`;
   
-  // Handle both MouseEvent and Touch correctly with proper type guards
+  // Handle both MouseEvent and Touch correctly with type guards
   let pageX: number;
   let pageY: number;
   
@@ -17,7 +16,6 @@ export const createGlitter = (e: MouseEvent | Touch) => {
     pageY = e.pageY;
   } else if ('clientX' in e && 'clientY' in e) {
     // It's a Touch object with clientX and clientY properties
-    // Avoid using instanceof Touch as it causes TypeScript errors
     pageX = e.clientX + document.documentElement.scrollLeft;
     pageY = e.clientY + document.documentElement.scrollTop;
   } else {

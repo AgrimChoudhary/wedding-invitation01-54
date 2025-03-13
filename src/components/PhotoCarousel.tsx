@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -219,11 +218,13 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
         ))}
       </div>
       
-      <style jsx>{`
+      <style>
+        {`
         .glow-effect {
           box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 15px rgba(255, 215, 0, 0.3);
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Heart, Sparkles, Star, Flower } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,7 +16,6 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
     setTimeout(() => setIsLoaded(true), 500);
     setTimeout(() => setShowDecorations(true), 1000);
     
-    // Periodically show glow animation
     const glowInterval = setInterval(() => {
       setIsGlowing(true);
       setTimeout(() => setIsGlowing(false), 2000);
@@ -40,7 +38,6 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
       )}
       onClick={handleClick}
     >
-      {/* Decorative elements */}
       {showDecorations && (
         <>
           <div className="absolute -top-10 -left-10 w-20 h-20 opacity-20">
@@ -63,15 +60,12 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
         </>
       )}
       
-      {/* Golden ornamental frame */}
       <div className="absolute inset-0 rounded-full border-4 border-gold-gradient opacity-20"></div>
       
-      {/* Decorative rings */}
       <div className="absolute inset-0 rounded-full border border-gold-light/30 animate-spin-slow"></div>
       <div className="absolute inset-2 rounded-full border border-gold-light/20 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '12s' }}></div>
       <div className="absolute inset-4 rounded-full border border-gold-light/10 animate-spin-slow" style={{ animationDuration: '15s' }}></div>
       
-      {/* Main couple image with interactive effects */}
       <div className="relative rounded-full overflow-hidden w-64 h-64 md:w-80 md:h-80 gold-border">
         <img 
           src="/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png" 
@@ -86,17 +80,14 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
           )}
         />
         
-        {/* Subtle gold overlay for warmth */}
         <div className={cn(
           "absolute inset-0 bg-gradient-to-b from-gold-light/5 to-gold-light/10 transition-opacity duration-500",
           isGlowing && "opacity-70",
           !isGlowing && "opacity-30"
         )}></div>
         
-        {/* Animated effects on click */}
         {showEffects && (
           <>
-            {/* Radial gold rays */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
               {[...Array(12)].map((_, i) => (
                 <div 
@@ -111,7 +102,6 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
               ))}
             </div>
             
-            {/* Circular ripple */}
             {[...Array(3)].map((_, i) => (
               <div 
                 key={i}
@@ -122,7 +112,6 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
               ></div>
             ))}
             
-            {/* Sparkles */}
             {[...Array(8)].map((_, i) => (
               <Sparkles 
                 key={i}
@@ -139,7 +128,8 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
         )}
       </div>
       
-      <style jsx>{`
+      <style>
+        {`
         @keyframes ray-expand {
           0% { height: 0%; opacity: 0.8; }
           100% { height: 150%; opacity: 0; }
@@ -155,7 +145,8 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
           50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
           100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
