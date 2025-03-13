@@ -7,10 +7,11 @@ import Dashboard from '@/components/Dashboard';
 import Countdown from '@/components/Countdown';
 import GaneshaHeader from '@/components/GaneshaHeader';
 import CoupleIllustration from '@/components/CoupleIllustration';
-import { initCursorGlitter, initTouchGlitter } from '@/utils/animationUtils';
+import { initCursorGlitter, initTouchGlitter, createMandalaEffect } from '@/utils/animationUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
 import { useNavigate } from 'react-router-dom';
+import Diya from '@/components/Diya';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -41,6 +42,18 @@ const Index = () => {
       return () => clearInterval(interval);
     }
   }, [showHearts]);
+
+  useEffect(() => {
+    if (isMandalaVisible) {
+      createMandalaEffect();
+      
+      const interval = setInterval(() => {
+        createMandalaEffect();
+      }, 10000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isMandalaVisible]);
 
   const createHeart = () => {
     if (!showHearts) return;
@@ -139,6 +152,9 @@ const Index = () => {
           </p>
         </div>
       )}
+      
+      <Diya className="top-20" position="left" />
+      <Diya className="bottom-20" position="right" delay={0.5} />
       
       <div className="pt-6 px-4">
         <GaneshaHeader />

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart, Sparkles, Star, Flower } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CoupleIllustrationProps {
@@ -11,9 +11,11 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
   const [isLoaded, setIsLoaded] = useState(false);
   const [isGlowing, setIsGlowing] = useState(false);
   const [showEffects, setShowEffects] = useState(false);
+  const [showDecorations, setShowDecorations] = useState(false);
   
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 500);
+    setTimeout(() => setShowDecorations(true), 1000);
     
     // Periodically show glow animation
     const glowInterval = setInterval(() => {
@@ -38,8 +40,36 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
       )}
       onClick={handleClick}
     >
+      {/* Decorative elements */}
+      {showDecorations && (
+        <>
+          <div className="absolute -top-10 -left-10 w-20 h-20 opacity-20">
+            <Flower className="text-gold-light absolute top-0 left-0 animate-float" style={{ animationDelay: "0.2s" }} />
+            <Star className="text-gold-light absolute top-8 left-12 w-4 h-4 animate-float" style={{ animationDelay: "0.8s" }} />
+          </div>
+          
+          <div className="absolute -bottom-10 -right-10 w-20 h-20 opacity-20">
+            <Star className="text-gold-light absolute bottom-0 right-0 animate-float" style={{ animationDelay: "0.5s" }} />
+            <Flower className="text-gold-light absolute bottom-10 right-14 w-4 h-4 animate-float" style={{ animationDelay: "1.2s" }} />
+          </div>
+          
+          <div className="absolute -top-5 -right-5 opacity-30">
+            <Heart className="text-gold-light w-5 h-5 animate-float" style={{ animationDelay: "0.3s" }} />
+          </div>
+          
+          <div className="absolute -bottom-5 -left-5 opacity-30">
+            <Heart className="text-gold-light w-5 h-5 animate-float" style={{ animationDelay: "0.9s" }} />
+          </div>
+        </>
+      )}
+      
       {/* Golden ornamental frame */}
       <div className="absolute inset-0 rounded-full border-4 border-gold-gradient opacity-20"></div>
+      
+      {/* Decorative rings */}
+      <div className="absolute inset-0 rounded-full border border-gold-light/30 animate-spin-slow"></div>
+      <div className="absolute inset-2 rounded-full border border-gold-light/20 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '12s' }}></div>
+      <div className="absolute inset-4 rounded-full border border-gold-light/10 animate-spin-slow" style={{ animationDuration: '15s' }}></div>
       
       {/* Main couple image with interactive effects */}
       <div className="relative rounded-full overflow-hidden w-64 h-64 md:w-80 md:h-80 gold-border">
@@ -109,7 +139,7 @@ const CoupleIllustration: React.FC<CoupleIllustrationProps> = ({ className }) =>
         )}
       </div>
       
-      <style>{`
+      <style jsx>{`
         @keyframes ray-expand {
           0% { height: 0%; opacity: 0.8; }
           100% { height: 150%; opacity: 0; }

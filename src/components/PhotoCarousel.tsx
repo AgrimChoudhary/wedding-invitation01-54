@@ -17,7 +17,8 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
   const [visiblePhotos, setVisiblePhotos] = useState<number[]>([0, 1, 2]);
-
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
   useEffect(() => {
     // Preload first few images for faster initial rendering
     preloadImages(photos.slice(0, 3).map(photo => photo.src));
@@ -107,6 +108,13 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
 
   return (
     <div className={cn('relative w-full', className)}>
+      {/* Decorative elements */}
+      <div className="absolute left-0 top-0 w-16 h-16 rounded-full bg-gold-gradient opacity-20 blur-md -z-10"></div>
+      <div className="absolute right-0 bottom-0 w-24 h-24 rounded-full bg-gold-gradient opacity-20 blur-md -z-10"></div>
+      
+      <div className="absolute left-1/4 bottom-0 w-8 h-8 rounded-full bg-gold-light opacity-10 blur-sm -z-10"></div>
+      <div className="absolute right-1/4 top-0 w-12 h-12 rounded-full bg-gold-light opacity-10 blur-sm -z-10"></div>
+      
       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
         <button 
           onClick={scrollLeft}
@@ -145,17 +153,25 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
                 : 'scale-95 rotate-[-2deg] hover:rotate-0'
             )}
             onClick={() => setActiveIndex(index === activeIndex ? null : index)}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
           >
+            {/* Photo frame with glow effect */}
             <div className={cn(
               'absolute inset-0 border-4 border-transparent transition-all duration-300',
-              activeIndex === index && 'border-gold-light/70'
+              activeIndex === index && 'border-gold-light/70',
+              hoveredIndex === index && 'glow-effect'
             )}></div>
             
             {visiblePhotos.includes(index) ? (
               <img 
                 src={photo.src} 
                 alt={photo.alt}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className={cn(
+                  "w-full h-full object-cover transition-transform duration-700",
+                  "group-hover:scale-105",
+                  hoveredIndex === index && "brightness-110"
+                )}
                 loading={index < 3 ? "eager" : "lazy"}
                 decoding="async"
                 width="240"
@@ -168,11 +184,13 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
               </div>
             )}
             
+            {/* Overlay gradient */}
             <div className={cn(
               'absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-maroon/90',
               'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
             )}></div>
             
+            {/* Like button */}
             <button
               className={cn(
                 'absolute bottom-3 right-3 p-2 rounded-full transition-all duration-300',
@@ -192,9 +210,20 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
                 )} 
               />
             </button>
+            
+            {/* Glow effect on hover */}
+            {hoveredIndex === index && (
+              <div className="absolute inset-0 bg-gold-light/10 mix-blend-overlay"></div>
+            )}
           </div>
         ))}
       </div>
+      
+      <style jsx>{`
+        .glow-effect {
+          box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 15px rgba(255, 215, 0, 0.3);
+        }
+      `}</style>
     </div>
   );
 };
