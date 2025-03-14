@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -260,7 +259,6 @@ const Index = () => {
         <GaneshaHeader />
       </div>
       
-      {/* Decorative elements */}
       <div className="absolute top-1/3 left-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
         <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
           <path d="M50,0 Q70,50 50,100 Q30,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
@@ -455,7 +453,8 @@ const Index = () => {
             Our Journey
           </h2>
           
-          <style jsx>{`
+          <style>
+            {`
             .photo-item {
               transition: all 0.3s ease;
               position: relative;
@@ -485,14 +484,15 @@ const Index = () => {
             .photo-item:hover::before {
               opacity: 1;
             }
-          `}</style>
+            `}
+          </style>
           
           <PhotoCarousel photos={photos} />
         </div>
       </section>
       
       <section className="py-10 px-4 relative overflow-hidden z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto">
           <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Join Our Celebration
           </h2>
@@ -517,7 +517,8 @@ const Index = () => {
             "Dance with us as two hearts become one"
           </p>
           
-          <style>{`
+          <style>
+            {`
             @keyframes dance-slow {
               0%, 100% { transform: rotate(-5deg); }
               50% { transform: rotate(5deg); }
@@ -553,7 +554,8 @@ const Index = () => {
               pointer-events: none;
               animation: float 20s linear infinite, spin-slow 40s linear infinite;
             }
-          `}</style>
+            `}
+          </style>
         </div>
       </section>
       
