@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -111,21 +112,19 @@ const Index = () => {
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
-  const [guestName, setGuestName] = useState('');
+  const [guestName, setGuestName] = useState('Agrim');
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
   
   useEffect(() => {
-    const savedName = localStorage.getItem('guestName');
-    if (savedName) {
-      setGuestName(savedName);
-    } else {
-      navigate('/');
+    if (!guestName) {
+      setGuestName('Agrim');
     }
     
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     return cleanup;
-  }, [isMobile, navigate]);
+  }, [isMobile, navigate, guestName]);
 
   useEffect(() => {
     if (showHearts) {
@@ -562,14 +561,14 @@ const Index = () => {
       <section className="py-10 px-4 text-center relative z-10">
         <div className="max-w-3xl mx-auto">
           <button
-            onClick={() => setDashboardOpen(true)}
+            onClick={() => setComingSoonOpen(true)}
             className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
           >
             <span className="relative z-10 font-cormorant font-bold">Enter Event Dashboard</span>
             <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
           </button>
           
-          <Dashboard open={dashboardOpen} onClose={() => setDashboardOpen(false)} />
+          <DashboardComingSoonPopup open={comingSoonOpen} onClose={() => setComingSoonOpen(false)} />
         </div>
       </section>
       
@@ -611,3 +610,4 @@ const Index = () => {
 };
 
 export default Index;
+
