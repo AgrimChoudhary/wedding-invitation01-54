@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
@@ -6,19 +5,16 @@ import { cn } from '@/lib/utils';
 
 const Welcome = () => {
   const navigate = useNavigate();
-  const [guestName, setGuestName] = useState('');
   const [isEntering, setIsEntering] = useState(false);
-  const [nameEntered, setNameEntered] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Set the guest name directly instead of asking for input
+  const guestName = "Agrim";
 
   useEffect(() => {
-    // Check if guest name exists in localStorage
-    const savedName = localStorage.getItem('guestName');
-    if (savedName) {
-      setGuestName(savedName);
-      setNameEntered(true);
-    }
+    // Store the predefined guest name
+    localStorage.setItem('guestName', guestName);
     
     // Animation sequence
     setTimeout(() => setIsLoaded(true), 300);
@@ -32,19 +28,7 @@ const Welcome = () => {
       
       return () => clearInterval(interval);
     }
-  }, [showParticles]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGuestName(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (guestName.trim()) {
-      localStorage.setItem('guestName', guestName);
-      setNameEntered(true);
-    }
-  };
+  }, [showParticles, guestName]);
 
   const handleEnterClick = () => {
     setIsEntering(true);
@@ -132,63 +116,35 @@ const Welcome = () => {
             <div className="absolute bottom-0 right-0 h-full w-0.5 bg-gold-gradient transform origin-bottom"></div>
           </div>
           
-          {!nameEntered ? (
-            // Name input form
-            <form onSubmit={handleSubmit} className="text-center">
-              <p className="text-cream mb-6 font-opensans">
-                Please enter your name to view our wedding invitation
-              </p>
-              
-              <div className="relative mb-6">
-                <input
-                  type="text"
-                  value={guestName}
-                  onChange={handleInputChange}
-                  placeholder="Enter your name"
-                  className="w-full bg-maroon/70 text-cream border-b-2 border-gold-light/70 px-4 py-3 rounded-lg focus:outline-none focus:border-gold-light"
-                  required
-                />
-                <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-light/70" size={18} />
-              </div>
-              
-              <button
-                type="submit"
-                className="bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105"
-              >
-                Continue
-              </button>
-            </form>
-          ) : (
-            // Personalized welcome
-            <div className={cn(
-              "text-center transition-all duration-500",
-              isEntering ? "opacity-0 transform -translate-y-10" : "opacity-100"
-            )}>
-              <p className="font-cormorant text-2xl gold-text mb-2">
-                Namaste, <span className="font-bold">{guestName}</span>!
-              </p>
-              
-              <p className="text-cream mb-6 font-opensans">
-                We are honored to invite you to witness the divine union of our hearts
-              </p>
-              
-              <div className="flex justify-center mb-6">
-                <Heart className="text-gold-light animate-heart-beat" size={40} />
-              </div>
-              
-              <p className="text-cream/80 italic mb-8 font-cormorant text-lg">
-                "In the garden of love, two souls have found their blooming season"
-              </p>
-              
-              <button
-                onClick={handleEnterClick}
-                className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto"
-              >
-                Enter Invitation
-                <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
-              </button>
+          {/* Personalized welcome - always show this now */}
+          <div className={cn(
+            "text-center transition-all duration-500",
+            isEntering ? "opacity-0 transform -translate-y-10" : "opacity-100"
+          )}>
+            <p className="font-cormorant text-2xl gold-text mb-2">
+              Namaste, <span className="font-bold">{guestName}</span>!
+            </p>
+            
+            <p className="text-cream mb-6 font-opensans">
+              We are honored to invite you to witness the divine union of our hearts
+            </p>
+            
+            <div className="flex justify-center mb-6">
+              <Heart className="text-gold-light animate-heart-beat" size={40} />
             </div>
-          )}
+            
+            <p className="text-cream/80 italic mb-8 font-cormorant text-lg">
+              "In the garden of love, two souls have found their blooming season"
+            </p>
+            
+            <button
+              onClick={handleEnterClick}
+              className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto"
+            >
+              Enter Invitation
+              <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
+            </button>
+          </div>
         </div>
       </div>
       
