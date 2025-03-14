@@ -27,8 +27,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Default song URL - replace with actual Indian wedding song
-  const defaultSongUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+  // Default song URL - Indian wedding song (you can replace this with your preferred song URL)
+  const defaultSongUrl = "https://cdn.gpteng.co/indian-wedding-song.mp3";
   
   // Get the actual song URL to use
   const songUrl = customSongUrl || defaultSongUrl;
