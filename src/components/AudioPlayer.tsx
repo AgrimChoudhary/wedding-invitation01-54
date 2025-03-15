@@ -20,33 +20,52 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
   const defaultSongUrl = "https://store-screenapp-production.storage.googleapis.com/vid/67d41dc0e5ce67e04ebe2417/1fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=GOOG1EINEQV5X2QGY62PSZMBMUR7IGGVLKNDB6ABP5GL6O6FKO76DWA2IE3SB%2F20250314%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250314T122512Z&X-Amz-Expires=604800&X-Amz-Signature=cd907dfc1f1bd3dad6a413b6de02cdc4ae48815d996fff64594775c8fad7ec02&X-Amz-SignedHeaders=host&response-content-type=attachment%3B%20filename%3D%221fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3%22%3B%20filename%2A%3D%20UTF-8%27%27Shubh%2520Aangan%2520_%2520DjPunjab%2520mp3cut.net.mp3.mp3%3B#t=0,";
 
   useEffect(() => {
+    // Solution for browsers requiring user interaction for autoplay
+    const handleUserInteraction = () => {
+      if (audioRef.current && !isPlaying) {
+        // Try to play after user interaction
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+            console.log("Audio playing successfully after user interaction");
+          })
+          .catch(error => {
+            console.error("Failed to play audio after user interaction:", error);
+          });
+      }
+    };
+
+    // Initial setup of the audio element
     if (audioRef.current) {
-      // Create audio element
       audioRef.current.volume = 0.4;
       
-      // Add event listeners
-      const handleCanPlayThrough = () => {
-        if (audioRef.current) {
-          audioRef.current.play()
-            .then(() => {
-              setIsPlaying(true);
-            })
-            .catch((error) => {
-              console.error("Autoplay prevented:", error);
-              // Most browsers prevent autoplay without user interaction
-              setIsPlaying(false);
-            });
-        }
-      };
+      // Important: preload the audio for better playback chance
+      audioRef.current.preload = "auto";
       
-      audioRef.current.addEventListener('canplaythrough', handleCanPlayThrough);
-      
-      return () => {
-        if (audioRef.current) {
-          audioRef.current.removeEventListener('canplaythrough', handleCanPlayThrough);
-        }
-      };
+      // Try to play, but expect it might fail due to browser restrictions
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          console.log("Audio playing automatically");
+        })
+        .catch((error) => {
+          console.error("Autoplay prevented:", error);
+          // Most browsers prevent autoplay without user interaction
+          setIsPlaying(false);
+          
+          // Add event listeners to attempt playback after user interaction
+          document.addEventListener('click', handleUserInteraction, { once: true });
+          document.addEventListener('touchstart', handleUserInteraction, { once: true });
+        });
     }
+    
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
 
   const toggleMute = () => {

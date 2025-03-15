@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
@@ -9,11 +10,11 @@ const Welcome = () => {
   const [showParticles, setShowParticles] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   
-  // Set the guest name directly instead of asking for input
-  const guestName = "Agrim";
+  // Set the generic guest name instead of a specific name
+  const guestName = "Guest Name";
 
   useEffect(() => {
-    // Store the predefined guest name
+    // Store the generic guest name
     localStorage.setItem('guestName', guestName);
     
     // Animation sequence
@@ -74,6 +75,25 @@ const Welcome = () => {
         }}></div>
       </div>
       
+      {/* Decorative elements for wedding theme */}
+      <div className="absolute top-10 left-10 w-20 h-20 opacity-30 hidden md:block">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,20 C60,35 80,35 90,25 C80,45 90,65 70,70 C50,75 30,65 20,45 C10,25 30,5 50,20 Z" fill="url(#gold-gradient)" />
+          <defs>
+            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      
+      <div className="absolute bottom-10 right-10 w-24 h-24 opacity-30 hidden md:block">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,20 C60,35 80,35 90,25 C80,45 90,65 70,70 C50,75 30,65 20,45 C10,25 30,5 50,20 Z" fill="url(#gold-gradient)" />
+        </svg>
+      </div>
+      
       {/* Particles container */}
       <div id="particles-container" className="absolute inset-0 pointer-events-none z-10"></div>
       
@@ -90,6 +110,11 @@ const Welcome = () => {
                 src="/lovable-uploads/762354ab-cff9-4c6a-9800-94eeefc3c43c.png" 
                 alt="Lord Ganesha" 
                 className="w-full h-full object-contain drop-shadow-gold"
+                width="128"
+                height="128"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
               />
             </div>
           </div>
@@ -116,7 +141,7 @@ const Welcome = () => {
             <div className="absolute bottom-0 right-0 h-full w-0.5 bg-gold-gradient transform origin-bottom"></div>
           </div>
           
-          {/* Personalized welcome - always show this now */}
+          {/* Personalized welcome */}
           <div className={cn(
             "text-center transition-all duration-500",
             isEntering ? "opacity-0 transform -translate-y-10" : "opacity-100"
@@ -148,6 +173,20 @@ const Welcome = () => {
         </div>
       </div>
       
+      {/* Wedding themed decorative elements */}
+      <div className="absolute top-0 left-0 w-full">
+        <svg width="100%" height="80" viewBox="0 0 1000 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,0 Q250,80 500,40 Q750,0 1000,40 L1000,0 L0,0 Z" fill="url(#gold-gradient-header)" opacity="0.15" />
+          <defs>
+            <linearGradient id="gold-gradient-header" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="50%" stopColor="#B8860B" />
+              <stop offset="100%" stopColor="#FFD700" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      
       {/* Footer decoration */}
       <div className="absolute bottom-0 left-0 w-full h-px bg-gold-gradient opacity-50"></div>
       
@@ -156,6 +195,11 @@ const Welcome = () => {
           0% { transform: scale(0); opacity: 0; }
           50% { transform: scale(1); opacity: 0.8; }
           100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
       `}</style>
     </div>

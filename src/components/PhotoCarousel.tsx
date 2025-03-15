@@ -1,12 +1,14 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { preloadImages } from '@/utils/animationUtils';
 
 interface PhotoCarouselProps {
   photos: Array<{
     src: string;
     alt: string;
+    width?: number;
+    height?: number;
   }>;
   className?: string;
 }
@@ -15,24 +17,39 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
-  const [visiblePhotos, setVisiblePhotos] = useState<number[]>([0, 1, 2]);
+  const [visiblePhotos, setVisiblePhotos] = useState<number[]>([0, 1]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [imagesLoaded, setImagesLoaded] = useState<Record<number, boolean>>({});
   
   useEffect(() => {
-    // Preload first few images for faster initial rendering
-    preloadImages(photos.slice(0, 3).map(photo => photo.src));
+    // Initial setup for lazy loading images
+    const initialLoadCount = 2; // Only load first 2 images initially
+    const initialVisibleIndexes = Array.from({ length: initialLoadCount }, (_, i) => i);
+    setVisiblePhotos(initialVisibleIndexes);
     
-    // Initial load of first few photos
+    // Track image loading
+    const loadedImages = {};
+    initialVisibleIndexes.forEach(index => {
+      loadedImages[index] = false;
+    });
+    setImagesLoaded(loadedImages);
+    
+    // Set up intersection observer for lazy loading remaining images
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const index = parseInt(entry.target.getAttribute('data-index') || '0');
           if (!visiblePhotos.includes(index) && index < photos.length) {
             setVisiblePhotos(prev => [...prev, index]);
+            setImagesLoaded(prev => ({ ...prev, [index]: false }));
           }
         }
       });
-    }, { root: scrollContainerRef.current, threshold: 0.1 });
+    }, { 
+      root: scrollContainerRef.current, 
+      threshold: 0.1,
+      rootMargin: "100px" // Start loading before it's visible
+    });
     
     const container = scrollContainerRef.current;
     if (container) {
@@ -54,6 +71,10 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
+  };
+
+  const handleImageLoad = (index: number) => {
+    setImagesLoaded(prev => ({ ...prev, [index]: true }));
   };
 
   const handleLike = (index: number, event: React.MouseEvent) => {
@@ -163,20 +184,29 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
             )}></div>
             
             {visiblePhotos.includes(index) ? (
-              <img 
-                src={photo.src} 
-                alt={photo.alt}
-                className={cn(
-                  "w-full h-full object-cover transition-transform duration-700",
-                  "group-hover:scale-105",
-                  hoveredIndex === index && "brightness-110"
+              <>
+                {!imagesLoaded[index] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-maroon/50 z-10">
+                    <div className="w-10 h-10 border-2 border-gold-light border-t-transparent rounded-full animate-spin"></div>
+                  </div>
                 )}
-                loading={index < 3 ? "eager" : "lazy"}
-                decoding="async"
-                width="240"
-                height="320"
-                fetchPriority={index < 3 ? "high" : "auto"}
-              />
+                <img 
+                  src={photo.src} 
+                  alt={photo.alt}
+                  className={cn(
+                    "w-full h-full object-cover transition-transform duration-700",
+                    "group-hover:scale-105",
+                    hoveredIndex === index && "brightness-110",
+                    !imagesLoaded[index] && "opacity-0"
+                  )}
+                  loading="lazy"
+                  decoding="async"
+                  width={photo.width || 240}
+                  height={photo.height || 320}
+                  onLoad={() => handleImageLoad(index)}
+                  fetchPriority={index < 2 ? "high" : "low"}
+                />
+              </>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-maroon/50">
                 <div className="w-10 h-10 border-2 border-gold-light border-t-transparent rounded-full animate-spin"></div>
@@ -222,6 +252,11 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
         {`
         .glow-effect {
           box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        @keyframes heart-beat {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.3); }
         }
         `}
       </style>

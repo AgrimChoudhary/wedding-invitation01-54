@@ -112,19 +112,40 @@ const Index = () => {
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
-  const [guestName, setGuestName] = useState('Agrim');
+  const [guestName, setGuestName] = useState('Guest Name');
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   
   useEffect(() => {
-    if (!guestName) {
-      setGuestName('Agrim');
+    const storedName = localStorage.getItem('guestName');
+    if (storedName) {
+      setGuestName(storedName);
     }
     
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
+    
+    const preloadImages = () => {
+      const imagesToPreload = photos.slice(0, 2).map(photo => photo.src);
+      let loadedCount = 0;
+      
+      imagesToPreload.forEach(src => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === imagesToPreload.length) {
+            setImagesLoaded(true);
+          }
+        };
+        img.src = src;
+      });
+    };
+    
+    preloadImages();
+    
     return cleanup;
-  }, [isMobile, navigate, guestName]);
+  }, [isMobile, navigate]);
 
   useEffect(() => {
     if (showHearts) {
@@ -234,18 +255,52 @@ const Index = () => {
   ];
   
   const photos = [
-    { src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png", alt: "Couple photo 1" },
-    { src: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png", alt: "Couple photo 2" },
-    { src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png", alt: "Couple photo 3" },
-    { src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", alt: "Couple photo 4" },
-    { src: "/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png", alt: "Bride and Groom Illustration" }
+    { 
+      src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png", 
+      alt: "Couple photo 1",
+      width: 600,
+      height: 800
+    },
+    { 
+      src: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png", 
+      alt: "Couple photo 2",
+      width: 600,
+      height: 800
+    },
+    { 
+      src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png", 
+      alt: "Couple photo 3",
+      width: 600,
+      height: 800
+    },
+    { 
+      src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", 
+      alt: "Couple photo 4",
+      width: 600,
+      height: 800
+    },
+    { 
+      src: "/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png", 
+      alt: "Bride and Groom Illustration",
+      width: 600,
+      height: 800
+    }
   ];
   
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {!imagesLoaded && (
+        <div className="fixed inset-0 bg-maroon/90 z-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="gold-text font-cormorant text-xl">Loading our love story...</p>
+          </div>
+        </div>
+      )}
+      
       {guestName && (
         <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
-          <p className="font-cormorant text-lg">
+          <p className="font-cormorant text-lg md:text-xl">
             Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
           </p>
         </div>
@@ -253,6 +308,19 @@ const Index = () => {
       
       <Diya className="top-20" position="left" />
       <Diya className="bottom-20" position="right" delay={0.5} />
+      
+      <div className="absolute left-0 top-0 w-full overflow-hidden opacity-20 pointer-events-none h-20 md:h-40">
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,100 C300,20 500,180 800,50 C1000,0 1200,100 1200,100 L1200,0 L0,0 Z" fill="url(#gold-gradient-top)" />
+          <defs>
+            <linearGradient id="gold-gradient-top" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="50%" stopColor="#B8860B" />
+              <stop offset="100%" stopColor="#FFD700" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       
       <div className="pt-6 px-4">
         <GaneshaHeader />
@@ -390,6 +458,21 @@ const Index = () => {
         ></div>
       )}
       
+      <div className="relative py-4 overflow-hidden">
+        <div className="absolute left-0 w-full h-px bg-gold-light/30"></div>
+        <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 opacity-60">
+          {[...Array(isMobile ? 5 : 10)].map((_, i) => (
+            <div key={i} className="w-4 h-4 md:w-6 md:h-6 relative">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12,2 C14,5 17,7 21,7 C17,7 14,9 12,12 C10,9 7,7 3,7 C7,7 10,5 12,2 Z" fill="#FFD700" opacity="0.8" />
+                <path d="M12,12 C14,15 17,17 21,17 C17,17 14,19 12,22 C10,19 7,17 3,17 C7,17 10,15 12,12 Z" fill="#FFD700" opacity="0.8" />
+              </svg>
+            </div>
+          ))}
+        </div>
+        <div className="absolute right-0 w-full h-px bg-gold-light/30"></div>
+      </div>
+      
       <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
@@ -424,6 +507,14 @@ const Index = () => {
         </div>
       </section>
       
+      <div className="flex justify-center my-8">
+        <div className="relative px-16">
+          <div className="absolute inset-y-0 left-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
+          <Heart size={24} className="text-gold-light" />
+          <div className="absolute inset-y-0 right-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
+        </div>
+      </div>
+      
       <section className="py-10 px-4 relative z-10" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
@@ -445,6 +536,24 @@ const Index = () => {
           </div>
         </div>
       </section>
+      
+      <div className="flex justify-center my-8 overflow-hidden">
+        <div className="relative">
+          <div className="flex items-center gap-2">
+            <div className="w-32 h-px bg-gold-gradient"></div>
+            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50,10 C60,30 80,40 90,30 C80,50 90,70 70,75 C50,80 30,70 20,50 C10,30 30,10 50,10 Z" fill="url(#gold-gradient)" opacity="0.7" />
+              <defs>
+                <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="w-32 h-px bg-gold-gradient"></div>
+          </div>
+        </div>
+      </div>
       
       <section className="py-10 px-2 md:px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
@@ -575,6 +684,21 @@ const Index = () => {
       <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
         <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
         
+        <div className="absolute top-10 left-10 w-12 h-12 opacity-20 hidden md:block">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="30" stroke="#FFD700" strokeWidth="2" fill="none" />
+            <circle cx="50" cy="50" r="20" stroke="#FFD700" strokeWidth="1" fill="none" />
+            <circle cx="50" cy="50" r="10" fill="#FFD700" opacity="0.5" />
+          </svg>
+        </div>
+        
+        <div className="absolute bottom-10 right-10 w-16 h-16 opacity-20 hidden md:block">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C65,10 80,25 80,40 C80,55 65,70 50,70 C35,70 20,55 20,40 C20,25 35,10 50,10 Z" stroke="#FFD700" strokeWidth="2" fill="none" />
+            <path d="M50,20 C60,20 70,30 70,40 C70,50 60,60 50,60 C40,60 30,50 30,40 C30,30 40,20 50,20 Z" stroke="#FFD700" strokeWidth="1" fill="none" />
+          </svg>
+        </div>
+        
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-6 flex justify-center">
             <Heart className="text-gold-light animate-heart-beat" size={28} />
@@ -610,4 +734,3 @@ const Index = () => {
 };
 
 export default Index;
-
