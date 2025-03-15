@@ -31,37 +31,52 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
           })
           .catch(error => {
             console.error("Failed to play audio after user interaction:", error);
+            // If it still fails, we'll retry once more with a user gesture
+            const playPromise = audioRef.current?.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.log("Second attempt failed:", err);
+              });
+            }
           });
       }
     };
 
+    // Add additional event listeners for more user gesture types
+    const userGestures = ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'];
+    
     // Initial setup of the audio element
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
-      
-      // Important: preload the audio for better playback chance
       audioRef.current.preload = "auto";
       
       // Try to play, but expect it might fail due to browser restrictions
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-          console.log("Audio playing automatically");
-        })
-        .catch((error) => {
-          console.error("Autoplay prevented:", error);
-          // Most browsers prevent autoplay without user interaction
-          setIsPlaying(false);
-          
-          // Add event listeners to attempt playback after user interaction
-          document.addEventListener('click', handleUserInteraction, { once: true });
-          document.addEventListener('touchstart', handleUserInteraction, { once: true });
-        });
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            console.log("Audio playing automatically");
+          })
+          .catch((error) => {
+            console.error("Autoplay prevented:", error);
+            // Most browsers prevent autoplay without user interaction
+            setIsPlaying(false);
+            
+            // Add event listeners to attempt playback after user interaction
+            userGestures.forEach(event => {
+              document.addEventListener(event, handleUserInteraction, { once: true });
+            });
+          });
+      }
     }
     
     return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
+      userGestures.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+      
       if (audioRef.current) {
         audioRef.current.pause();
       }
@@ -71,12 +86,28 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
   const toggleMute = () => {
     if (!audioRef.current) return;
     
-    audioRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const newMutedState = !isMuted;
+    audioRef.current.muted = newMutedState;
+    setIsMuted(newMutedState);
+    
+    // Try to play if it's not already playing (this will work with user interaction)
+    if (!isPlaying && !newMutedState) {
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            console.log("Audio started playing from mute toggle");
+          })
+          .catch(error => {
+            console.error("Play failed from mute toggle:", error);
+          });
+      }
+    }
     
     toast({
-      title: isMuted ? "Music unmuted" : "Music muted",
-      description: isMuted ? "Wedding music is now playing" : "Wedding music has been muted",
+      title: newMutedState ? "Music muted" : "Music unmuted",
+      description: newMutedState ? "Wedding music has been muted" : "Wedding music is now playing",
     });
   };
 
@@ -93,7 +124,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
         onClick={toggleMute}
         className={cn(
           "bg-maroon/90 gold-border shadow-gold p-3 rounded-full hover:scale-110 transition-transform duration-300",
-          isMobile ? "p-2.5" : "p-3"
+          isMobile ? "p-2.5" : "p-3",
+          "animate-pulse-glow" // Add subtle animation to attract attention
         )}
         aria-label={isMuted ? "Unmute music" : "Mute music"}
       >
@@ -101,6 +133,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
           <VolumeX className="text-gold-light" size={isMobile ? 18 : 22} /> : 
           <Volume2 className="text-gold-light" size={isMobile ? 18 : 22} />
         }
+        
+        {/* Add subtle indicator that's always visible */}
+        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gold-light animate-pulse"></span>
       </button>
     </div>
   );
