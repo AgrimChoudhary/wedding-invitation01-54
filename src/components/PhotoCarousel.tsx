@@ -176,11 +176,11 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            {/* Photo frame with hover border glow effect */}
+            {/* Photo frame with glow effect */}
             <div className={cn(
               'absolute inset-0 border-4 border-transparent transition-all duration-300',
               activeIndex === index && 'border-gold-light/70',
-              hoveredIndex === index && 'border-gold-light shadow-gold-lg' // Only show glow on hover
+              hoveredIndex === index && 'glow-effect'
             )}></div>
             
             {visiblePhotos.includes(index) ? (
@@ -196,6 +196,7 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
                   className={cn(
                     "w-full h-full object-cover transition-transform duration-700",
                     "group-hover:scale-105",
+                    hoveredIndex === index && "brightness-110",
                     !imagesLoaded[index] && "opacity-0"
                   )}
                   loading="lazy"
@@ -238,12 +239,21 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ photos, className }) => {
                 )} 
               />
             </button>
+            
+            {/* Glow effect on hover */}
+            {hoveredIndex === index && (
+              <div className="absolute inset-0 bg-gold-light/10 mix-blend-overlay"></div>
+            )}
           </div>
         ))}
       </div>
       
       <style>
         {`
+        .glow-effect {
+          box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 15px rgba(255, 215, 0, 0.3);
+        }
+        
         @keyframes heart-beat {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.3); }
