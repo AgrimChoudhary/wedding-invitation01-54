@@ -603,7 +603,15 @@ const Index = () => {
         </div>
       </div>
       
-      <PhotoFrame />
+      <PhotoFrame className="max-w-md mx-auto mt-8">
+        <div className="p-4">
+          <img 
+            src={photos[0].src} 
+            alt={photos[0].alt} 
+            className="w-full h-auto rounded"
+          />
+        </div>
+      </PhotoFrame>
     </div>
   );
 };
