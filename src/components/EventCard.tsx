@@ -42,8 +42,22 @@ const EventCard: React.FC<EventCardProps> = ({
       )}
       onClick={() => setExpanded(!expanded)}
     >
-      <div className="absolute top-0 left-0 w-full h-full rounded-xl overflow-hidden">
-        <div className="absolute inset-0 bg-gold-light/5 rotate-[-3deg] transform-gpu"></div>
+      {/* Elegant decorative corners instead of gold line */}
+      <div className="absolute top-0 left-0 w-12 h-12 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-0.5 h-8 bg-gold-gradient"></div>
+        <div className="absolute top-0 left-0 w-8 h-0.5 bg-gold-gradient"></div>
+      </div>
+      <div className="absolute top-0 right-0 w-12 h-12 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-0.5 h-8 bg-gold-gradient"></div>
+        <div className="absolute top-0 right-0 w-8 h-0.5 bg-gold-gradient"></div>
+      </div>
+      <div className="absolute bottom-0 left-0 w-12 h-12 overflow-hidden pointer-events-none">
+        <div className="absolute bottom-0 left-0 w-0.5 h-8 bg-gold-gradient"></div>
+        <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold-gradient"></div>
+      </div>
+      <div className="absolute bottom-0 right-0 w-12 h-12 overflow-hidden pointer-events-none">
+        <div className="absolute bottom-0 right-0 w-0.5 h-8 bg-gold-gradient"></div>
+        <div className="absolute bottom-0 right-0 w-8 h-0.5 bg-gold-gradient"></div>
       </div>
       
       <div className="relative">

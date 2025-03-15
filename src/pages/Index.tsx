@@ -157,15 +157,130 @@ const Index = () => {
     }
   }, [showHearts]);
 
+  // Update the isMandalaVisible effect to create more impressive lotus flowers
   useEffect(() => {
     if (isMandalaVisible) {
+      // Create initial mandala effect
       createMandalaEffect();
+      
+      // Create lotus flowers floating across the screen
+      const createLotusFlowers = () => {
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const lotus = document.createElement('div');
+            const size = Math.random() * 40 + 20;
+            const xPos = Math.random() * window.innerWidth;
+            const yPos = Math.random() * window.innerHeight;
+            const rotation = Math.random() * 360;
+            const duration = Math.random() * 15 + 10;
+            
+            lotus.className = 'lotus-flower';
+            lotus.innerHTML = `
+              <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g transform="rotate(${rotation} 50 50)">
+                  <path d="M50,10 C60,30 80,40 90,30 C80,50 90,70 70,75 C50,80 30,70 20,50 C10,30 30,10 50,10 Z" fill="#FFD700" opacity="0.6" />
+                  <path d="M50,20 C56,32 68,38 74,32 C68,44 74,56 62,58 C50,60 38,56 32,44 C26,32 38,20 50,20 Z" fill="#FFD700" opacity="0.4" />
+                  <circle cx="50" cy="50" r="8" fill="#FFD700" opacity="0.8" />
+                </g>
+              </svg>
+            `;
+            
+            lotus.style.position = 'fixed';
+            lotus.style.left = `${xPos}px`;
+            lotus.style.top = `${yPos}px`;
+            lotus.style.zIndex = '3';
+            lotus.style.opacity = '0';
+            lotus.style.transition = 'opacity 1s ease-in';
+            lotus.style.filter = 'drop-shadow(0 0 5px rgba(255, 215, 0, 0.5))';
+            
+            document.body.appendChild(lotus);
+            
+            setTimeout(() => {
+              lotus.style.opacity = '0.8';
+            }, 100);
+            
+            // Animate the lotus to float and rotate
+            lotus.animate([
+              { transform: `translate(0, 0) rotate(0deg)` },
+              { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${rotation + 180}deg)` }
+            ], {
+              duration: duration * 1000,
+              easing: 'ease-in-out',
+              iterations: Infinity,
+              direction: 'alternate'
+            });
+            
+            // Remove the lotus after some time
+            setTimeout(() => {
+              lotus.style.opacity = '0';
+              setTimeout(() => {
+                if (document.body.contains(lotus)) {
+                  document.body.removeChild(lotus);
+                }
+              }, 1000);
+            }, duration * 1000);
+          }, i * 300);
+        }
+      };
+      
+      createLotusFlowers();
+      
+      // Create additional magical sparkle effects
+      const createSparkles = () => {
+        for (let i = 0; i < 15; i++) {
+          setTimeout(() => {
+            const sparkle = document.createElement('div');
+            const size = Math.random() * 8 + 2;
+            const xPos = Math.random() * window.innerWidth;
+            const yPos = Math.random() * window.innerHeight;
+            
+            sparkle.className = 'magical-sparkle';
+            sparkle.style.position = 'fixed';
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.backgroundColor = '#FFD700';
+            sparkle.style.boxShadow = '0 0 10px 2px rgba(255, 215, 0, 0.8)';
+            sparkle.style.left = `${xPos}px`;
+            sparkle.style.top = `${yPos}px`;
+            sparkle.style.zIndex = '3';
+            sparkle.style.opacity = '0';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+              sparkle.style.opacity = '1';
+              sparkle.style.transition = 'transform 4s ease-in-out, opacity 4s ease-in-out';
+              sparkle.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(${Math.random() * 3})`;
+            }, 100);
+            
+            setTimeout(() => {
+              sparkle.style.opacity = '0';
+              setTimeout(() => {
+                if (document.body.contains(sparkle)) {
+                  document.body.removeChild(sparkle);
+                }
+              }, 1000);
+            }, 4000);
+          }, i * 200);
+        }
+      };
+      
+      createSparkles();
       
       const interval = setInterval(() => {
         createMandalaEffect();
+        createLotusFlowers();
+        createSparkles();
       }, 10000);
       
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        // Clean up any remaining lotus elements
+        document.querySelectorAll('.lotus-flower, .magical-sparkle').forEach(el => {
+          document.body.removeChild(el);
+        });
+      };
     }
   }, [isMandalaVisible]);
 
@@ -179,7 +294,7 @@ const Index = () => {
     const duration = Math.random() * 3 + 3;
     const delay = Math.random();
     
-    heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+    heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
     heart.className = 'fixed z-50 pointer-events-none text-gold-light';
     heart.style.width = `${size}px`;
     heart.style.height = `${size}px`;
@@ -293,7 +408,7 @@ const Index = () => {
         <div className="fixed inset-0 bg-maroon/90 z-50 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="gold-text font-cormorant text-xl">Loading our love story...</p>
+            <p className="gold-text font-cormorant text-xl">[ Guest Name ] Wait we are opening invitation...</p>
           </div>
         </div>
       )}
@@ -421,8 +536,8 @@ const Index = () => {
                   className={cn(
                     "relative px-6 py-3 rounded-full transition-all duration-300",
                     "border-2 border-gold-light text-gold-light font-bold",
-                    "overflow-hidden hover:bg-gold-light/10 group",
-                    isMandalaVisible && "bg-gold-light/10"
+                    "overflow-hidden group",
+                    isMandalaVisible ? "bg-gold-light/20 shadow-gold" : "hover:bg-gold-light/10"
                   )}
                   onClick={() => setIsMandalaVisible(!isMandalaVisible)}
                 >
@@ -430,10 +545,35 @@ const Index = () => {
                     {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
                     <Sparkle className={cn(
                       "ml-2 transition-transform duration-300",
-                      "group-hover:rotate-12 animate-pulse"
+                      isMandalaVisible ? "animate-spin-slow text-maroon" : "group-hover:rotate-12 animate-pulse"
                     )} size={18} />
                   </span>
+                  
+                  {/* Enhanced button effects */}
                   <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+                  
+                  {isMandalaVisible && (
+                    <>
+                      {/* Animated rings around the button */}
+                      <span className="absolute inset-0 rounded-full border-2 border-gold-light/30 animate-ping"></span>
+                      <span className="absolute inset-[-4px] rounded-full border border-gold-light/20 animate-spin-slow" style={{ animationDuration: '5s' }}></span>
+                      <span className="absolute inset-[-8px] rounded-full border border-gold-light/10 animate-spin-slow" style={{ animationDuration: '7s', animationDirection: 'reverse' }}></span>
+                      
+                      {/* Sparkle effects inside the button */}
+                      {[...Array(5)].map((_, i) => (
+                        <span 
+                          key={i}
+                          className="absolute w-1.5 h-1.5 rounded-full bg-gold-light animate-ping" 
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${i * 0.3}s`,
+                            animationDuration: `${1 + Math.random()}s`
+                          }}
+                        />
+                      ))}
+                    </>
+                  )}
                 </button>
               </HoverCardTrigger>
               <HoverCardContent className="bg-maroon/90 border-gold-light/30 text-cream p-4 w-80">
@@ -470,267 +610,4 @@ const Index = () => {
             </div>
           ))}
         </div>
-        <div className="absolute right-0 w-full h-px bg-gold-light/30"></div>
-      </div>
-      
-      <section className="py-10 px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-            <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(brideFamily)}
-            >
-              <div className="flex justify-center mb-4">
-                <Flower className="text-gold-light" size={28} />
-              </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Bride's Parents
-                <Info size={16} className="ml-2 text-gold-light/70" />
-              </h3>
-              <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
-            </div>
-            
-            <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(groomFamily)}
-            >
-              <div className="flex justify-center mb-4">
-                <Star className="text-gold-light" size={28} />
-              </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Groom's Parents
-                <Info size={16} className="ml-2 text-gold-light/70" />
-              </h3>
-              <p className="text-center text-cream text-lg font-cormorant">Harkesh & Harkeshi</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <div className="flex justify-center my-8">
-        <div className="relative px-16">
-          <div className="absolute inset-y-0 left-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
-          <Heart size={24} className="text-gold-light" />
-          <div className="absolute inset-y-0 right-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
-        </div>
-      </div>
-      
-      <section className="py-10 px-4 relative z-10" id="events">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
-            Celebration Events
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {events.map((event, index) => (
-              <div 
-                key={index}
-                className={`transform transition-all duration-500 ${
-                  index % 2 === 0 ? 'animate-fade-in-left' : 'animate-fade-in-right'
-                }`}
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <EventCard {...event} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      <div className="flex justify-center my-8 overflow-hidden">
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="w-32 h-px bg-gold-gradient"></div>
-            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50,10 C60,30 80,40 90,30 C80,50 90,70 70,75 C50,80 30,70 20,50 C10,30 30,10 50,10 Z" fill="url(#gold-gradient)" opacity="0.7" />
-              <defs>
-                <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFD700" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="w-32 h-px bg-gold-gradient"></div>
-          </div>
-        </div>
-      </div>
-      
-      <section className="py-10 px-2 md:px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-            Our Journey
-          </h2>
-          
-          <style>
-            {`
-            .photo-item {
-              transition: all 0.3s ease;
-              position: relative;
-            }
-            
-            .photo-item::before {
-              content: '';
-              position: absolute;
-              inset: 0;
-              border-radius: 0.75rem;
-              padding: 3px;
-              background: linear-gradient(to right, #FFD700, #C5A20A);
-              -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-              -webkit-mask-composite: xor;
-              mask-composite: exclude;
-              opacity: 0;
-              transition: opacity 0.3s ease;
-            }
-            
-            .photo-item:hover {
-              transform: translateY(-5px);
-              box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            }
-            
-            .photo-item:hover::before {
-              opacity: 1;
-            }
-            `}
-          </style>
-          
-          <PhotoCarousel photos={photos} />
-        </div>
-      </section>
-      
-      <section className="py-10 px-4 relative overflow-hidden z-10">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-            Join Our Celebration
-          </h2>
-          
-          <div className="relative h-40 md:h-60">
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex items-end justify-center gap-4 md:gap-10">
-              <div className="w-10 h-20 md:w-16 md:h-32 bg-gold-gradient rounded-t-full animate-dance-slow">
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
-                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
-                </div>
-              </div>
-              
-              <div className="w-10 h-24 md:w-16 md:h-40 bg-gold-gradient rounded-t-full animate-dance-medium">
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
-                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <p className="text-cream/80 mt-8 font-cormorant text-xl italic">
-            "Dance with us as two hearts become one"
-          </p>
-          
-          <style>
-            {`
-            @keyframes dance-slow {
-              0%, 100% { transform: rotate(-5deg); }
-              50% { transform: rotate(5deg); }
-            }
-            @keyframes dance-medium {
-              0%, 100% { transform: rotate(5deg); }
-              50% { transform: rotate(-5deg); }
-            }
-            .animate-dance-slow {
-              animation: dance-slow 2s ease-in-out infinite;
-              transform-origin: bottom center;
-            }
-            .animate-dance-medium {
-              animation: dance-medium 1.8s ease-in-out infinite;
-              transform-origin: bottom center;
-            }
-            @keyframes float-heart {
-              0% { 
-                transform: translateY(0) rotate(var(--rotation, 0deg)) scale(0); 
-                opacity: 0; 
-              }
-              10% { 
-                opacity: 0.8; 
-                transform: translateY(10px) rotate(var(--rotation, 0deg)) scale(1); 
-              }
-              100% { 
-                transform: translateY(100vh) rotate(var(--rotation, 0deg)) scale(0.5); 
-                opacity: 0; 
-              }
-            }
-            .lotus-flower {
-              position: absolute;
-              pointer-events: none;
-              animation: float 20s linear infinite, spin-slow 40s linear infinite;
-            }
-            `}
-          </style>
-        </div>
-      </section>
-      
-      <section className="py-10 px-4 text-center relative z-10">
-        <div className="max-w-3xl mx-auto">
-          <button
-            onClick={() => setComingSoonOpen(true)}
-            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
-          >
-            <span className="relative z-10 font-cormorant font-bold">Enter Event Dashboard</span>
-            <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-          </button>
-          
-          <DashboardComingSoonPopup open={comingSoonOpen} onClose={() => setComingSoonOpen(false)} />
-        </div>
-      </section>
-      
-      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
-        <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
-        
-        <div className="absolute top-10 left-10 w-12 h-12 opacity-20 hidden md:block">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="30" stroke="#FFD700" strokeWidth="2" fill="none" />
-            <circle cx="50" cy="50" r="20" stroke="#FFD700" strokeWidth="1" fill="none" />
-            <circle cx="50" cy="50" r="10" fill="#FFD700" opacity="0.5" />
-          </svg>
-        </div>
-        
-        <div className="absolute bottom-10 right-10 w-16 h-16 opacity-20 hidden md:block">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50,10 C65,10 80,25 80,40 C80,55 65,70 50,70 C35,70 20,55 20,40 C20,25 35,10 50,10 Z" stroke="#FFD700" strokeWidth="2" fill="none" />
-            <path d="M50,20 C60,20 70,30 70,40 C70,50 60,60 50,60 C40,60 30,50 30,40 C30,30 40,20 50,20 Z" stroke="#FFD700" strokeWidth="1" fill="none" />
-          </svg>
-        </div>
-        
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-6 flex justify-center">
-            <Heart className="text-gold-light animate-heart-beat" size={28} />
-          </div>
-          
-          <p className="font-cormorant text-xl gold-text italic mb-8">
-            "Your presence is the greatest blessing."
-          </p>
-          
-          <div className="text-cream/80">
-            <p className="mb-2">The Royal Celebration Hall, Wedding City</p>
-            <p className="flex flex-wrap justify-center gap-4">
-              <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
-                <PhoneIcon className="mr-1" />
-                Priya's Family
-              </a>
-              <a href="tel:+919876543211" className="text-gold-light hover:underline flex items-center">
-                <PhoneIcon className="mr-1" />
-                Vijay's Family
-              </a>
-            </p>
-          </div>
-        </div>
-      </footer>
-      
-      <FamilyDetailsDialog 
-        open={familyDialogOpen} 
-        onOpenChange={setFamilyDialogOpen} 
-        familyDetails={selectedFamily} 
-      />
-    </div>
-  );
-};
-
-export default Index;
+        <div className="absolute right-0 w
