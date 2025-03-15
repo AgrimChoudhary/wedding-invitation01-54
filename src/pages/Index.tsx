@@ -15,6 +15,7 @@ import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
+import PhotoFrame from '@/components/PhotoFrame';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -157,13 +158,10 @@ const Index = () => {
     }
   }, [showHearts]);
 
-  // Update the isMandalaVisible effect to create more impressive lotus flowers
   useEffect(() => {
     if (isMandalaVisible) {
-      // Create initial mandala effect
       createMandalaEffect();
       
-      // Create lotus flowers floating across the screen
       const createLotusFlowers = () => {
         for (let i = 0; i < 8; i++) {
           setTimeout(() => {
@@ -199,7 +197,6 @@ const Index = () => {
               lotus.style.opacity = '0.8';
             }, 100);
             
-            // Animate the lotus to float and rotate
             lotus.animate([
               { transform: `translate(0, 0) rotate(0deg)` },
               { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${rotation + 180}deg)` }
@@ -210,7 +207,6 @@ const Index = () => {
               direction: 'alternate'
             });
             
-            // Remove the lotus after some time
             setTimeout(() => {
               lotus.style.opacity = '0';
               setTimeout(() => {
@@ -225,7 +221,6 @@ const Index = () => {
       
       createLotusFlowers();
       
-      // Create additional magical sparkle effects
       const createSparkles = () => {
         for (let i = 0; i < 15; i++) {
           setTimeout(() => {
@@ -276,7 +271,6 @@ const Index = () => {
       
       return () => {
         clearInterval(interval);
-        // Clean up any remaining lotus elements
         document.querySelectorAll('.lotus-flower, .magical-sparkle').forEach(el => {
           document.body.removeChild(el);
         });
@@ -549,17 +543,14 @@ const Index = () => {
                     )} size={18} />
                   </span>
                   
-                  {/* Enhanced button effects */}
                   <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
                   
                   {isMandalaVisible && (
                     <>
-                      {/* Animated rings around the button */}
                       <span className="absolute inset-0 rounded-full border-2 border-gold-light/30 animate-ping"></span>
                       <span className="absolute inset-[-4px] rounded-full border border-gold-light/20 animate-spin-slow" style={{ animationDuration: '5s' }}></span>
                       <span className="absolute inset-[-8px] rounded-full border border-gold-light/10 animate-spin-slow" style={{ animationDuration: '7s', animationDirection: 'reverse' }}></span>
                       
-                      {/* Sparkle effects inside the button */}
                       {[...Array(5)].map((_, i) => (
                         <span 
                           key={i}
@@ -598,16 +589,54 @@ const Index = () => {
         ></div>
       )}
       
-      <div className="relative py-4 overflow-hidden">
-        <div className="absolute left-0 w-full h-px bg-gold-light/30"></div>
-        <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 opacity-60">
-          {[...Array(isMobile ? 5 : 10)].map((_, i) => (
-            <div key={i} className="w-4 h-4 md:w-6 md:h-6 relative">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12,2 C14,5 17,7 21,7 C17,7 14,9 12,12 C10,9 7,7 3,7 C7,7 10,5 12,2 Z" fill="#FFD700" opacity="0.8" />
-                <path d="M12,12 C14,15 17,17 21,17 C17,17 14,19 12,22 C10,19 7,17 3,17 C7,17 10,15 12,12 Z" fill="#FFD700" opacity="0.8" />
-              </svg>
-            </div>
-          ))}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-cormorant gold-text text-center mb-12">Our Journey Together</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {photos.map((photo, index) => (
+              <PhotoFrame 
+                key={index} 
+                className="aspect-[3/4] overflow-hidden" 
+                isHovered={false}
+              >
+                <img 
+                  src={photo.src} 
+                  alt={photo.alt} 
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                />
+              </PhotoFrame>
+            ))}
+          </div>
         </div>
-        <div className="absolute right-0 w
+      </section>
+
+      <section className="py-16 px-4 bg-maroon/30">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-cormorant gold-text text-center mb-12">Wedding Events</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {events.map((event, index) => (
+              <EventCard key={index} event={event} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {selectedFamily && (
+        <FamilyDetailsDialog 
+          family={selectedFamily} 
+          open={familyDialogOpen} 
+          onClose={() => setFamilyDialogOpen(false)} 
+        />
+      )}
+      
+      <DashboardComingSoonPopup 
+        open={comingSoonOpen} 
+        onClose={() => setComingSoonOpen(false)} 
+      />
+    </div>
+  );
+};
+
+export default Index;
