@@ -15,6 +15,7 @@ import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
+import PhotoFrame from '@/components/PhotoFrame';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -157,13 +158,10 @@ const Index = () => {
     }
   }, [showHearts]);
 
-  // Update the isMandalaVisible effect to create more impressive lotus flowers
   useEffect(() => {
     if (isMandalaVisible) {
-      // Create initial mandala effect
       createMandalaEffect();
       
-      // Create lotus flowers floating across the screen
       const createLotusFlowers = () => {
         for (let i = 0; i < 8; i++) {
           setTimeout(() => {
@@ -199,7 +197,6 @@ const Index = () => {
               lotus.style.opacity = '0.8';
             }, 100);
             
-            // Animate the lotus to float and rotate
             lotus.animate([
               { transform: `translate(0, 0) rotate(0deg)` },
               { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${rotation + 180}deg)` }
@@ -210,7 +207,6 @@ const Index = () => {
               direction: 'alternate'
             });
             
-            // Remove the lotus after some time
             setTimeout(() => {
               lotus.style.opacity = '0';
               setTimeout(() => {
@@ -225,7 +221,6 @@ const Index = () => {
       
       createLotusFlowers();
       
-      // Create additional magical sparkle effects
       const createSparkles = () => {
         for (let i = 0; i < 15; i++) {
           setTimeout(() => {
@@ -276,7 +271,6 @@ const Index = () => {
       
       return () => {
         clearInterval(interval);
-        // Clean up any remaining lotus elements
         document.querySelectorAll('.lotus-flower, .magical-sparkle').forEach(el => {
           document.body.removeChild(el);
         });
@@ -549,17 +543,14 @@ const Index = () => {
                     )} size={18} />
                   </span>
                   
-                  {/* Enhanced button effects */}
                   <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
                   
                   {isMandalaVisible && (
                     <>
-                      {/* Animated rings around the button */}
                       <span className="absolute inset-0 rounded-full border-2 border-gold-light/30 animate-ping"></span>
                       <span className="absolute inset-[-4px] rounded-full border border-gold-light/20 animate-spin-slow" style={{ animationDuration: '5s' }}></span>
                       <span className="absolute inset-[-8px] rounded-full border border-gold-light/10 animate-spin-slow" style={{ animationDuration: '7s', animationDirection: 'reverse' }}></span>
                       
-                      {/* Sparkle effects inside the button */}
                       {[...Array(5)].map((_, i) => (
                         <span 
                           key={i}
@@ -610,4 +601,11 @@ const Index = () => {
             </div>
           ))}
         </div>
-        <div className="absolute right-0 w
+      </div>
+      
+      <PhotoFrame />
+    </div>
+  );
+};
+
+export default Index;
