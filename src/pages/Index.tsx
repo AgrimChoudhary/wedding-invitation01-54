@@ -530,7 +530,14 @@ const Index = () => {
                 }`}
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
-                <EventCard {...event} />
+                <EventCard 
+                  title={event.title}
+                  date={event.date}
+                  time={event.time}
+                  venue={event.venue}
+                  icon={event.icon}
+                  images={event.images}
+                />
               </div>
             ))}
           </div>
@@ -557,7 +564,7 @@ const Index = () => {
       
       <section className="py-10 px-2 md:px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
             Our Journey
           </h2>
           
