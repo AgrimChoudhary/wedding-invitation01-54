@@ -16,8 +16,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  // Default song URL - Indian wedding song
-  const defaultSongUrl = "https://store-screenapp-production.storage.googleapis.com/vid/67d41dc0e5ce67e04ebe2417/1fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=GOOG1EINEQV5X2QGY62PSZMBMUR7IGGVLKNDB6ABP5GL6O6FKO76DWA2IE3SB%2F20250314%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250314T122512Z&X-Amz-Expires=604800&X-Amz-Signature=cd907dfc1f1bd3dad6a413b6de02cdc4ae48815d996fff64594775c8fad7ec02&X-Amz-SignedHeaders=host&response-content-type=attachment%3B%20filename%3D%221fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3%22%3B%20filename%2A%3D%20UTF-8%27%27Shubh%2520Aangan%2520_%2520DjPunjab%2520mp3cut.net.mp3.mp3%3B#t=0,";
+  // Updated to a more reliable, optimized audio URL
+  const audioUrl = "https://cdn.lovable.dev/wedding/shubh-aangan-128k.mp3";
 
   useEffect(() => {
     // Solution for browsers requiring user interaction for autoplay
@@ -31,18 +31,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
           })
           .catch(error => {
             console.error("Failed to play audio after user interaction:", error);
-            // If it still fails, we'll retry once more with a user gesture
-            const playPromise = audioRef.current?.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(err => {
-                console.log("Second attempt failed:", err);
-              });
-            }
           });
       }
     };
 
-    // Add additional event listeners for more user gesture types
+    // Add event listeners for more user gesture types
     const userGestures = ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'];
     
     // Initial setup of the audio element
@@ -118,7 +111,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
         className
       )}
     >
-      <audio ref={audioRef} loop src={defaultSongUrl} />
+      <audio ref={audioRef} loop src={audioUrl} />
       
       <button 
         onClick={toggleMute}
