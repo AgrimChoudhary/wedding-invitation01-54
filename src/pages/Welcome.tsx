@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -151,7 +151,7 @@ const Welcome = () => {
           
           <div className="gold-text font-cormorant text-lg md:text-xl italic mb-6">
             <p className="mb-1">Welcome to our Wedding Celebration</p>
-            <p>21st March 2025</p>
+            <p>30th March 2025</p>
           </div>
         </div>
         

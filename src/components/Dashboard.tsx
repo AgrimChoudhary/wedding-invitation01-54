@@ -13,7 +13,8 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
-  const weddingDate = new Date('2025-03-21T00:00:00');
+  // Update the wedding date
+  const weddingDate = new Date('2025-03-30T00:00:00');
   
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -50,19 +51,19 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
                     <ul className="space-y-3">
                       <li className="flex justify-between">
                         <span className="text-cream/90">Mehndi Ceremony</span>
-                        <span className="text-gold-light">19 March 2025</span>
+                        <span className="text-gold-light">28 March 2025</span>
                       </li>
                       <li className="flex justify-between">
                         <span className="text-cream/90">Sangeet Night</span>
-                        <span className="text-gold-light">19 March 2025</span>
+                        <span className="text-gold-light">28 March 2025</span>
                       </li>
                       <li className="flex justify-between">
                         <span className="text-cream/90">Haldi Ceremony</span>
-                        <span className="text-gold-light">20 March 2025</span>
+                        <span className="text-gold-light">29 March 2025</span>
                       </li>
                       <li className="flex justify-between border-t border-gold-light/20 pt-2 mt-2">
                         <span className="text-cream font-bold">Wedding Ceremony</span>
-                        <span className="text-gold-light font-bold">21 March 2025</span>
+                        <span className="text-gold-light font-bold">30 March 2025</span>
                       </li>
                     </ul>
                   </div>

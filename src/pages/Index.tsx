@@ -201,12 +201,12 @@ const Index = () => {
     setFamilyDialogOpen(true);
   };
 
-  const weddingDate = new Date("2025-03-21T17:00:00");
+  const weddingDate = new Date("2025-03-30T17:00:00");
 
   const events = [
     {
       title: "Mehndi Ceremony",
-      date: "19 March 2025",
+      date: "28 March 2025",
       time: "10:00 AM - 2:00 PM",
       venue: "Garden Court, The Royal Celebration Hall, Wedding City",
       icon: <Paintbrush size={24} className="text-maroon" />,
@@ -218,7 +218,7 @@ const Index = () => {
     },
     {
       title: "Sangeet Night",
-      date: "19 March 2025",
+      date: "28 March 2025",
       time: "7:00 PM - 11:00 PM",
       venue: "Grand Pavilion, The Royal Celebration Hall, Wedding City",
       icon: <Music size={24} className="text-maroon" />,
@@ -230,7 +230,7 @@ const Index = () => {
     },
     {
       title: "Haldi Ceremony",
-      date: "20 March 2025",
+      date: "29 March 2025",
       time: "11:00 AM - 2:00 PM",
       venue: "Courtyard, The Royal Celebration Hall, Wedding City",
       icon: <Sparkles size={24} className="text-maroon" />,
@@ -242,7 +242,7 @@ const Index = () => {
     },
     {
       title: "Wedding Ceremony",
-      date: "21 March 2025",
+      date: "30 March 2025",
       time: "5:00 PM - 8:00 PM",
       venue: "Main Hall, The Royal Celebration Hall, Wedding City",
       icon: <Heart size={24} className="text-maroon" />,
@@ -386,7 +386,7 @@ const Index = () => {
             <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
               <span className="font-cormorant text-xl md:text-2xl gold-text">
-                21 March 2025
+                30 March 2025
               </span>
             </div>
           </div>
