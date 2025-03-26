@@ -78,31 +78,20 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
                     
                     <div className="bg-maroon/80 rounded-lg p-4 gold-border">
                       <div className="text-center mb-3">
-                        <div className="text-cream font-medium">Tum Hi Ho</div>
-                        <div className="text-cream/70 text-sm">Arijit Singh</div>
+                        <div className="text-cream font-medium">Shubh Aangan</div>
+                        <div className="text-cream/70 text-sm">Wedding Celebration</div>
                       </div>
                       
-                      <div className="relative h-12 mb-3">
-                        <div className="absolute inset-0 bg-maroon/50 rounded-full overflow-hidden gold-border">
-                          <div className="h-full w-full flex justify-center items-center">
-                            {Array.from({ length: 40 }).map((_, i) => (
-                              <div
-                                key={i}
-                                className="w-0.5 mx-px h-2 bg-gold-light opacity-70 rounded-full animate-float"
-                                style={{ 
-                                  height: `${Math.sin(i * 0.3) * 20 + 30}%`,
-                                  animationDelay: `${i * 0.05}s`
-                                }}
-                              ></div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-center">
-                        <button className="px-4 py-2 bg-gold-gradient text-maroon rounded-lg transition-transform duration-300 hover:scale-105 font-medium">
-                          Play Our Song
-                        </button>
+                      <div className="relative h-48 mb-3 overflow-hidden rounded-lg gold-border">
+                        <iframe 
+                          src="https://screenapp.io/app/#/shared/5ZvZZuyaVC?embed=true" 
+                          width="100%" 
+                          height="100%" 
+                          frameBorder="0"
+                          allowFullScreen
+                          title="Wedding Music"
+                          className="w-full h-full"
+                        />
                       </div>
                     </div>
                   </div>

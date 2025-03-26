@@ -10,127 +10,75 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
-
-  // Use the requested song URL
-  const audioUrl = "https://store-screenapp-production.storage.googleapis.com/vid/67d41dc0e5ce67e04ebe2417/1fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=GOOG1EINEQV5X2QGY62PSZMBMUR7IGGVLKNDB6ABP5GL6O6FKO76DWA2IE3SB%2F20250314%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250314T122512Z&X-Amz-Expires=604800&X-Amz-Signature=cd907dfc1f1bd3dad6a413b6de02cdc4ae48815d996fff64594775c8fad7ec02&X-Amz-SignedHeaders=host&response-content-type=attachment%3B%20filename%3D%221fb2487e-e8f5-463e-a9ac-3fcbe731f070.mp3%22%3B%20filename%2A%3D%20UTF-8%27%27Shubh%2520Aangan%2520_%2520DjPunjab%2520mp3cut.net.mp3.mp3%3B#t=0,";
-
-  useEffect(() => {
-    // Solution for browsers requiring user interaction for autoplay
-    const handleUserInteraction = () => {
-      if (audioRef.current && !isPlaying) {
-        // Try to play after user interaction
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-            console.log("Audio playing successfully after user interaction");
-          })
-          .catch(error => {
-            console.error("Failed to play audio after user interaction:", error);
-          });
-      }
-    };
-
-    // Add event listeners for more user gesture types
-    const userGestures = ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'];
-    
-    // Initial setup of the audio element
-    if (audioRef.current) {
-      audioRef.current.volume = 0.4;
-      audioRef.current.preload = "auto";
-      
-      // Try to play, but expect it might fail due to browser restrictions
-      const playPromise = audioRef.current.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-            console.log("Audio playing automatically");
-          })
-          .catch((error) => {
-            console.error("Autoplay prevented:", error);
-            // Most browsers prevent autoplay without user interaction
-            setIsPlaying(false);
-            
-            // Add event listeners to attempt playback after user interaction
-            userGestures.forEach(event => {
-              document.addEventListener(event, handleUserInteraction, { once: true });
-            });
-          });
-      }
-    }
-    
-    return () => {
-      userGestures.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
-      
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
-  }, []);
-
+  
+  // Function to control embedded player
   const toggleMute = () => {
-    if (!audioRef.current) return;
-    
     const newMutedState = !isMuted;
-    audioRef.current.muted = newMutedState;
     setIsMuted(newMutedState);
     
-    // Try to play if it's not already playing (this will work with user interaction)
-    if (!isPlaying && !newMutedState) {
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-            console.log("Audio started playing from mute toggle");
-          })
-          .catch(error => {
-            console.error("Play failed from mute toggle:", error);
-          });
+    // Try to access the iframe to control it
+    if (iframeRef.current) {
+      try {
+        // Post message to the iframe to mute/unmute
+        iframeRef.current.contentWindow?.postMessage(
+          { action: newMutedState ? 'mute' : 'unmute' }, 
+          '*'
+        );
+        
+        toast({
+          title: newMutedState ? "Music muted" : "Music unmuted",
+          description: newMutedState ? "Wedding music has been muted" : "Wedding music is now playing",
+        });
+      } catch (error) {
+        console.error("Error controlling embedded player:", error);
       }
     }
-    
-    toast({
-      title: newMutedState ? "Music muted" : "Music unmuted",
-      description: newMutedState ? "Wedding music has been muted" : "Wedding music is now playing",
-    });
   };
 
+  // Hidden iframe for the audio player
   return (
-    <div 
-      className={cn(
-        "fixed bottom-4 right-4 z-50 transition-all duration-300",
-        className
-      )}
-    >
-      <audio ref={audioRef} loop src={audioUrl} />
+    <>
+      <div className="hidden">
+        <iframe 
+          ref={iframeRef}
+          src="https://screenapp.io/app/#/shared/5ZvZZuyaVC?embed=true" 
+          width="100" 
+          height="100" 
+          frameBorder="0"
+          allow="autoplay"
+          title="Wedding Music Player"
+        />
+      </div>
       
-      <button 
-        onClick={toggleMute}
+      <div 
         className={cn(
-          "bg-maroon/90 gold-border shadow-gold p-3 rounded-full hover:scale-110 transition-transform duration-300",
-          isMobile ? "p-2.5" : "p-3",
-          "animate-pulse-glow" // Add subtle animation to attract attention
+          "fixed bottom-4 right-4 z-50 transition-all duration-300",
+          className
         )}
-        aria-label={isMuted ? "Unmute music" : "Mute music"}
       >
-        {isMuted ? 
-          <VolumeX className="text-gold-light" size={isMobile ? 18 : 22} /> : 
-          <Volume2 className="text-gold-light" size={isMobile ? 18 : 22} />
-        }
-        
-        {/* Add subtle indicator that's always visible */}
-        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gold-light animate-pulse"></span>
-      </button>
-    </div>
+        <button 
+          onClick={toggleMute}
+          className={cn(
+            "bg-maroon/90 gold-border shadow-gold p-3 rounded-full hover:scale-110 transition-transform duration-300",
+            isMobile ? "p-2.5" : "p-3",
+            "animate-pulse-glow" // Add subtle animation to attract attention
+          )}
+          aria-label={isMuted ? "Unmute music" : "Mute music"}
+        >
+          {isMuted ? 
+            <VolumeX className="text-gold-light" size={isMobile ? 18 : 22} /> : 
+            <Volume2 className="text-gold-light" size={isMobile ? 18 : 22} />
+          }
+          
+          {/* Add subtle indicator that's always visible */}
+          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gold-light animate-pulse"></span>
+        </button>
+      </div>
+    </>
   );
 };
 
