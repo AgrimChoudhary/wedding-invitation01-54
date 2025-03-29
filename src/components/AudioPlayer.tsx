@@ -10,49 +10,68 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ className }) => {
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  // Function to control embedded player
+  useEffect(() => {
+    // Initialize audio
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5; // Set initial volume to 50%
+      
+      // Handle autoplay with user interaction
+      const handleUserInteraction = () => {
+        if (audioRef.current && audioRef.current.paused) {
+          audioRef.current.play().catch(error => {
+            console.log("Autoplay prevented:", error);
+          });
+        }
+        // Remove event listeners after first interaction
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+      };
+      
+      document.addEventListener('click', handleUserInteraction);
+      document.addEventListener('touchstart', handleUserInteraction);
+      
+      return () => {
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+      };
+    }
+  }, []);
+  
+  // Function to control audio
   const toggleMute = () => {
+    if (!audioRef.current) return;
+    
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
     
-    // Try to access the iframe to control it
-    if (iframeRef.current) {
-      try {
-        // Post message to the iframe to mute/unmute
-        iframeRef.current.contentWindow?.postMessage(
-          { action: newMutedState ? 'mute' : 'unmute' }, 
-          '*'
-        );
-        
-        toast({
-          title: newMutedState ? "Music muted" : "Music unmuted",
-          description: newMutedState ? "Wedding music has been muted" : "Wedding music is now playing",
-        });
-      } catch (error) {
-        console.error("Error controlling embedded player:", error);
+    if (audioRef.current) {
+      if (newMutedState) {
+        audioRef.current.volume = 0;
+      } else {
+        audioRef.current.volume = 0.5;
       }
+      
+      toast({
+        title: newMutedState ? "Music muted" : "Music unmuted",
+        description: newMutedState ? "Wedding music has been muted" : "Wedding music is now playing",
+      });
     }
   };
 
-  // Hidden iframe for the audio player
   return (
     <>
-      <div className="hidden">
-        <iframe 
-          ref={iframeRef}
-          src="https://screenapp.io/app/#/shared/5ZvZZuyaVC?embed=true" 
-          width="100" 
-          height="100" 
-          frameBorder="0"
-          allow="autoplay"
-          title="Wedding Music Player"
-        />
-      </div>
+      <audio 
+        ref={audioRef}
+        src="https://pagalfree.com/musics/128-Kudmayi%20(Film%20Version)%20-%20Rocky%20Aur%20Rani%20Kii%20Prem%20Kahaani%20128%20Kbps.mp3"
+        loop
+        preload="auto"
+        className="hidden"
+      />
       
       <div 
         className={cn(

@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Countdown from './Countdown';
 import MapLocation from './MapLocation';
-import { Calendar, Music, X } from 'lucide-react';
+import { Calendar, Music, X, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import PhoneIcon from './PhoneIcon';
 
@@ -15,6 +15,20 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
   // Update the wedding date
   const weddingDate = new Date('2025-03-30T00:00:00');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
   
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -78,20 +92,37 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
                     
                     <div className="bg-maroon/80 rounded-lg p-4 gold-border">
                       <div className="text-center mb-3">
-                        <div className="text-cream font-medium">Shubh Aangan</div>
-                        <div className="text-cream/70 text-sm">Wedding Celebration</div>
+                        <div className="text-cream font-medium">Kudmayi (Film Version)</div>
+                        <div className="text-cream/70 text-sm">Rocky Aur Rani Kii Prem Kahaani</div>
                       </div>
                       
-                      <div className="relative h-48 mb-3 overflow-hidden rounded-lg gold-border">
-                        <iframe 
-                          src="https://screenapp.io/app/#/shared/5ZvZZuyaVC?embed=true" 
-                          width="100%" 
-                          height="100%" 
-                          frameBorder="0"
-                          allowFullScreen
-                          title="Wedding Music"
-                          className="w-full h-full"
-                        />
+                      <div className="relative mb-3 overflow-hidden rounded-lg gold-border">
+                        <div className="p-4 flex flex-col items-center justify-center">
+                          <audio 
+                            ref={audioRef}
+                            src="https://pagalfree.com/musics/128-Kudmayi%20(Film%20Version)%20-%20Rocky%20Aur%20Rani%20Kii%20Prem%20Kahaani%20128%20Kbps.mp3"
+                            preload="auto"
+                            className="w-full mb-4 max-w-full"
+                            controls
+                          />
+                          
+                          <button 
+                            onClick={toggleAudio}
+                            className="bg-gold-gradient text-maroon px-4 py-2 rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+                          >
+                            {isPlaying ? (
+                              <>
+                                <VolumeX className="mr-2" size={18} />
+                                Pause Music
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="mr-2" size={18} />
+                                Play Music
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
