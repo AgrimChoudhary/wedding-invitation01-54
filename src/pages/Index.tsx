@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -15,6 +15,7 @@ import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
+import { useToast } from '@/hooks/use-toast';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -117,6 +118,8 @@ const Index = () => {
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [invitationAccepted, setInvitationAccepted] = useState(false);
+  const { toast } = useToast();
   
   useEffect(() => {
     const storedName = localStorage.getItem('guestName');
@@ -201,6 +204,16 @@ const Index = () => {
     setFamilyDialogOpen(true);
   };
 
+  const handleAcceptInvitation = () => {
+    setInvitationAccepted(true);
+    toast({
+      title: "Invitation Accepted!",
+      description: "Thank you for accepting our invitation. We look forward to celebrating with you!",
+      variant: "default",
+      duration: 5000,
+    });
+  };
+
   const weddingDate = new Date("2025-03-30T17:00:00");
 
   const events = [
@@ -210,11 +223,7 @@ const Index = () => {
       time: "10:00 AM - 2:00 PM",
       venue: "Garden Court, The Royal Celebration Hall, Wedding City",
       icon: <Paintbrush size={24} className="text-maroon" />,
-      images: [
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22",
-        "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb"
-      ]
+      googleMapsUrl: "https://maps.google.com/?q=Garden+Court+Royal+Celebration+Hall+Wedding+City"
     },
     {
       title: "Sangeet Night",
@@ -222,11 +231,7 @@ const Index = () => {
       time: "7:00 PM - 11:00 PM",
       venue: "Grand Pavilion, The Royal Celebration Hall, Wedding City",
       icon: <Music size={24} className="text-maroon" />,
-      images: [
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22",
-        "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb",
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07"
-      ]
+      googleMapsUrl: "https://maps.google.com/?q=Grand+Pavilion+Royal+Celebration+Hall+Wedding+City"
     },
     {
       title: "Haldi Ceremony",
@@ -234,11 +239,7 @@ const Index = () => {
       time: "11:00 AM - 2:00 PM",
       venue: "Courtyard, The Royal Celebration Hall, Wedding City",
       icon: <Sparkles size={24} className="text-maroon" />,
-      images: [
-        "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb",
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22"
-      ]
+      googleMapsUrl: "https://maps.google.com/?q=Courtyard+Royal+Celebration+Hall+Wedding+City"
     },
     {
       title: "Wedding Ceremony",
@@ -246,11 +247,7 @@ const Index = () => {
       time: "5:00 PM - 8:00 PM",
       venue: "Main Hall, The Royal Celebration Hall, Wedding City",
       icon: <Heart size={24} className="text-maroon" />,
-      images: [
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22",
-        "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb"
-      ]
+      googleMapsUrl: "https://maps.google.com/?q=Main+Hall+Royal+Celebration+Hall+Wedding+City"
     }
   ];
   
@@ -536,7 +533,7 @@ const Index = () => {
                   time={event.time}
                   venue={event.venue}
                   icon={event.icon}
-                  images={event.images}
+                  googleMapsUrl={event.googleMapsUrl}
                 />
               </div>
             ))}
@@ -676,15 +673,24 @@ const Index = () => {
       
       <section className="py-10 px-4 text-center relative z-10">
         <div className="max-w-3xl mx-auto">
-          <button
-            onClick={() => setComingSoonOpen(true)}
-            className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
-          >
-            <span className="relative z-10 font-cormorant font-bold">Enter Event Dashboard</span>
-            <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-          </button>
-          
-          <DashboardComingSoonPopup open={comingSoonOpen} onClose={() => setComingSoonOpen(false)} />
+          {!invitationAccepted ? (
+            <button
+              onClick={handleAcceptInvitation}
+              className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
+            >
+              <span className="relative z-10 font-cormorant font-bold flex items-center">
+                <CheckCircle className="mr-2" size={20} />
+                Accept Invitation
+              </span>
+              <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+            </button>
+          ) : (
+            <div className="bg-gold-light/10 border border-gold-light/40 rounded-lg p-6 animate-fade-in">
+              <CheckCircle className="text-gold-light mx-auto mb-3" size={32} />
+              <h3 className="font-cormorant gold-text text-2xl font-bold mb-2">Thank You!</h3>
+              <p className="text-cream/90">We look forward to celebrating our special day with you!</p>
+            </div>
+          )}
         </div>
       </section>
       
@@ -711,12 +717,29 @@ const Index = () => {
             <Heart className="text-gold-light animate-heart-beat" size={28} />
           </div>
           
-          <p className="font-cormorant text-xl gold-text italic mb-8">
+          <p className="font-cormorant text-xl gold-text italic mb-6">
             "Your presence is the greatest blessing."
           </p>
           
+          <div className="mb-6 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
+            <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
+              <MapPin className="mr-2" size={18} />
+              Venue Location
+            </h3>
+            <p className="text-cream/90 mb-3">The Royal Celebration Hall, Wedding City</p>
+            <a 
+              href="https://maps.google.com/?q=Royal+Celebration+Hall+Wedding+City" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
+            >
+              <MapPin className="mr-2" size={14} />
+              View on Google Maps
+              <ExternalLink size={12} className="ml-2" />
+            </a>
+          </div>
+          
           <div className="text-cream/80">
-            <p className="mb-2">The Royal Celebration Hall, Wedding City</p>
             <p className="flex flex-wrap justify-center gap-4">
               <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
                 <PhoneIcon className="mr-1" />

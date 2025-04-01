@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MapPin, Navigation, Phone } from 'lucide-react';
+import { MapPin, Navigation, Phone, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MapLocationProps {
@@ -17,6 +17,11 @@ const MapLocation: React.FC<MapLocationProps> = ({
   className
 }) => {
   const [mapExpanded, setMapExpanded] = useState(false);
+  
+  const handleOpenMap = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
+  };
   
   return (
     <div className={cn('relative rounded-xl overflow-hidden', className)}>
@@ -36,10 +41,12 @@ const MapLocation: React.FC<MapLocationProps> = ({
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleOpenMap}
             className="flex items-center justify-center sm:justify-start px-4 py-2 bg-gold-gradient text-maroon rounded-lg transition-transform duration-300 hover:scale-105 font-medium"
           >
             <Navigation className="mr-2" size={18} />
             View on Google Maps
+            <ExternalLink size={14} className="ml-2" />
           </a>
           
           <button
@@ -54,7 +61,7 @@ const MapLocation: React.FC<MapLocationProps> = ({
         {mapExpanded && (
           <div className="w-full h-80 rounded-lg overflow-hidden gold-border animate-fade-in">
             <iframe 
-              src={`${googleMapsUrl}&output=embed`}
+              src={`${googleMapsUrl.replace('https://maps.google.com/?q=', 'https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=')}`}
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 

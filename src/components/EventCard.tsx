@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, ExternalLink } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventCardProps {
   title: string;
@@ -9,7 +10,7 @@ interface EventCardProps {
   time: string;
   venue: string;
   icon: React.ReactNode;
-  images?: string[];
+  googleMapsUrl?: string;
   className?: string;
 }
 
@@ -19,11 +20,12 @@ const EventCard: React.FC<EventCardProps> = ({
   time,
   venue,
   icon,
-  images = [],
+  googleMapsUrl,
   className,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [isSparkle, setIsSparkle] = useState(false);
+  const { toast } = useToast();
 
   const handleSparkle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -31,12 +33,25 @@ const EventCard: React.FC<EventCardProps> = ({
     setTimeout(() => setIsSparkle(false), 1000);
   };
 
+  const handleMapClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (googleMapsUrl) {
+      window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      toast({
+        title: "Map link unavailable",
+        description: "The location map is not available for this venue.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div 
       className={cn(
         'relative rounded-xl p-5 md:p-6 card-hover cursor-pointer',
         'border border-gold-light/30 bg-maroon/80 backdrop-blur-sm',
-        'max-w-md mx-auto',
+        'max-w-md mx-auto transform transition-all duration-300 hover:-translate-y-1',
         expanded && 'shadow-gold-lg',
         className
       )}
@@ -72,27 +87,28 @@ const EventCard: React.FC<EventCardProps> = ({
           <p className="animate-pulse-slow">{venue}</p>
         </div>
         
-        <div className="flex justify-center">
+        {expanded && (
+          <div className="mt-4 animate-fade-in">
+            {googleMapsUrl && (
+              <button 
+                onClick={handleMapClick}
+                className="flex items-center justify-center w-full px-4 py-2 rounded-lg border border-gold-light/50 text-gold-light hover:bg-gold-light/10 transition-colors"
+              >
+                <MapPin size={16} className="mr-2" />
+                View Location on Map
+                <ExternalLink size={14} className="ml-2" />
+              </button>
+            )}
+          </div>
+        )}
+        
+        <div className="flex justify-center mt-2">
           {expanded ? (
             <ChevronUp className="text-gold-light opacity-70 mt-1" />
           ) : (
             <ChevronDown className="text-gold-light opacity-70 mt-1" />
           )}
         </div>
-
-        {expanded && images.length > 0 && (
-          <div className="mt-4 grid grid-cols-3 gap-2 animate-fade-in">
-            {images.map((image, index) => (
-              <div key={index} className="aspect-square rounded-md overflow-hidden gold-border">
-                <img
-                  src={image}
-                  alt={`${title} image ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform hover:scale-110 duration-300"
-                />
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {isSparkle && (
