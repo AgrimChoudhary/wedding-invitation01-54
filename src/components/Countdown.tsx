@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 
 interface CountdownProps {
-  targetDate: Date;
+  targetDate: Date | string;
   className?: string;
 }
 
@@ -15,8 +15,16 @@ interface TimeLeft {
   seconds: number;
 }
 
-const calculateTimeLeft = (targetDate: Date): TimeLeft => {
-  const difference = targetDate.getTime() - new Date().getTime();
+const calculateTimeLeft = (targetDate: Date | string): TimeLeft => {
+  // Convert string to Date if needed
+  const targetDateObj = typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
+  
+  // Ensure we have a valid date
+  if (!targetDateObj || isNaN(targetDateObj.getTime())) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  
+  const difference = targetDateObj.getTime() - new Date().getTime();
   
   if (difference <= 0) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 };

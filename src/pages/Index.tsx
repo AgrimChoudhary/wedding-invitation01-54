@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -72,12 +73,37 @@ const groomFamily: FamilyDetails = {
   ]
 };
 
+// Sample photos for the carousel
+const weddingPhotos = [
+  {
+    src: "/lovable-uploads/5afd7a5a-50bd-433d-8e23-7e0d3aa5b16f.png",
+    alt: "Couple at engagement ceremony",
+    caption: "Our Engagement Day"
+  },
+  {
+    src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png",
+    alt: "Pre-wedding photoshoot",
+    caption: "Pre-wedding Photoshoot"
+  },
+  {
+    src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png",
+    alt: "First date memory",
+    caption: "Where It All Began"
+  },
+  {
+    src: "/lovable-uploads/762354ab-cff9-4c6a-9800-94eeefc3c43c.png",
+    alt: "Proposal moment",
+    caption: "The Proposal"
+  }
+];
+
 // The actual Index component
 const Index = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
+  const [dashboardOpen, setDashboardOpen] = useState(false);
 
   useEffect(() => {
     document.body.classList.add('overflow-hidden');
@@ -130,7 +156,7 @@ const Index = () => {
       {/* Countdown Section */}
       <section className="py-8 px-4 text-center relative z-10">
         <h2 className="text-2xl sm:text-3xl text-maroon font-semibold mb-4">Countdown to Our Special Day</h2>
-        <Countdown weddingDate="2025-03-30T00:00:00" />
+        <Countdown targetDate="2025-03-30T00:00:00" />
       </section>
 
       {/* Event Details Section */}
@@ -138,7 +164,7 @@ const Index = () => {
         <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Event Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <EventCard
-            icon={Flower}
+            icon={<Flower className="text-gold-light h-6 w-6" />}
             title="Haldi Ceremony"
             date="29th March 2025"
             time="10:00 AM"
@@ -146,7 +172,7 @@ const Index = () => {
             description="A traditional ceremony where the bride and groom are blessed with turmeric paste."
           />
           <EventCard
-            icon={Heart}
+            icon={<Heart className="text-gold-light h-6 w-6" />}
             title="Wedding Ceremony"
             date="30th March 2025"
             time="11:00 AM"
@@ -154,7 +180,7 @@ const Index = () => {
             description="The main event where Priya and Vijay will exchange vows and begin their journey as one."
           />
           <EventCard
-            icon={Music}
+            icon={<Music className="text-gold-light h-6 w-6" />}
             title="Sangeet Night"
             date="29th March 2025"
             time="7:00 PM"
@@ -162,7 +188,7 @@ const Index = () => {
             description="A night filled with music, dance, and celebration as we rejoice in the union of Priya and Vijay."
           />
           <EventCard
-            icon={Paintbrush}
+            icon={<Paintbrush className="text-gold-light h-6 w-6" />}
             title="Reception"
             date="30th March 2025"
             time="7:00 PM"
@@ -175,7 +201,7 @@ const Index = () => {
       {/* Photo Carousel Section */}
       <section className="py-8 px-4 relative z-10">
         <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Our Memories</h2>
-        <PhotoCarousel />
+        <PhotoCarousel photos={weddingPhotos} />
       </section>
 
       {/* Family Details Section */}
@@ -204,9 +230,17 @@ const Index = () => {
       {/* Dashboard Section */}
       <section className="py-8 px-4 relative z-10">
         <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Dashboard</h2>
-        <DashboardComingSoonPopup>
-          <Dashboard />
+        <DashboardComingSoonPopup open={dashboardOpen} onClose={() => setDashboardOpen(false)}>
+          <Dashboard open={dashboardOpen} onClose={() => setDashboardOpen(false)} />
         </DashboardComingSoonPopup>
+        <div className="text-center mt-4">
+          <button 
+            onClick={() => setDashboardOpen(true)}
+            className="bg-gold-light text-maroon py-3 px-6 rounded-full font-semibold hover:bg-gold-light/80 transition-colors"
+          >
+            Open Wedding Dashboard
+          </button>
+        </div>
       </section>
 
       {/* Footer Section */}
