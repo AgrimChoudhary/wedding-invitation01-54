@@ -72,4 +72,156 @@ const groomFamily: FamilyDetails = {
   ]
 };
 
-// ... keep existing code (the rest of the Index component)
+// The actual Index component
+const Index = () => {
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
+  const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
+
+  useEffect(() => {
+    document.body.classList.add('overflow-hidden');
+    initCursorGlitter();
+    initTouchGlitter();
+    createMandalaEffect();
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, []);
+
+  const handleFamilyOpen = (family: FamilyDetails) => {
+    setSelectedFamily(family);
+    setFamilyDialogOpen(true);
+  };
+
+  const handleFamilyClose = () => {
+    setFamilyDialogOpen(false);
+    setSelectedFamily(null);
+  };
+
+  return (
+    <div className="font-cormorant relative overflow-hidden">
+
+      <FamilyDetailsDialog 
+        open={familyDialogOpen}
+        onOpenChange={setFamilyDialogOpen}
+        familyDetails={selectedFamily}
+      />
+
+      <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center z-0" style={{ backgroundImage: "url('/bg-flower.svg')" }}></div>
+      <div id="glitter-container" className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"></div>
+
+      {/* Header Section */}
+      <header className="pt-6 pb-4 px-4 text-center relative z-10">
+        <GaneshaHeader />
+        <h1 className="text-3xl sm:text-5xl text-maroon font-bold mt-4">Priya & Vijay</h1>
+        <p className="text-xl sm:text-2xl text-gold-light mt-2">
+          <Calendar className="inline-block mr-1 mb-1 h-5 w-5 text-gold-light" />
+          30th March 2025
+        </p>
+      </header>
+
+      {/* Couple Illustration */}
+      <section className="px-4 relative z-10">
+        <CoupleIllustration />
+      </section>
+
+      {/* Countdown Section */}
+      <section className="py-8 px-4 text-center relative z-10">
+        <h2 className="text-2xl sm:text-3xl text-maroon font-semibold mb-4">Countdown to Our Special Day</h2>
+        <Countdown weddingDate="2025-03-30T00:00:00" />
+      </section>
+
+      {/* Event Details Section */}
+      <section className="py-8 px-4 relative z-10">
+        <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Event Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EventCard
+            icon={Flower}
+            title="Haldi Ceremony"
+            date="29th March 2025"
+            time="10:00 AM"
+            venue="Bride's Residence"
+            description="A traditional ceremony where the bride and groom are blessed with turmeric paste."
+          />
+          <EventCard
+            icon={Heart}
+            title="Wedding Ceremony"
+            date="30th March 2025"
+            time="11:00 AM"
+            venue="The Grand Venue, City Center"
+            description="The main event where Priya and Vijay will exchange vows and begin their journey as one."
+          />
+          <EventCard
+            icon={Music}
+            title="Sangeet Night"
+            date="29th March 2025"
+            time="7:00 PM"
+            venue="The Grand Venue, City Center"
+            description="A night filled with music, dance, and celebration as we rejoice in the union of Priya and Vijay."
+          />
+          <EventCard
+            icon={Paintbrush}
+            title="Reception"
+            date="30th March 2025"
+            time="7:00 PM"
+            venue="The Grand Venue, City Center"
+            description="A grand reception to celebrate the newlyweds with friends, family, and well-wishers."
+          />
+        </div>
+      </section>
+
+      {/* Photo Carousel Section */}
+      <section className="py-8 px-4 relative z-10">
+        <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Our Memories</h2>
+        <PhotoCarousel />
+      </section>
+
+      {/* Family Details Section */}
+      <section className="py-8 px-4 relative z-10">
+        <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Our Families</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="text-center">
+            <button 
+              onClick={() => handleFamilyOpen(brideFamily)}
+              className="bg-gold-light text-maroon py-3 px-6 rounded-full font-semibold hover:bg-gold-light/80 transition-colors"
+            >
+              Meet the Bride's Family
+            </button>
+          </div>
+          <div className="text-center">
+            <button 
+              onClick={() => handleFamilyOpen(groomFamily)}
+              className="bg-gold-light text-maroon py-3 px-6 rounded-full font-semibold hover:bg-gold-light/80 transition-colors"
+            >
+              Meet the Groom's Family
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard Section */}
+      <section className="py-8 px-4 relative z-10">
+        <h2 className="text-2xl sm:text-3xl text-maroon font-semibold text-center mb-6">Dashboard</h2>
+        <DashboardComingSoonPopup>
+          <Dashboard />
+        </DashboardComingSoonPopup>
+      </section>
+
+      {/* Footer Section */}
+      <footer className="py-6 px-4 text-center text-cream relative z-10">
+        <p className="text-base">
+          <Sparkles className="inline-block mr-1 mb-1 h-4 w-4 text-gold-light" />
+          Made with Love <Heart className="inline-block mx-1 h-4 w-4 text-red-500" /> by Priya & Vijay
+        </p>
+        <p className="text-sm mt-2">
+          <Info className="inline-block mr-1 mb-1 h-4 w-4 text-gold-light" />
+          For any queries, contact us at: <PhoneIcon className="inline-block mx-1 h-4 w-4 text-gold-light" /> +91-9999999999
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default Index;
