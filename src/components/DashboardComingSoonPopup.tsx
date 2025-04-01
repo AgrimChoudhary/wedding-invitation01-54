@@ -12,13 +12,11 @@ import { Button } from '@/components/ui/button';
 interface DashboardComingSoonPopupProps {
   open: boolean;
   onClose: () => void;
-  children?: React.ReactNode;
 }
 
 const DashboardComingSoonPopup: React.FC<DashboardComingSoonPopupProps> = ({
   open,
   onClose,
-  children,
 }) => {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -59,9 +57,6 @@ const DashboardComingSoonPopup: React.FC<DashboardComingSoonPopupProps> = ({
             </Button>
           </div>
         </div>
-        
-        {/* Render children if provided (for future implementation) */}
-        {children}
       </DialogContent>
     </Dialog>
   );

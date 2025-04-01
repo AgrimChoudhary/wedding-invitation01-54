@@ -9,7 +9,6 @@ interface EventCardProps {
   time: string;
   venue: string;
   icon: React.ReactNode;
-  description?: string;
   images?: string[];
   className?: string;
 }
@@ -20,7 +19,6 @@ const EventCard: React.FC<EventCardProps> = ({
   time,
   venue,
   icon,
-  description,
   images = [],
   className,
 }) => {
@@ -73,10 +71,6 @@ const EventCard: React.FC<EventCardProps> = ({
           <MapPin size={16} className="text-gold-light mr-2 flex-shrink-0" />
           <p className="animate-pulse-slow">{venue}</p>
         </div>
-        
-        {description && (
-          <p className="text-cream/80 text-sm mb-4 font-opensans">{description}</p>
-        )}
         
         <div className="flex justify-center">
           {expanded ? (
