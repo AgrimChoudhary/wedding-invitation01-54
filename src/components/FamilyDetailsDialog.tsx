@@ -1,7 +1,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Flower, Heart, PhoneIcon, Mail, MapPin, Cake, X } from "lucide-react";
+import { Flower, Heart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export type FamilyMember = {
   name: string;
@@ -34,11 +36,13 @@ const FamilyDetailsDialog = ({
   onOpenChange,
   familyDetails,
 }: FamilyDetailsDialogProps) => {
+  const isMobile = useIsMobile();
+  
   if (!familyDetails) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-lg md:max-w-2xl h-[90vh] sm:h-auto overflow-y-auto bg-maroon/95 border-gold-light/50 text-cream p-3 sm:p-6">
+      <DialogContent className="max-w-[95vw] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto bg-maroon/95 border-gold-light/50 text-cream p-3 sm:p-6">
         <div className="absolute right-3 top-3 z-10">
           <button 
             onClick={() => onOpenChange(false)}
@@ -65,73 +69,50 @@ const FamilyDetailsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4">
-          {familyDetails.address && (
-            <div className="text-center mb-4 flex items-center justify-center gap-2">
-              <MapPin className="text-gold-light h-4 w-4" />
-              <span className="text-cream/80 text-sm sm:text-base">{familyDetails.address}</span>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-6 px-1">
+        <div className="mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 px-1">
             {familyDetails.members.map((member, index) => (
               <div 
                 key={index} 
                 className={cn(
-                  "relative gold-border group bg-maroon/60 rounded-lg p-3 sm:p-4",
+                  "relative gold-border rounded-lg overflow-hidden",
                   "transition-all duration-300 hover:shadow-gold",
-                  "before:absolute before:inset-0 before:rounded-lg before:bg-gold-light/5 before:opacity-0",
-                  "before:transition-opacity before:duration-300 group-hover:before:opacity-100"
+                  isMobile ? "p-3" : "p-4"
                 )}
               >
-                <div className="relative z-10">
+                {member.photo && (
+                  <div className="mb-3 w-full h-32 sm:h-40 overflow-hidden rounded-md">
+                    <img 
+                      src={member.photo} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                )}
+                
+                <div className="space-y-1.5">
                   <h3 className="gold-text text-lg sm:text-xl font-cormorant font-bold">{member.name}</h3>
                   <p className="text-cream/80 italic text-sm sm:text-base">{member.relation}</p>
                   
                   {member.description && (
                     <p className="text-cream/70 mt-2 text-xs sm:text-sm">{member.description}</p>
                   )}
-                  
-                  <div className="mt-3 flex flex-col space-y-1.5">
-                    {member.birthdate && (
-                      <div className="flex items-center gap-2 text-xs text-cream/70">
-                        <Cake className="h-3.5 w-3.5 text-gold-light/70 flex-shrink-0" />
-                        <span className="truncate">{member.birthdate}</span>
-                      </div>
-                    )}
-                    
-                    {member.phone && (
-                      <div className="flex items-center gap-2 text-xs text-cream/70">
-                        <PhoneIcon className="h-3.5 w-3.5 text-gold-light/70 flex-shrink-0" />
-                        <a 
-                          href={`tel:${member.phone.replace(/\s+/g, '')}`} 
-                          className="truncate hover:text-gold-light/90 transition-colors"
-                        >
-                          {member.phone}
-                        </a>
-                      </div>
-                    )}
-                    
-                    {member.email && (
-                      <div className="flex items-center gap-2 text-xs text-cream/70">
-                        <Mail className="h-3.5 w-3.5 text-gold-light/70 flex-shrink-0" />
-                        <a 
-                          href={`mailto:${member.email}`} 
-                          className="truncate hover:text-gold-light/90 transition-colors"
-                        >
-                          {member.email}
-                        </a>
-                      </div>
-                    )}
-                    
-                    {member.location && (
-                      <div className="flex items-center gap-2 text-xs text-cream/70">
-                        <MapPin className="h-3.5 w-3.5 text-gold-light/70 flex-shrink-0" />
-                        <span className="truncate">{member.location}</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
+                
+                {/* Show contact information on click for mobile users */}
+                {isMobile && (member.phone || member.email || member.location || member.birthdate) && (
+                  <Collapsible className="mt-3 pt-2 border-t border-gold-light/20">
+                    <CollapsibleTrigger className="w-full text-xs text-gold-light/80 flex items-center justify-center">
+                      <span>Show details</span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2 pt-2 space-y-1.5 text-xs text-cream/70">
+                      {member.birthdate && <p>Birthday: {member.birthdate}</p>}
+                      {member.phone && <p>Phone: {member.phone}</p>}
+                      {member.email && <p>Email: {member.email}</p>}
+                      {member.location && <p>Location: {member.location}</p>}
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
               </div>
             ))}
           </div>
