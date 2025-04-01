@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Flower, Heart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
 
 export type FamilyMember = {
   name: string;
@@ -40,6 +41,9 @@ const FamilyDetailsDialog = ({
   
   if (!familyDetails) return null;
 
+  // Extract just the family name without "& Family" part
+  const familyName = familyDetails.title.split(" Family")[0];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto bg-maroon/95 border-gold-light/50 text-cream p-3 sm:p-6">
@@ -61,59 +65,44 @@ const FamilyDetailsDialog = ({
               ) : (
                 <Heart className="text-gold-light h-5 w-5 sm:h-6 sm:w-6" />
               )}
-              {familyDetails.title}
+              {familyName} Family
             </span>
           </DialogTitle>
-          <DialogDescription className="text-center text-cream/80 text-base sm:text-lg font-cormorant mt-2">
-            {familyDetails.description}
-          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 px-1">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 px-1">
             {familyDetails.members.map((member, index) => (
-              <div 
+              <Card 
                 key={index} 
-                className={cn(
-                  "relative gold-border rounded-lg overflow-hidden",
-                  "transition-all duration-300 hover:shadow-gold",
-                  isMobile ? "p-3" : "p-4"
-                )}
+                className="bg-maroon/60 border-gold-light/30 hover:shadow-gold transition-all duration-300"
               >
-                {member.photo && (
-                  <div className="mb-3 w-full h-32 sm:h-40 overflow-hidden rounded-md">
-                    <img 
-                      src={member.photo} 
-                      alt={member.name} 
-                      className="w-full h-full object-cover object-center"
-                    />
+                <CardContent className="p-4 flex flex-col items-center text-center">
+                  <div className="mb-3">
+                    {member.photo ? (
+                      <Avatar className="h-20 w-20 border-2 border-gold-light/50">
+                        <AvatarImage src={member.photo} alt={member.name} />
+                        <AvatarFallback className="bg-gold-light/20 text-lg font-medium text-gold-light">
+                          {member.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Avatar className="h-20 w-20 border-2 border-gold-light/50">
+                        <AvatarFallback className="bg-gold-light/20 text-lg font-medium text-gold-light">
+                          {member.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                   </div>
-                )}
-                
-                <div className="space-y-1.5">
-                  <h3 className="gold-text text-lg sm:text-xl font-cormorant font-bold">{member.name}</h3>
-                  <p className="text-cream/80 italic text-sm sm:text-base">{member.relation}</p>
+                  
+                  <h3 className="gold-text text-lg font-cormorant font-bold mt-1">{member.name}</h3>
+                  <p className="text-cream/80 italic text-sm">{member.relation}</p>
                   
                   {member.description && (
-                    <p className="text-cream/70 mt-2 text-xs sm:text-sm">{member.description}</p>
+                    <p className="text-cream/70 mt-2 text-xs px-2">{member.description}</p>
                   )}
-                </div>
-                
-                {/* Show contact information on click for mobile users */}
-                {isMobile && (member.phone || member.email || member.location || member.birthdate) && (
-                  <Collapsible className="mt-3 pt-2 border-t border-gold-light/20">
-                    <CollapsibleTrigger className="w-full text-xs text-gold-light/80 flex items-center justify-center">
-                      <span>Show details</span>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-2 pt-2 space-y-1.5 text-xs text-cream/70">
-                      {member.birthdate && <p>Birthday: {member.birthdate}</p>}
-                      {member.phone && <p>Phone: {member.phone}</p>}
-                      {member.email && <p>Email: {member.email}</p>}
-                      {member.location && <p>Location: {member.location}</p>}
-                    </CollapsibleContent>
-                  </Collapsible>
-                )}
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
