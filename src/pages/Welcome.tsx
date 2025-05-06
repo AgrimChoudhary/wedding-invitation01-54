@@ -1,6 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Fade } from "@/utils/animationUtils";
 import AudioPlayer from '@/components/AudioPlayer';
 import Countdown from '@/components/Countdown';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
@@ -13,6 +13,9 @@ import Diya from '@/components/Diya';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import { toast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import Heart from '@/components/Heart';
+import ArrowRight from '@/components/ArrowRight';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -27,6 +30,7 @@ const Welcome = () => {
   const [showMehendiModal, setShowMehendiModal] = useState(false);
   const [showReceptionModal, setShowReceptionModal] = useState(false);
   const [showWeddingModal, setShowWeddingModal] = useState(false);
+  const [showDashboardModal, setShowDashboardModal] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   
   // Set the generic guest name instead of a specific name
@@ -58,6 +62,10 @@ const Welcome = () => {
     setTimeout(() => {
       navigate('/invitation');
     }, 1200);
+  };
+
+  const handleDashboard = () => {
+    setShowDashboardModal(true);
   };
 
   // Create decorative particle effect
@@ -304,7 +312,10 @@ const Welcome = () => {
           `}</style>
         </div>
         
-        {/* ... keep existing code (conditionals, dialogs, etc) */}
+        {/* Show Dashboard Modal */}
+        {showDashboardModal && (
+          <DashboardComingSoonPopup onClose={() => setShowDashboardModal(false)} />
+        )}
       </div>
     </div>
   );

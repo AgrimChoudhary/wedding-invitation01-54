@@ -1,10 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Diya from "@/components/Diya";
 import { toast } from "@/hooks/use-toast";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
 
 const Index = () => {
@@ -12,7 +13,7 @@ const Index = () => {
   const [passcode, setPasscode] = useState("");
   const [showRedirect, setShowRedirect] = useState(false);
   const navigate = useNavigate();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const audio = new Audio(
