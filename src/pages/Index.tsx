@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -16,6 +16,9 @@ import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDi
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import PromotionCard from '@/components/PromotionCard';
+import TypingText from '@/components/TypingText';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -119,12 +122,15 @@ const Index = () => {
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [invitationAccepted, setInvitationAccepted] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [newGuestName, setNewGuestName] = useState('');
   const { toast } = useToast();
   
   useEffect(() => {
     const storedName = localStorage.getItem('guestName');
     if (storedName) {
       setGuestName(storedName);
+      setNewGuestName(storedName);
     }
     
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
@@ -206,12 +212,28 @@ const Index = () => {
 
   const handleAcceptInvitation = () => {
     setInvitationAccepted(true);
+    setEditingName(true);
     toast({
       title: "Invitation Accepted!",
       description: "Thank you for accepting our invitation. We look forward to celebrating with you!",
       variant: "default",
       duration: 5000,
     });
+  };
+
+  const handleSaveGuestName = () => {
+    if (newGuestName.trim()) {
+      setGuestName(newGuestName.trim());
+      localStorage.setItem('guestName', newGuestName.trim());
+      setEditingName(false);
+      
+      toast({
+        title: "Name Updated!",
+        description: "Your name has been saved. We look forward to celebrating with you!",
+        variant: "default",
+        duration: 3000,
+      });
+    }
   };
 
   const weddingDate = new Date("2025-03-30T17:00:00");
@@ -298,7 +320,7 @@ const Index = () => {
       {guestName && (
         <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
           <p className="font-cormorant text-lg md:text-xl">
-            Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
+            Welcome, <TypingText text={guestName} className="font-bold" />! We're delighted you could join us.
           </p>
         </div>
       )}
@@ -688,7 +710,33 @@ const Index = () => {
             <div className="bg-gold-light/10 border border-gold-light/40 rounded-lg p-6 animate-fade-in">
               <CheckCircle className="text-gold-light mx-auto mb-3" size={32} />
               <h3 className="font-cormorant gold-text text-2xl font-bold mb-2">Thank You!</h3>
-              <p className="text-cream/90">We look forward to celebrating our special day with you!</p>
+              <p className="text-cream/90 mb-4">We look forward to celebrating our special day with you!</p>
+              
+              {editingName ? (
+                <div className="max-w-xs mx-auto">
+                  <p className="text-gold-light/80 text-sm mb-2">Please enter your name:</p>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={newGuestName}
+                      onChange={(e) => setNewGuestName(e.target.value)}
+                      placeholder="Your Name"
+                      className="bg-maroon/50 border-gold-light/30 text-cream focus-visible:ring-gold-light"
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleSaveGuestName}
+                      className="bg-gold-gradient text-maroon px-4 py-2 rounded-md hover:scale-105 transition-transform"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2 text-gold-light hover:text-gold-light/80 transition-colors cursor-pointer" onClick={() => setEditingName(true)}>
+                  <TypingText text={guestName} className="text-lg font-cormorant" typingSpeed={80} />
+                  <Pencil size={16} />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -751,6 +799,17 @@ const Index = () => {
               </a>
             </p>
           </div>
+          
+          <div className="my-8">
+            <PromotionCard className="max-w-md mx-auto" />
+          </div>
+          
+          <div className="mt-8 pt-4 border-t border-gold-light/20">
+            <p className="text-cream/60 text-sm flex items-center justify-center">
+              Made with <Heart size={14} className="mx-1 text-gold-light" fill="rgba(255,215,0,0.3)" /> by 
+              <a href="tel:+919549461861" className="text-gold-light hover:underline ml-1">Utsavy</a>
+            </p>
+          </div>
         </div>
       </footer>
       
@@ -759,6 +818,42 @@ const Index = () => {
         onOpenChange={setFamilyDialogOpen} 
         familyDetails={selectedFamily} 
       />
+      
+      {/* Coming soon popup */}
+      <DashboardComingSoonPopup
+        open={comingSoonOpen}
+        onClose={() => setComingSoonOpen(false)}
+      />
+      
+      <style jsx>{`
+        @keyframes float-heart {
+          0% { 
+            transform: translateY(0) rotate(var(--rotation, 0deg)) scale(0); 
+            opacity: 0; 
+          }
+          10% { 
+            opacity: 0.8; 
+            transform: translateY(10px) rotate(var(--rotation, 0deg)) scale(1); 
+          }
+          100% { 
+            transform: translateY(100vh) rotate(var(--rotation, 0deg)) scale(0.5); 
+            opacity: 0; 
+          }
+        }
+        .lotus-flower {
+          position: absolute;
+          pointer-events: none;
+          animation: float 20s linear infinite, spin-slow 40s linear infinite;
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+          50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+        .animate-pulse-glow {
+          animation: pulse-glow 2s infinite;
+        }
+      `}</style>
     </div>
   );
 };
