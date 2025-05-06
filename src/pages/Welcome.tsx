@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -313,9 +312,10 @@ const Welcome = () => {
         </div>
         
         {/* Show Dashboard Modal */}
-        {showDashboardModal && (
-          <DashboardComingSoonPopup onClose={() => setShowDashboardModal(false)} />
-        )}
+        <DashboardComingSoonPopup 
+          open={showDashboardModal} 
+          onClose={() => setShowDashboardModal(false)} 
+        />
       </div>
     </div>
   );
