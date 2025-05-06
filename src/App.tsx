@@ -1,25 +1,34 @@
 
-import { useState } from 'react'
-import './App.css'
-import Index from './pages/Index'
-import Welcome from './pages/Welcome'
-import NotFound from './pages/NotFound'
-import WishingWall from './pages/WishingWall'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Toaster } from './components/ui/toaster'
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import Index from "./pages/Index";
+import Welcome from "./pages/Welcome";
+import NotFound from "./pages/NotFound";
+import AudioPlayer from "./components/AudioPlayer";
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/invitation" element={<Welcome />} />
-        <Route path="/wishing-wall" element={<WishingWall />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
       <Toaster />
-    </BrowserRouter>
-  )
-}
+      <Sonner />
+      <BrowserRouter>
+        {/* Audio player for the entire app - loaded with priority */}
+        <AudioPlayer />
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route path="/invitation" element={<Index />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
-export default App
+export default App;
