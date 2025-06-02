@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AudioPlayer from '@/components/AudioPlayer';
+import TypingText from '@/components/TypingText';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -184,7 +186,7 @@ const Welcome = () => {
                 </div>
               </div>
               <p className="gold-text text-xl font-cormorant animate-pulse">
-                {loadingText}
+                <TypingText text={loadingText} typingSpeed={50} />
               </p>
             </div>
           ) : (
@@ -193,7 +195,7 @@ const Welcome = () => {
               isEntering ? "opacity-0 transform -translate-y-10" : "opacity-100"
             )}>
               <p className="font-cormorant text-2xl gold-text mb-2">
-                Namaste, <span className="font-bold">{guestName}</span>!
+                Namaste, <TypingText text={guestName} className="font-bold" />!
               </p>
               
               <p className="text-cream mb-6 font-opensans">
@@ -257,6 +259,15 @@ const Welcome = () => {
         .wedding-pattern-bottom {
           background-image: url("data:image/svg+xml,%3Csvg width='40' height='12' viewBox='0 0 40 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,12 L40,12 L40,10 C30,0 10,0 0,10 L0,12 Z' fill='%23FFD700' fill-opacity='0.2'/%3E%3C/svg%3E");
           background-repeat: repeat-x;
+        }
+        
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        
+        .animate-blink {
+          animation: blink 1s infinite;
         }
       `}</style>
     </div>
