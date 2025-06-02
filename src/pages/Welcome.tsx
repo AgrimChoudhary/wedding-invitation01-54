@@ -146,12 +146,12 @@ const Welcome = () => {
           </div>
           
           <h1 className="font-cormorant text-4xl md:text-5xl gold-text font-bold mb-4 animate-scale-up">
-            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
+            RCB <span className="inline-block mx-1 md:mx-3">&</span> IPL trophy
           </h1>
           
           <div className="gold-text font-cormorant text-lg md:text-xl italic mb-6">
             <p className="mb-1">Welcome to our Wedding Celebration</p>
-            <p>30th March 2025</p>
+            <p>3rd June 2025</p>
           </div>
         </div>
         

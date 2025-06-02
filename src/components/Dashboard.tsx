@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Countdown from './Countdown';
@@ -14,7 +13,7 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
   // Update the wedding date
-  const weddingDate = new Date('2025-03-30T00:00:00');
+  const weddingDate = new Date('2025-06-03T19:30:00');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -64,20 +63,16 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
                     
                     <ul className="space-y-3">
                       <li className="flex justify-between">
-                        <span className="text-cream/90">Mehndi Ceremony</span>
-                        <span className="text-gold-light">28 March 2025</span>
+                        <span className="text-cream/90">Playoff 2 - MI vs PBKS</span>
+                        <span className="text-gold-light">1 June 2025</span>
                       </li>
                       <li className="flex justify-between">
-                        <span className="text-cream/90">Sangeet Night</span>
-                        <span className="text-gold-light">28 March 2025</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span className="text-cream/90">Haldi Ceremony</span>
-                        <span className="text-gold-light">29 March 2025</span>
+                        <span className="text-cream/90">Final Toss RCB vs PBKS</span>
+                        <span className="text-gold-light">3 June 2025</span>
                       </li>
                       <li className="flex justify-between border-t border-gold-light/20 pt-2 mt-2">
                         <span className="text-cream font-bold">Wedding Ceremony</span>
-                        <span className="text-gold-light font-bold">30 March 2025</span>
+                        <span className="text-gold-light font-bold">3 June 2025</span>
                       </li>
                     </ul>
                   </div>
@@ -149,9 +144,9 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
               </div>
               
               <MapLocation
-                venueName="The Royal Celebration Hall"
-                address="123 Wedding Lane, Wedding City, WC 12345"
-                googleMapsUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2174330532673!2d-73.9888539!3d40.7493051!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9aeb1c6b5%3A0x35b1cfbc89a6097f!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1680566826343!5m2!1sen!2sus"
+                venueName="Narendra Modi Stadium"
+                address="Ahmedabad"
+                googleMapsUrl="https://g.co/kgs/45CVZL5"
                 className="mb-8"
               />
             </div>

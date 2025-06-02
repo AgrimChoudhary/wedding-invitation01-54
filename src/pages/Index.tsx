@@ -19,90 +19,81 @@ import { useToast } from '@/hooks/use-toast';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
-  title: "Ramesh & Rameshi Family",
-  description: "The bride's family is known for their warmth and hospitality. They have been residents of Wedding City for three generations and are well-respected in the community.",
-  address: "23 Marigold Lane, Wedding City",
+  title: "IPL Trophy Family",
+  description: "The IPL Trophy family represents the pinnacle of T20 cricket excellence, bringing together the best of cricket talent from around the world.",
+  address: "BCCI Headquarters, Mumbai",
   members: [
     {
-      name: "Ramesh Kumar",
+      name: "IPL Chairman",
       relation: "Father of the Bride",
-      description: "A respected businessman who loves gardening and classical music in his free time.",
-      phone: "+91 98765 43210",
-      email: "ramesh@example.com",
-      birthdate: "April 15, 1970",
-      location: "Wedding City"
+      description: "A visionary leader who has transformed cricket with the IPL.",
+      phone: "+91 98765 43215",
+      email: "iplchairman@example.com",
+      birthdate: "October 7, 1968",
+      location: "Mumbai"
     },
     {
-      name: "Rameshi Devi",
-      relation: "Mother of the Bride",
-      description: "A loving homemaker known for her delicious cooking and kind heart.",
-      phone: "+91 98765 43211",
-      email: "rameshi@example.com",
-      birthdate: "June 22, 1972",
-      location: "Wedding City"
-    },
-    {
-      name: "Priya Kumar",
+      name: "IPL Trophy",
       relation: "The Bride",
-      description: "A software engineer who loves to paint and travel. She met Vijay during a company hackathon.",
-      phone: "+91 98765 43212",
-      email: "priya@example.com",
-      birthdate: "May 5, 1995",
-      location: "Bangalore"
-    },
-    {
-      name: "Rahul Kumar",
-      relation: "Brother of the Bride",
-      description: "Currently studying medicine and aspires to be a neurosurgeon.",
-      phone: "+91 98765 43213",
-      email: "rahul@example.com",
-      birthdate: "November 12, 1998",
-      location: "Delhi"
+      description: "The most coveted prize in T20 cricket, symbolizing excellence and achievement.",
+      phone: "+91 98765 43217",
+      email: "ipltrophy@example.com",
+      birthdate: "July 18, 1993",
+      location: "Mumbai"
     }
   ]
 };
 
 const groomFamily: FamilyDetails = {
   side: "groom",
-  title: "Harkesh & Harkeshi Family",
-  description: "The groom's family has a rich cultural heritage and is known for their contributions to arts and education in the community.",
-  address: "45 Jasmine Road, Wedding City",
+  title: "RCB Family",
+  description: "The Royal Challengers Bangalore family, known for their passionate fan base and never-give-up spirit. Led by Faf du Plessis, they are ready to lift their first IPL trophy.",
+  address: "M. Chinnaswamy Stadium, Bangalore",
   members: [
     {
-      name: "Harkesh Singh",
-      relation: "Father of the Groom",
-      description: "A retired professor who now spends his time writing books on history.",
-      phone: "+91 98765 43215",
-      email: "harkesh@example.com",
-      birthdate: "October 7, 1968",
-      location: "Wedding City"
-    },
-    {
-      name: "Harkeshi Kaur",
-      relation: "Mother of the Groom",
-      description: "A talented classical dancer who has taught dance to hundreds of students.",
-      phone: "+91 98765 43216",
-      email: "harkeshi@example.com",
-      birthdate: "January 3, 1970",
-      location: "Wedding City"
-    },
-    {
-      name: "Vijay Singh",
-      relation: "The Groom",
-      description: "A product manager who is passionate about photography and mountain climbing.",
-      phone: "+91 98765 43217",
-      email: "vijay@example.com",
-      birthdate: "July 18, 1993",
+      name: "Faf du Plessis",
+      relation: "Father of the Groom (Captain)",
+      description: "The charismatic leader who has transformed RCB's fortunes with his calm leadership and explosive batting.",
+      phone: "+91 98765 43210",
+      email: "faf@rcb.com",
+      birthdate: "July 13, 1984",
       location: "Bangalore"
     },
     {
-      name: "Anita Singh",
-      relation: "Sister of the Groom",
-      description: "An architect who loves designing sustainable buildings.",
-      phone: "+91 98765 43218",
-      email: "anita@example.com",
-      birthdate: "February 25, 1996",
-      location: "Mumbai"
+      name: "Andy Flower",
+      relation: "Mother of the Groom (Head Coach)",
+      description: "The strategic mastermind behind RCB's resurgence, bringing his wealth of experience to guide the team.",
+      phone: "+91 98765 43211",
+      email: "andy@rcb.com",
+      birthdate: "April 28, 1968",
+      location: "Bangalore"
+    },
+    {
+      name: "Virat Kohli",
+      relation: "Brother of the Groom",
+      description: "The heart and soul of RCB, bringing passion and determination to every match.",
+      phone: "+91 98765 43212",
+      email: "virat@rcb.com",
+      birthdate: "November 5, 1988",
+      location: "Bangalore"
+    },
+    {
+      name: "Glenn Maxwell",
+      relation: "Brother of the Groom",
+      description: "The explosive all-rounder who can change the game in a matter of overs.",
+      phone: "+91 98765 43213",
+      email: "maxwell@rcb.com",
+      birthdate: "October 14, 1988",
+      location: "Bangalore"
+    },
+    {
+      name: "Mohammed Siraj",
+      relation: "Brother of the Groom",
+      description: "The pace spearhead who leads RCB's bowling attack with skill and determination.",
+      phone: "+91 98765 43214",
+      email: "siraj@rcb.com",
+      birthdate: "March 13, 1994",
+      location: "Bangalore"
     }
   ]
 };
@@ -214,71 +205,77 @@ const Index = () => {
     });
   };
 
-  const weddingDate = new Date("2025-03-30T17:00:00");
+  const weddingDate = new Date("2025-06-03T00:00:00+05:30");
 
   const events = [
     {
-      title: "Mehndi Ceremony",
-      date: "28 March 2025",
-      time: "10:00 AM - 2:00 PM",
-      venue: "Garden Court, The Royal Celebration Hall, Wedding City",
+      title: "Playoff 2 - MI vs PBKS",
+      date: "1 June 2025",
+      time: "7:30 PM - 11:30 PM",
+      venue: "Narendra Modi Stadium, Ahmedabad",
       icon: <Paintbrush size={24} className="text-maroon" />,
-      googleMapsUrl: "https://maps.google.com/?q=Garden+Court+Royal+Celebration+Hall+Wedding+City"
+      googleMapsUrl: "https://g.co/kgs/45CVZL5"
     },
     {
-      title: "Sangeet Night",
-      date: "28 March 2025",
-      time: "7:00 PM - 11:00 PM",
-      venue: "Grand Pavilion, The Royal Celebration Hall, Wedding City",
+      title: "Final Toss RCB vs PBKS",
+      date: "3 June 2025",
+      time: "7:00 PM",
+      venue: "Narendra Modi Stadium, Ahmedabad",
       icon: <Music size={24} className="text-maroon" />,
-      googleMapsUrl: "https://maps.google.com/?q=Grand+Pavilion+Royal+Celebration+Hall+Wedding+City"
+      googleMapsUrl: "https://g.co/kgs/45CVZL5"
     },
     {
-      title: "Haldi Ceremony",
-      date: "29 March 2025",
-      time: "11:00 AM - 2:00 PM",
-      venue: "Courtyard, The Royal Celebration Hall, Wedding City",
-      icon: <Sparkles size={24} className="text-maroon" />,
-      googleMapsUrl: "https://maps.google.com/?q=Courtyard+Royal+Celebration+Hall+Wedding+City"
-    },
-    {
-      title: "Wedding Ceremony",
-      date: "30 March 2025",
-      time: "5:00 PM - 8:00 PM",
-      venue: "Main Hall, The Royal Celebration Hall, Wedding City",
+      title: "Final Mukabla",
+      date: "3 June 2025",
+      time: "7:30 PM - 11:30 PM",
+      venue: "Narendra Modi Stadium, Ahmedabad",
       icon: <Heart size={24} className="text-maroon" />,
-      googleMapsUrl: "https://maps.google.com/?q=Main+Hall+Royal+Celebration+Hall+Wedding+City"
+      googleMapsUrl: "https://g.co/kgs/45CVZL5"
+    },
+    {
+      title: "Trophy Lifting",
+      date: "3 June 2025",
+      time: "12:00 AM",
+      venue: "Narendra Modi Stadium, Ahmedabad",
+      icon: <Sparkles size={24} className="text-maroon" />,
+      googleMapsUrl: "https://g.co/kgs/45CVZL5"
     }
   ];
   
   const photos = [
     { 
-      src: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png", 
-      alt: "Couple photo 1",
-      width: 600,
-      height: 800
+      src: "https://img.etimg.com/thumb/width-1200,height-1200,imgsize-57006,resizemode-75,msid-119687196/news/new-updates/dosa-idly-sambar-chutney-rcbs-win-over-csk-in-ipl-ignites-meme-fest-watch-viral-video-of-virat-kohli-teasing-jadeja.jpg", 
+      alt: "RCB vs CSK Match Moment",
+      width: 1200,
+      height: 1200
     },
     { 
-      src: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png", 
-      alt: "Couple photo 2",
-      width: 600,
-      height: 800
+      src: "https://images.moneycontrol.com/static-mcnews/2025/04/20250420131610_Kohli-BCCI.jpg?impolicy=website&width=770&height=431", 
+      alt: "Virat Kohli in Action",
+      width: 770,
+      height: 431
     },
     { 
-      src: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png", 
-      alt: "Couple photo 3",
-      width: 600,
-      height: 800
+      src: "https://i.pinimg.com/236x/27/8d/84/278d84aa87b920c2a73fef777459a735.jpg", 
+      alt: "RCB Team Celebration",
+      width: 236,
+      height: 236
     },
     { 
-      src: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png", 
-      alt: "Couple photo 4",
-      width: 600,
-      height: 800
+      src: "https://images.bhaskarassets.com/thumb/1200x900/web2images/1884/2025/04/20/go-z4ohxuaacvlt_1745172634.jpg", 
+      alt: "RCB Match Moment",
+      width: 1200,
+      height: 900
     },
     { 
-      src: "/lovable-uploads/88954d14-07a5-494c-a5ac-075e055e0223.png", 
-      alt: "Bride and Groom Illustration",
+      src: "https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_960,q_50/lsci/db/PICTURES/CMS/261700/261725.jpg", 
+      alt: "RCB Team Photo",
+      width: 960,
+      height: 640
+    },
+    { 
+      src: "/lovable-uploads/5afd7a5a-50bd-433d-8e23-7e0d3aa5b16f", 
+      alt: "RCB Special Moment",
       width: 600,
       height: 800
     }
@@ -317,10 +314,6 @@ const Index = () => {
             </linearGradient>
           </defs>
         </svg>
-      </div>
-      
-      <div className="pt-6 px-4">
-        <GaneshaHeader />
       </div>
       
       <div className="absolute top-1/3 left-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
@@ -368,7 +361,7 @@ const Index = () => {
           </p>
           
           <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
-            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
+            RCB <span className="inline-block mx-1 md:mx-3">&</span> IPL trophy
           </h1>
           
           <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
@@ -383,7 +376,7 @@ const Index = () => {
             <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
               <span className="font-cormorant text-xl md:text-2xl gold-text">
-                30 March 2025
+                3 June 2025
               </span>
             </div>
           </div>
@@ -484,7 +477,7 @@ const Index = () => {
                 Bride's Parents
                 <Info size={16} className="ml-2 text-gold-light/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
+              <p className="text-center text-cream text-lg font-cormorant">IPL Trophy Family</p>
             </div>
             
             <div 
@@ -498,7 +491,7 @@ const Index = () => {
                 Groom's Parents
                 <Info size={16} className="ml-2 text-gold-light/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">Harkesh & Harkeshi</p>
+              <p className="text-center text-cream text-lg font-cormorant">RCB Family</p>
             </div>
           </div>
         </div>
@@ -743,11 +736,11 @@ const Index = () => {
             <p className="flex flex-wrap justify-center gap-4">
               <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
                 <PhoneIcon className="mr-1" />
-                Priya's Family
+                RCB's Family
               </a>
               <a href="tel:+919876543211" className="text-gold-light hover:underline flex items-center">
                 <PhoneIcon className="mr-1" />
-                Vijay's Family
+                IPL trophy's Family
               </a>
             </p>
           </div>
