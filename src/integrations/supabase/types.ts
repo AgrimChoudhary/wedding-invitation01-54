@@ -133,6 +133,100 @@ export type Database = {
         }
         Relationships: []
       }
+      wish_likes: {
+        Row: {
+          created_at: string
+          guest_name: string
+          id: string
+          wish_id: string
+        }
+        Insert: {
+          created_at?: string
+          guest_name: string
+          id?: string
+          wish_id: string
+        }
+        Update: {
+          created_at?: string
+          guest_name?: string
+          id?: string
+          wish_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wish_likes_wish_id_fkey"
+            columns: ["wish_id"]
+            isOneToOne: false
+            referencedRelation: "wishes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wish_replies: {
+        Row: {
+          created_at: string
+          guest_name: string
+          id: string
+          reply_text: string
+          wish_id: string
+        }
+        Insert: {
+          created_at?: string
+          guest_name: string
+          id?: string
+          reply_text: string
+          wish_id: string
+        }
+        Update: {
+          created_at?: string
+          guest_name?: string
+          id?: string
+          reply_text?: string
+          wish_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wish_replies_wish_id_fkey"
+            columns: ["wish_id"]
+            isOneToOne: false
+            referencedRelation: "wishes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wishes: {
+        Row: {
+          created_at: string
+          guest_name: string
+          id: string
+          likes_count: number
+          replies_count: number
+          team_preference: string | null
+          wish_text: string
+          wish_type: string
+        }
+        Insert: {
+          created_at?: string
+          guest_name: string
+          id?: string
+          likes_count?: number
+          replies_count?: number
+          team_preference?: string | null
+          wish_text: string
+          wish_type?: string
+        }
+        Update: {
+          created_at?: string
+          guest_name?: string
+          id?: string
+          likes_count?: number
+          replies_count?: number
+          team_preference?: string | null
+          wish_text?: string
+          wish_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

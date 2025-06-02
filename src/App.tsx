@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
+import WishingWallPage from "./pages/WishingWallPage";
 import NotFound from "./pages/NotFound";
 import AudioPlayer from "./components/AudioPlayer";
 
@@ -47,6 +48,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/invitation" element={<Index />} />
+            <Route path="/wishing-wall" element={<WishingWallPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

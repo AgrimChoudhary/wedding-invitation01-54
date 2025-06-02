@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Trophy, Crown, Zap } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Trophy, Crown, Zap, MessageSquare, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -457,6 +457,47 @@ const Index = () => {
           ))}
         </div>
       </div>
+      
+      {/* NEW: Wishing Wall CTA Section */}
+      <section className="py-8 px-4 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="bg-gradient-to-br from-red-800/40 to-yellow-700/40 backdrop-blur-sm border-2 border-yellow-400/40 rounded-xl p-6 shadow-2xl animate-scale-up hover:shadow-gold-lg transition-all duration-300">
+            <div className="flex justify-center items-center gap-3 mb-4">
+              <MessageSquare className="text-yellow-400 animate-bounce" size={28} />
+              <h3 className="font-cormorant text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400">
+                Join the RCB Wishing Wall! 🔥
+              </h3>
+              <Users className="text-red-400 animate-pulse" size={28} />
+            </div>
+            
+            <p className="text-yellow-100/90 text-lg mb-6">
+              Share your wishes, engage in cricket banter, and make predictions with fellow fans! 
+              <br />
+              <span className="text-yellow-400 font-bold">Let's make this viral! 🚀</span>
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button
+                onClick={() => navigate('/wishing-wall')}
+                className="group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-500 hover:to-yellow-400 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <MessageSquare size={18} />
+                  Open Wishing Wall
+                  <Sparkle size={16} className="group-hover:rotate-12 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              </button>
+              
+              <div className="text-sm text-yellow-300/80 flex items-center gap-2">
+                <Heart className="text-red-400" size={14} />
+                <span>Be part of the 12th man army!</span>
+                <Trophy className="text-yellow-400" size={14} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       
       {/* Enhanced family section */}
       <section className="py-10 px-4 relative z-10">
