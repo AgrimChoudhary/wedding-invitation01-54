@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Send, Trophy, Crown, Flame, Zap, Star, Users, TrendingUp } from 'lucide-react';
+import { Heart, MessageCircle, Send, Trophy, Crown, Flame, Zap, Star, Users, TrendingUp, Camera, X, ThumbsUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -15,6 +14,7 @@ interface Wish {
   created_at: string;
   likes_count: number;
   replies_count: number;
+  image_url?: string;
 }
 
 interface WishReply {
@@ -23,6 +23,13 @@ interface WishReply {
   guest_name: string;
   reply_text: string;
   created_at: string;
+  likes_count: number;
+}
+
+interface ReplyLike {
+  id: string;
+  reply_id: string;
+  guest_name: string;
 }
 
 const WishingWall = ({ guestName }: { guestName: string }) => {
@@ -34,7 +41,10 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
   const [replies, setReplies] = useState<{ [key: string]: WishReply[] }>({});
   const [newReply, setNewReply] = useState<{ [key: string]: string }>({});
   const [likedWishes, setLikedWishes] = useState<Set<string>>(new Set());
+  const [likedReplies, setLikedReplies] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -87,17 +97,49 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
     setReplies(prev => ({ ...prev, [wishId]: data || [] }));
   };
 
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "Image too large 📸",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
+
   const submitWish = async () => {
     if (!newWish.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    
+    // For now, we'll simulate image upload and just store the preview
+    // In a real app, you'd upload to Supabase storage first
+    const imageUrl = imagePreview || undefined;
+
     const { error } = await supabase
       .from('wishes')
       .insert({
         guest_name: guestName,
         wish_text: newWish.trim(),
         wish_type: wishType,
-        team_preference: teamPreference
+        team_preference: teamPreference,
+        image_url: imageUrl
       });
 
     if (error) {
@@ -108,6 +150,8 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
       });
     } else {
       setNewWish('');
+      setSelectedImage(null);
+      setImagePreview(null);
       toast({
         title: "Wish posted! 🔥",
         description: "Your message is now live on the RCB wall!",
@@ -143,6 +187,29 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
       setLikedWishes(prev => new Set(prev).add(wishId));
     }
     fetchWishes();
+  };
+
+  const toggleReplyLike = async (replyId: string, wishId: string) => {
+    // Simulate reply like functionality
+    if (likedReplies.has(replyId)) {
+      setLikedReplies(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(replyId);
+        return newSet;
+      });
+      toast({
+        title: "Like removed! 👍",
+        description: "Reply unliked successfully",
+        variant: "default",
+      });
+    } else {
+      setLikedReplies(prev => new Set(prev).add(replyId));
+      toast({
+        title: "Reply liked! 🚀",
+        description: "Show some love for great comments!",
+        variant: "default",
+      });
+    }
   };
 
   const submitReply = async (wishId: string) => {
@@ -243,6 +310,36 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
           className="w-full h-24 p-3 bg-red-900/60 border border-yellow-400/40 rounded-lg text-yellow-100 placeholder-yellow-300/50 focus:outline-none focus:border-yellow-400 resize-none"
           maxLength={300}
         />
+
+        {/* Image Upload Section */}
+        <div className="mt-4">
+          {!imagePreview ? (
+            <label className="flex items-center gap-2 px-4 py-2 bg-red-800/60 border border-yellow-400/40 rounded-lg text-yellow-300 hover:bg-red-700/60 transition-all cursor-pointer w-fit">
+              <Camera size={18} />
+              <span>Add Image (Max 5MB)</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="relative inline-block">
+              <img 
+                src={imagePreview} 
+                alt="Preview" 
+                className="max-h-32 rounded-lg border-2 border-yellow-400/40"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
+        </div>
         
         <div className="flex flex-wrap gap-2 mt-4 mb-4">
           <select
@@ -310,6 +407,18 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
             {/* Wish Content */}
             <p className="text-yellow-100 mb-3 leading-relaxed">{wish.wish_text}</p>
 
+            {/* Wish Image */}
+            {wish.image_url && (
+              <div className="mb-3">
+                <img 
+                  src={wish.image_url} 
+                  alt="Wish attachment" 
+                  className="max-h-64 rounded-lg border border-yellow-400/30 hover:border-yellow-400/60 transition-all cursor-pointer"
+                  onClick={() => window.open(wish.image_url, '_blank')}
+                />
+              </div>
+            )}
+
             {/* Wish Actions */}
             <div className="flex items-center gap-4">
               <button
@@ -342,9 +451,23 @@ const WishingWall = ({ guestName }: { guestName: string }) => {
                   <div key={reply.id} className="mb-3 p-3 bg-red-900/30 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-bold text-yellow-400">{reply.guest_name}</span>
-                      <span className="text-xs text-yellow-300/60">
-                        {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true })}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-yellow-300/60">
+                          {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true })}
+                        </span>
+                        <button
+                          onClick={() => toggleReplyLike(reply.id, wish.id)}
+                          className={cn(
+                            "flex items-center gap-1 px-2 py-1 rounded-full transition-all text-xs",
+                            likedReplies.has(reply.id)
+                              ? "bg-red-600/60 text-red-200"
+                              : "bg-red-800/40 text-yellow-300/80 hover:bg-red-700/60"
+                          )}
+                        >
+                          <ThumbsUp size={10} className={likedReplies.has(reply.id) ? "fill-current" : ""} />
+                          {likedReplies.has(reply.id) ? "Liked" : "Like"}
+                        </button>
+                      </div>
                     </div>
                     <p className="text-yellow-100/90 text-sm">{reply.reply_text}</p>
                   </div>

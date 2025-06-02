@@ -18,6 +18,7 @@ import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
 import { useToast } from '@/hooks/use-toast';
 import PromotionCard from '@/components/PromotionCard';
 import TypingText from '@/components/TypingText';
+import RCBPoll from '@/components/RCBPoll';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -457,6 +458,13 @@ const Index = () => {
           ))}
         </div>
       </div>
+      
+      {/* NEW: RCB vs PBKS Poll Section */}
+      <section className="py-8 px-4 relative z-10">
+        <div className="max-w-3xl mx-auto">
+          <RCBPoll guestName={guestName} />
+        </div>
+      </section>
       
       {/* NEW: Wishing Wall CTA Section */}
       <section className="py-8 px-4 relative z-10">
