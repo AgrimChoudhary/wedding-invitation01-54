@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Trophy, Crown, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -16,6 +16,8 @@ import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDi
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import DashboardComingSoonPopup from '@/components/DashboardComingSoonPopup';
 import { useToast } from '@/hooks/use-toast';
+import PromotionCard from '@/components/PromotionCard';
+import TypingText from '@/components/TypingText';
 
 const brideFamily: FamilyDetails = {
   side: "bride",
@@ -104,12 +106,14 @@ const Index = () => {
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
-  const [guestName, setGuestName] = useState('Guest Name');
+  const [guestName, setGuestName] = useState('RCB Haters');
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [invitationAccepted, setInvitationAccepted] = useState(false);
+  const [showGuestInput, setShowGuestInput] = useState(false);
+  const [tempGuestName, setTempGuestName] = useState('');
   const { toast } = useToast();
   
   useEffect(() => {
@@ -197,12 +201,27 @@ const Index = () => {
 
   const handleAcceptInvitation = () => {
     setInvitationAccepted(true);
+    setShowGuestInput(true);
     toast({
-      title: "Invitation Accepted!",
-      description: "Thank you for accepting our invitation. We look forward to celebrating with you!",
+      title: "Invitation Accepted! 🏆",
+      description: "Welcome to the RCB family! Please enter your name to personalize your experience.",
       variant: "default",
       duration: 5000,
     });
+  };
+
+  const handleGuestNameSubmit = () => {
+    if (tempGuestName.trim()) {
+      setGuestName(tempGuestName.trim());
+      localStorage.setItem('guestName', tempGuestName.trim());
+      setShowGuestInput(false);
+      toast({
+        title: "Welcome to the RCB Army! 🔥",
+        description: `Hello ${tempGuestName}! You're now part of the 12th man brigade!`,
+        variant: "default",
+        duration: 5000,
+      });
+    }
   };
 
   const weddingDate = new Date("2025-06-03T00:00:00+05:30");
@@ -213,7 +232,7 @@ const Index = () => {
       date: "1 June 2025",
       time: "7:30 PM - 11:30 PM",
       venue: "Narendra Modi Stadium, Ahmedabad",
-      icon: <Paintbrush size={24} className="text-maroon" />,
+      icon: <Paintbrush size={24} className="text-red-600" />,
       googleMapsUrl: "https://g.co/kgs/45CVZL5"
     },
     {
@@ -221,23 +240,23 @@ const Index = () => {
       date: "3 June 2025",
       time: "7:00 PM",
       venue: "Narendra Modi Stadium, Ahmedabad",
-      icon: <Music size={24} className="text-maroon" />,
+      icon: <Trophy size={24} className="text-yellow-500" />,
       googleMapsUrl: "https://g.co/kgs/45CVZL5"
     },
     {
-      title: "Final Mukabla",
+      title: "Final Mukabla - The Ultimate Battle",
       date: "3 June 2025",
       time: "7:30 PM - 11:30 PM",
       venue: "Narendra Modi Stadium, Ahmedabad",
-      icon: <Heart size={24} className="text-maroon" />,
+      icon: <Zap size={24} className="text-red-500" />,
       googleMapsUrl: "https://g.co/kgs/45CVZL5"
     },
     {
-      title: "Trophy Lifting",
+      title: "Trophy Lifting - RCB's Glory",
       date: "3 June 2025",
       time: "12:00 AM",
       venue: "Narendra Modi Stadium, Ahmedabad",
-      icon: <Sparkles size={24} className="text-maroon" />,
+      icon: <Crown size={24} className="text-yellow-400" />,
       googleMapsUrl: "https://g.co/kgs/45CVZL5"
     }
   ];
@@ -282,101 +301,81 @@ const Index = () => {
   ];
   
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-red-900 via-red-800 to-black">
       {!imagesLoaded && (
-        <div className="fixed inset-0 bg-maroon/90 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-gradient-to-br from-red-900 to-black z-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="gold-text font-cormorant text-xl">Loading our love story...</p>
+            <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-yellow-400 font-cormorant text-xl animate-pulse">Loading RCB's journey to glory...</p>
           </div>
         </div>
       )}
       
+      {/* RCB themed welcome banner */}
       {guestName && (
-        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
-          <p className="font-cormorant text-lg md:text-xl">
-            Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
+        <div className="bg-gradient-to-r from-red-600 to-yellow-500 text-white py-3 px-4 text-center animate-fade-in shadow-lg">
+          <p className="font-cormorant text-lg md:text-xl flex items-center justify-center gap-2">
+            <Crown className="text-yellow-300" size={20} />
+            Welcome to the RCB Army, <span className="font-bold">
+              <TypingText text={guestName} className="text-yellow-200" />
+            </span>! 
+            <Trophy className="text-yellow-300" size={20} />
           </p>
         </div>
       )}
+      
+      {/* Enhanced RCB themed decorative elements */}
+      <div className="absolute top-10 left-10 w-20 h-20 opacity-30 animate-pulse">
+        <div className="w-full h-full bg-gradient-to-br from-red-500 to-yellow-400 rounded-full flex items-center justify-center">
+          <Crown className="text-white" size={32} />
+        </div>
+      </div>
+      
+      <div className="absolute bottom-10 right-10 w-24 h-24 opacity-30 animate-bounce">
+        <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 rounded-full flex items-center justify-center">
+          <Trophy className="text-white" size={36} />
+        </div>
+      </div>
       
       <Diya className="top-20" position="left" />
       <Diya className="bottom-20" position="right" delay={0.5} />
       
-      <div className="absolute left-0 top-0 w-full overflow-hidden opacity-20 pointer-events-none h-20 md:h-40">
-        <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,100 C300,20 500,180 800,50 C1000,0 1200,100 1200,100 L1200,0 L0,0 Z" fill="url(#gold-gradient-top)" />
-          <defs>
-            <linearGradient id="gold-gradient-top" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFD700" />
-              <stop offset="50%" stopColor="#B8860B" />
-              <stop offset="100%" stopColor="#FFD700" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-      
-      <div className="absolute top-1/3 left-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
-        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50,0 Q70,50 50,100 Q30,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
-          <g transform="translate(45, 40)">
-            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
-          </g>
-          <g transform="translate(45, 90)">
-            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
-          </g>
-          <g transform="translate(45, 140)">
-            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
-          </g>
-        </svg>
-      </div>
-      
-      <div className="absolute top-1/4 right-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
-        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50,0 Q30,50 50,100 Q70,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
-          <g transform="translate(55, 40)">
-            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
-          </g>
-          <g transform="translate(55, 90)">
-            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
-          </g>
-          <g transform="translate(55, 140)">
-            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
-          </g>
-        </svg>
-      </div>
-      
+      {/* Enhanced header section */}
       <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 animate-float">
-            <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
-              <div className="bg-maroon p-2 rounded-full">
-                <Heart size={28} className="text-gold-light" />
+            <div className="inline-block p-2 rounded-full bg-gradient-to-r from-red-500 to-yellow-400 shadow-2xl">
+              <div className="bg-gradient-to-br from-red-900 to-black p-3 rounded-full">
+                <Heart size={32} className="text-yellow-400 animate-pulse" />
               </div>
             </div>
           </div>
           
-          <p className="text-gold-light/90 font-opensans tracking-widest animate-fade-in mb-3">
-            WE ARE GETTING MARRIED
+          <p className="text-yellow-400 font-opensans tracking-widest animate-fade-in mb-3 text-sm md:text-base">
+            🏆 THE ULTIMATE CRICKET WEDDING 🏆
           </p>
           
-          <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
-            RCB <span className="inline-block mx-1 md:mx-3">&</span> IPL trophy
+          <h1 className="font-cormorant text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-300 to-red-400 font-bold mb-4 animate-scale-up">
+            RCB <span className="inline-block mx-1 md:mx-3 text-yellow-400">&</span> IPL Trophy
           </h1>
           
-          <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
-            "A journey written in the stars…"
+          <p className="text-yellow-100 text-lg md:text-xl italic font-cormorant animate-fade-in mb-4">
+            "Finally, the wait ends... Ee Sala Cup Namde! 🔥"
           </p>
+          
+          <div className="mb-6 bg-gradient-to-r from-red-800/80 to-yellow-600/80 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
+            <p className="text-white font-bold">12th Man Army Member: <TypingText text={guestName} className="text-yellow-300" /></p>
+          </div>
           
           <div className="mt-8 flex justify-center">
             <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
           </div>
           
           <div className="mt-8 animate-fade-in flex justify-center">
-            <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
-              <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
-              <span className="font-cormorant text-xl md:text-2xl gold-text">
-                3 June 2025
+            <div className="bg-gradient-to-r from-red-700/70 to-yellow-600/70 backdrop-blur-sm px-6 py-4 rounded-xl border-2 border-yellow-400/50 shadow-2xl">
+              <Calendar className="inline-block text-yellow-400 mr-2 mb-1" size={20} />
+              <span className="font-cormorant text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
+                3 June 2025 - Victory Day
               </span>
             </div>
           </div>
@@ -389,20 +388,20 @@ const Index = () => {
             <button 
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
-                "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
-                "overflow-hidden group",
-                showHearts && "bg-opacity-100"
+                "bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-500 hover:to-yellow-400",
+                "text-white font-bold shadow-lg hover:shadow-2xl",
+                "overflow-hidden group transform hover:scale-105",
+                showHearts && "animate-pulse"
               )}
               onClick={() => setShowHearts(!showHearts)}
             >
               <span className="relative z-10 flex items-center">
-                {showHearts ? "Stop Hearts" : "Shower Love"} 
+                {showHearts ? "Stop the Fire 🔥" : "RCB Fire 🔥"} 
                 <Heart className={cn(
                   "ml-2 transition-transform duration-300",
                   showHearts ? "animate-heart-beat" : "group-hover:scale-125"
                 )} size={18} />
               </span>
-              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
             
             <HoverCard>
@@ -410,28 +409,27 @@ const Index = () => {
                 <button 
                   className={cn(
                     "relative px-6 py-3 rounded-full transition-all duration-300",
-                    "border-2 border-gold-light text-gold-light font-bold",
-                    "overflow-hidden hover:bg-gold-light/10 group",
-                    isMandalaVisible && "bg-gold-light/10"
+                    "border-2 border-yellow-400 text-yellow-400 font-bold",
+                    "overflow-hidden hover:bg-yellow-400/10 group transform hover:scale-105",
+                    isMandalaVisible && "bg-yellow-400/10"
                   )}
                   onClick={() => setIsMandalaVisible(!isMandalaVisible)}
                 >
                   <span className="relative z-10 flex items-center">
-                    {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
+                    {isMandalaVisible ? "Hide Magic ✨" : "Show Magic ✨"} 
                     <Sparkle className={cn(
                       "ml-2 transition-transform duration-300",
                       "group-hover:rotate-12 animate-pulse"
                     )} size={18} />
                   </span>
-                  <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
                 </button>
               </HoverCardTrigger>
-              <HoverCardContent className="bg-maroon/90 border-gold-light/30 text-cream p-4 w-80">
+              <HoverCardContent className="bg-red-900/90 border-yellow-400/30 text-yellow-100 p-4 w-80">
                 <div className="flex justify-between space-x-4">
                   <div className="space-y-1">
-                    <h4 className="gold-text text-lg font-cormorant">Experience the Magic</h4>
-                    <p className="text-sm text-cream/80">
-                      Click to reveal a mesmerizing display of sacred symbols and lotus flowers that bring blessings to our union.
+                    <h4 className="text-yellow-400 text-lg font-cormorant">Experience RCB Magic</h4>
+                    <p className="text-sm text-yellow-100/80">
+                      Unleash the power of Royal Challengers with sacred symbols and blessings for our historic victory!
                     </p>
                   </div>
                 </div>
@@ -448,67 +446,62 @@ const Index = () => {
         ></div>
       )}
       
+      {/* Enhanced divider */}
       <div className="relative py-4 overflow-hidden">
-        <div className="absolute left-0 w-full h-px bg-gold-light/30"></div>
-        <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 opacity-60">
+        <div className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+        <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 opacity-80">
           {[...Array(isMobile ? 5 : 10)].map((_, i) => (
-            <div key={i} className="w-4 h-4 md:w-6 md:h-6 relative">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12,2 C14,5 17,7 21,7 C17,7 14,9 12,12 C10,9 7,7 3,7 C7,7 10,5 12,2 Z" fill="#FFD700" opacity="0.8" />
-                <path d="M12,12 C14,15 17,17 21,17 C17,17 14,19 12,22 C10,19 7,17 3,17 C7,17 10,15 12,12 Z" fill="#FFD700" opacity="0.8" />
-              </svg>
+            <div key={i} className="w-4 h-4 md:w-6 md:h-6 relative animate-pulse" style={{ animationDelay: `${i * 0.1}s` }}>
+              <Trophy className="text-yellow-400" fill="currentColor" />
             </div>
           ))}
         </div>
-        <div className="absolute right-0 w-full h-px bg-gold-light/30"></div>
       </div>
       
+      {/* Enhanced family section */}
       <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              className="bg-gradient-to-br from-red-800/60 to-red-900/60 backdrop-blur-sm rounded-xl p-6 border-2 border-yellow-400/30 animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-yellow-400/60"
               onClick={() => handleFamilyClick(brideFamily)}
             >
               <div className="flex justify-center mb-4">
-                <Flower className="text-gold-light" size={28} />
+                <div className="p-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full">
+                  <Trophy className="text-red-900" size={28} />
+                </div>
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Bride's Parents
-                <Info size={16} className="ml-2 text-gold-light/70" />
+              <h3 className="text-center font-cormorant text-xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100 mb-2 flex items-center justify-center">
+                Trophy's Legacy
+                <Info size={16} className="ml-2 text-yellow-400/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">IPL Trophy Family</p>
+              <p className="text-center text-yellow-100 text-lg font-cormorant">IPL Trophy Family 🏆</p>
             </div>
             
             <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              className="bg-gradient-to-br from-red-800/60 to-red-900/60 backdrop-blur-sm rounded-xl p-6 border-2 border-yellow-400/30 animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-yellow-400/60"
               onClick={() => handleFamilyClick(groomFamily)}
             >
               <div className="flex justify-center mb-4">
-                <Star className="text-gold-light" size={28} />
+                <div className="p-3 bg-gradient-to-br from-red-500 to-red-700 rounded-full">
+                  <Crown className="text-yellow-400" size={28} />
+                </div>
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Groom's Parents
-                <Info size={16} className="ml-2 text-gold-light/70" />
+              <h3 className="text-center font-cormorant text-xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100 mb-2 flex items-center justify-center">
+                Royal Challengers
+                <Info size={16} className="ml-2 text-yellow-400/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">RCB Family</p>
+              <p className="text-center text-yellow-100 text-lg font-cormorant">RCB Family 👑</p>
             </div>
           </div>
         </div>
       </section>
       
-      <div className="flex justify-center my-8">
-        <div className="relative px-16">
-          <div className="absolute inset-y-0 left-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
-          <Heart size={24} className="text-gold-light" />
-          <div className="absolute inset-y-0 right-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
-        </div>
-      </div>
-      
+      {/* Enhanced events section */}
       <section className="py-10 px-4 relative z-10" id="events">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
-            Celebration Events
+          <h2 className="text-center font-cormorant text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-red-300 to-yellow-300 font-bold mb-10">
+            🏆 Road to Glory - Match Schedule 🏆
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -534,214 +527,117 @@ const Index = () => {
         </div>
       </section>
       
-      <div className="flex justify-center my-8 overflow-hidden">
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="w-32 h-px bg-gold-gradient"></div>
-            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50,10 C60,30 80,40 90,30 C80,50 90,70 70,75 C50,80 30,70 20,50 C10,30 30,10 50,10 Z" fill="url(#gold-gradient)" opacity="0.7" />
-              <defs>
-                <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFD700" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="w-32 h-px bg-gold-gradient"></div>
-          </div>
-        </div>
-      </div>
-      
       <section className="py-10 px-2 md:px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-            Our Journey
+          <h2 className="font-cormorant text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-red-300 to-yellow-300 font-bold mb-8">
+            🔥 RCB's Journey to Victory 🔥
           </h2>
-          
-          <style>
-            {`
-            .photo-item {
-              transition: all 0.3s ease;
-              position: relative;
-            }
-            
-            .photo-item::before {
-              content: '';
-              position: absolute;
-              inset: 0;
-              border-radius: 0.75rem;
-              padding: 3px;
-              background: linear-gradient(to right, #FFD700, #C5A20A);
-              -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-              -webkit-mask-composite: xor;
-              mask-composite: exclude;
-              opacity: 0;
-              transition: opacity 0.3s ease;
-            }
-            
-            .photo-item:hover {
-              transform: translateY(-5px);
-              box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            }
-            
-            .photo-item:hover::before {
-              opacity: 1;
-            }
-            `}
-          </style>
           
           <PhotoCarousel photos={photos} />
         </div>
       </section>
       
-      <section className="py-10 px-4 relative overflow-hidden z-10">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-            Join Our Celebration
-          </h2>
-          
-          <div className="relative h-40 md:h-60">
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex items-end justify-center gap-4 md:gap-10">
-              <div className="w-10 h-20 md:w-16 md:h-32 bg-gold-gradient rounded-t-full animate-dance-slow">
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
-                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
-                </div>
-              </div>
-              
-              <div className="w-10 h-24 md:w-16 md:h-40 bg-gold-gradient rounded-t-full animate-dance-medium">
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
-                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <p className="text-cream/80 mt-8 font-cormorant text-xl italic">
-            "Dance with us as two hearts become one"
-          </p>
-          
-          <style>
-            {`
-            @keyframes dance-slow {
-              0%, 100% { transform: rotate(-5deg); }
-              50% { transform: rotate(5deg); }
-            }
-            @keyframes dance-medium {
-              0%, 100% { transform: rotate(5deg); }
-              50% { transform: rotate(-5deg); }
-            }
-            .animate-dance-slow {
-              animation: dance-slow 2s ease-in-out infinite;
-              transform-origin: bottom center;
-            }
-            .animate-dance-medium {
-              animation: dance-medium 1.8s ease-in-out infinite;
-              transform-origin: bottom center;
-            }
-            @keyframes float-heart {
-              0% { 
-                transform: translateY(0) rotate(var(--rotation, 0deg)) scale(0); 
-                opacity: 0; 
-              }
-              10% { 
-                opacity: 0.8; 
-                transform: translateY(10px) rotate(var(--rotation, 0deg)) scale(1); 
-              }
-              100% { 
-                transform: translateY(100vh) rotate(var(--rotation, 0deg)) scale(0.5); 
-                opacity: 0; 
-              }
-            }
-            .lotus-flower {
-              position: absolute;
-              pointer-events: none;
-              animation: float 20s linear infinite, spin-slow 40s linear infinite;
-            }
-            `}
-          </style>
-        </div>
-      </section>
-      
+      {/* Enhanced invitation section */}
       <section className="py-10 px-4 text-center relative z-10">
         <div className="max-w-3xl mx-auto">
           {!invitationAccepted ? (
             <button
               onClick={handleAcceptInvitation}
-              className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
+              className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white font-bold text-lg transition-transform duration-300 hover:scale-105 shadow-2xl animate-pulse"
             >
               <span className="relative z-10 font-cormorant font-bold flex items-center">
                 <CheckCircle className="mr-2" size={20} />
-                Accept Invitation
+                Join the RCB Army! 🔥
               </span>
-              <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
             </button>
+          ) : showGuestInput ? (
+            <div className="bg-gradient-to-br from-red-800/60 to-yellow-600/60 backdrop-blur-sm border-2 border-yellow-400/40 rounded-lg p-6 animate-fade-in">
+              <Crown className="text-yellow-400 mx-auto mb-4" size={32} />
+              <h3 className="font-cormorant text-yellow-400 text-2xl font-bold mb-4">Welcome to the 12th Man Army!</h3>
+              <p className="text-yellow-100 mb-4">Enter your name to join the RCB family:</p>
+              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <input
+                  type="text"
+                  value={tempGuestName}
+                  onChange={(e) => setTempGuestName(e.target.value)}
+                  placeholder="Your name..."
+                  className="flex-1 px-4 py-2 rounded-lg bg-red-900/80 border border-yellow-400/50 text-yellow-100 placeholder-yellow-300/70 focus:outline-none focus:border-yellow-400"
+                  onKeyPress={(e) => e.key === 'Enter' && handleGuestNameSubmit()}
+                />
+                <button
+                  onClick={handleGuestNameSubmit}
+                  className="px-6 py-2 bg-gradient-to-r from-yellow-500 to-red-500 text-white font-bold rounded-lg hover:scale-105 transition-transform"
+                >
+                  Join! 🚀
+                </button>
+              </div>
+            </div>
           ) : (
-            <div className="bg-gold-light/10 border border-gold-light/40 rounded-lg p-6 animate-fade-in">
-              <CheckCircle className="text-gold-light mx-auto mb-3" size={32} />
-              <h3 className="font-cormorant gold-text text-2xl font-bold mb-2">Thank You!</h3>
-              <p className="text-cream/90">We look forward to celebrating our special day with you!</p>
+            <div className="bg-gradient-to-br from-red-800/60 to-yellow-600/60 backdrop-blur-sm border-2 border-yellow-400/40 rounded-lg p-6 animate-fade-in">
+              <Crown className="text-yellow-400 mx-auto mb-3" size={32} />
+              <h3 className="font-cormorant text-yellow-400 text-2xl font-bold mb-2">Welcome to the RCB Army!</h3>
+              <p className="text-yellow-100">
+                <TypingText text={`Thank you ${guestName}! See you at the stadium when RCB lifts their first IPL trophy! 🏆`} />
+              </p>
             </div>
           )}
         </div>
       </section>
       
-      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
-        <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
-        
-        <div className="absolute top-10 left-10 w-12 h-12 opacity-20 hidden md:block">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="30" stroke="#FFD700" strokeWidth="2" fill="none" />
-            <circle cx="50" cy="50" r="20" stroke="#FFD700" strokeWidth="1" fill="none" />
-            <circle cx="50" cy="50" r="10" fill="#FFD700" opacity="0.5" />
-          </svg>
-        </div>
-        
-        <div className="absolute bottom-10 right-10 w-16 h-16 opacity-20 hidden md:block">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50,10 C65,10 80,25 80,40 C80,55 65,70 50,70 C35,70 20,55 20,40 C20,25 35,10 50,10 Z" stroke="#FFD700" strokeWidth="2" fill="none" />
-            <path d="M50,20 C60,20 70,30 70,40 C70,50 60,60 50,60 C40,60 30,50 30,40 C30,30 40,20 50,20 Z" stroke="#FFD700" strokeWidth="1" fill="none" />
-          </svg>
-        </div>
-        
+      {/* Enhanced footer */}
+      <footer className="py-10 px-4 relative mt-10 border-t-2 border-yellow-400/30 z-10 bg-gradient-to-br from-red-900/80 to-black/80 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-6 flex justify-center">
-            <Heart className="text-gold-light animate-heart-beat" size={28} />
+          <div className="mb-8">
+            <PromotionCard />
           </div>
           
-          <p className="font-cormorant text-xl gold-text italic mb-6">
-            "Your presence is the greatest blessing."
+          <div className="mb-6 flex justify-center">
+            <div className="p-3 bg-gradient-to-br from-yellow-400 to-red-500 rounded-full animate-pulse">
+              <Heart className="text-white" size={28} />
+            </div>
+          </div>
+          
+          <p className="font-cormorant text-xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100 italic mb-6">
+            "Your presence will make our victory even sweeter! 🏆"
           </p>
           
-          <div className="mb-6 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
-            <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
+          <div className="mb-6 bg-gradient-to-br from-red-800/60 to-yellow-600/60 backdrop-blur-sm p-5 rounded-lg border border-yellow-400/30 max-w-md mx-auto">
+            <h3 className="font-cormorant text-xl text-yellow-400 mb-3 flex items-center justify-center">
               <MapPin className="mr-2" size={18} />
-              Venue Location
+              Victory Stadium
             </h3>
-            <p className="text-cream/90 mb-3">The Royal Celebration Hall, Wedding City</p>
+            <p className="text-yellow-100/90 mb-3">Narendra Modi Stadium, Ahmedabad</p>
             <a 
-              href="https://maps.google.com/?q=Royal+Celebration+Hall+Wedding+City" 
+              href="https://g.co/kgs/45CVZL5" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-red-500 text-white rounded-lg hover:scale-105 transition-transform text-sm font-medium"
             >
               <MapPin className="mr-2" size={14} />
-              View on Google Maps
+              Navigate to Victory
               <ExternalLink size={12} className="ml-2" />
             </a>
           </div>
           
-          <div className="text-cream/80">
+          <div className="text-yellow-100/80 mb-6">
             <p className="flex flex-wrap justify-center gap-4">
-              <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
+              <a href="tel:+919876543210" className="text-yellow-400 hover:text-yellow-300 flex items-center hover:underline">
                 <PhoneIcon className="mr-1" />
-                RCB's Family
+                RCB Family
               </a>
-              <a href="tel:+919876543211" className="text-gold-light hover:underline flex items-center">
+              <a href="tel:+919876543211" className="text-yellow-400 hover:text-yellow-300 flex items-center hover:underline">
                 <PhoneIcon className="mr-1" />
-                IPL trophy's Family
+                Trophy Family
               </a>
+            </p>
+          </div>
+          
+          <div className="border-t border-yellow-400/20 pt-6">
+            <p className="text-yellow-300 font-cormorant text-lg">
+              Made with ❤️ by <span className="font-bold text-yellow-400">Team Utsavy</span>
+            </p>
+            <p className="text-yellow-100/70 text-sm mt-2">
+              For custom wedding invitations like this: <span className="text-yellow-400 font-bold">9549461861</span>
             </p>
           </div>
         </div>
