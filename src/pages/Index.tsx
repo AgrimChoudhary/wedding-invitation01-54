@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import EnhancedEventCard from '@/components/EnhancedEventCard';
-import EnhancedPhotoCarousel from '@/components/EnhancedPhotoCarousel';
-import FloatingElements from '@/components/FloatingElements';
+import EventCard from '@/components/EventCard';
+import PhotoCarousel from '@/components/PhotoCarousel';
 import Dashboard from '@/components/Dashboard';
 import Countdown from '@/components/Countdown';
 import GaneshaHeader from '@/components/GaneshaHeader';
@@ -287,197 +286,161 @@ const Index = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Floating background elements */}
-      <FloatingElements />
-      
-      {/* Loading screen */}
       {!imagesLoaded && (
-        <div className="fixed inset-0 bg-gradient-to-br from-maroon via-maroon/90 to-maroon z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-maroon/90 z-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="relative">
-              <div className="w-20 h-20 border-4 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-              <Heart className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gold-light w-6 h-6 animate-pulse" />
-            </div>
-            <p className="text-gold-light font-cormorant text-2xl animate-pulse">Loading our love story...</p>
-            <div className="flex justify-center mt-4 space-x-1">
-              {[...Array(3)].map((_, i) => (
-                <div 
-                  key={i}
-                  className="w-2 h-2 bg-gold-light rounded-full animate-bounce"
-                  style={{ animationDelay: `${i * 0.2}s` }}
-                ></div>
-              ))}
-            </div>
+            <div className="w-16 h-16 border-4 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="gold-text font-cormorant text-xl">Loading our love story...</p>
           </div>
         </div>
       )}
       
-      {/* Welcome banner with enhanced styling */}
       {guestName && (
-        <div className="bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light text-maroon py-3 px-4 text-center animate-fade-in relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full animate-shimmer"></div>
-          <p className="font-cormorant text-lg md:text-xl font-semibold relative z-10">
-            Welcome, <span className="font-bold text-maroon/90">{guestName}</span>! We're delighted you could join us.
+        <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
+          <p className="font-cormorant text-lg md:text-xl">
+            Welcome, <span className="font-bold">{guestName}</span>! We're delighted you could join us.
           </p>
         </div>
       )}
       
-      {/* Enhanced Diyas with better positioning */}
-      <Diya className="top-20 animate-fade-in" position="left" />
-      <Diya className="bottom-20 animate-fade-in" position="right" delay={0.5} />
+      <Diya className="top-20" position="left" />
+      <Diya className="bottom-20" position="right" delay={0.5} />
       
-      {/* Enhanced decorative borders */}
-      <div className="absolute left-0 top-0 w-full overflow-hidden opacity-30 pointer-events-none h-24 md:h-40">
+      <div className="absolute left-0 top-0 w-full overflow-hidden opacity-20 pointer-events-none h-20 md:h-40">
         <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,100 C300,20 500,180 800,50 C1000,0 1200,100 1200,100 L1200,0 L0,0 Z" fill="url(#enhanced-gold-gradient-top)" />
+          <path d="M0,100 C300,20 500,180 800,50 C1000,0 1200,100 1200,100 L1200,0 L0,0 Z" fill="url(#gold-gradient-top)" />
           <defs>
-            <linearGradient id="enhanced-gold-gradient-top" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id="gold-gradient-top" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#FFD700" />
-              <stop offset="25%" stopColor="#FFE55C" />
               <stop offset="50%" stopColor="#B8860B" />
-              <stop offset="75%" stopColor="#FFE55C" />
               <stop offset="100%" stopColor="#FFD700" />
             </linearGradient>
           </defs>
         </svg>
       </div>
       
-      {/* Enhanced side decorations */}
-      <div className="absolute top-1/3 left-0 w-20 h-40 md:w-28 md:h-48 opacity-25 pointer-events-none animate-float">
+      <div className="pt-6 px-4">
+        <GaneshaHeader />
+      </div>
+      
+      <div className="absolute top-1/3 left-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
         <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50,0 Q70,50 50,100 Q30,150 50,200" stroke="url(#side-gradient)" strokeWidth="3" fill="none" />
+          <path d="M50,0 Q70,50 50,100 Q30,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
           <g transform="translate(45, 40)">
-            <circle cx="5" cy="10" r="3" fill="#FFD700" opacity="0.8" />
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
           </g>
           <g transform="translate(45, 90)">
-            <circle cx="5" cy="10" r="4" fill="#FFE55C" opacity="0.6" />
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
           </g>
           <g transform="translate(45, 140)">
-            <circle cx="5" cy="10" r="3" fill="#FFD700" opacity="0.8" />
+            <path d="M0,0 Q10,10 0,20 Q-10,10 0,0" fill="#FFD700" />
           </g>
-          <defs>
-            <linearGradient id="side-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#FFD700" />
-              <stop offset="50%" stopColor="#FFE55C" />
-              <stop offset="100%" stopColor="#FFD700" />
-            </linearGradient>
-          </defs>
         </svg>
       </div>
       
-      {/* Enhanced header section */}
-      <header className="pt-12 md:pt-16 pb-12 px-4 relative text-center">
+      <div className="absolute top-1/4 right-0 w-16 h-32 md:w-24 md:h-40 opacity-20 pointer-events-none">
+        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,0 Q30,50 50,100 Q70,150 50,200" stroke="#FFD700" strokeWidth="2" fill="none" />
+          <g transform="translate(55, 40)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(55, 90)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+          <g transform="translate(55, 140)">
+            <path d="M0,0 Q-10,10 0,20 Q10,10 0,0" fill="#FFD700" />
+          </g>
+        </svg>
+      </div>
+      
+      <header className="pt-10 md:pt-12 pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
-          {/* Enhanced floating heart icon */}
-          <div className="mb-8 animate-float">
-            <div className="inline-block p-2 rounded-full bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light shadow-lg shadow-gold-light/30">
-              <div className="bg-maroon p-3 rounded-full">
-                <Heart size={32} className="text-gold-light" fill="currentColor" />
+          <div className="mb-6 animate-float">
+            <div className="inline-block p-1.5 rounded-full bg-gold-gradient">
+              <div className="bg-maroon p-2 rounded-full">
+                <Heart size={28} className="text-gold-light" />
               </div>
             </div>
           </div>
           
-          <p className="text-gold-light/90 font-opensans tracking-[0.3em] animate-fade-in mb-4 text-sm md:text-base">
+          <p className="text-gold-light/90 font-opensans tracking-widest animate-fade-in mb-3">
             WE ARE GETTING MARRIED
           </p>
           
-          {/* Enhanced couple names with better typography */}
-          <div className="relative mb-6">
-            <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl font-bold mb-4 animate-scale-up">
-              <span className="bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light bg-clip-text text-transparent">
-                Priya
-              </span>
-              <span className="inline-block mx-2 md:mx-4 text-gold-light/80 animate-pulse">
-                &
-              </span>
-              <span className="bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light bg-clip-text text-transparent">
-                Vijay
-              </span>
-            </h1>
-            
-            {/* Decorative underline */}
-            <div className="flex justify-center mt-4">
-              <div className="w-32 md:w-48 h-1 bg-gradient-to-r from-transparent via-gold-light to-transparent rounded-full"></div>
-            </div>
-          </div>
+          <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
+            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
+          </h1>
           
-          <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in mb-8">
+          <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
             "A journey written in the stars…"
           </p>
           
-          {/* Enhanced couple illustration */}
-          <div className="mt-10 flex justify-center">
-            <div className="relative">
-              <CoupleIllustration className="w-72 h-72 md:w-96 md:h-96 animate-float" />
-              <div className="absolute inset-0 bg-gradient-to-r from-gold-light/10 via-transparent to-gold-light/10 rounded-full blur-3xl"></div>
-            </div>
+          <div className="mt-8 flex justify-center">
+            <CoupleIllustration className="w-64 h-64 md:w-80 md:h-80" />
           </div>
           
-          {/* Enhanced wedding date */}
-          <div className="mt-10 animate-fade-in flex justify-center">
-            <div className="relative bg-gradient-to-r from-maroon/60 via-maroon/40 to-maroon/60 px-8 py-4 rounded-xl border border-gold-light/40 backdrop-blur-sm shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-gold-light/5 via-gold-light/10 to-gold-light/5 rounded-xl"></div>
-              <Calendar className="inline-block text-gold-light mr-3 mb-1" size={24} />
-              <span className="font-cormorant text-2xl md:text-3xl font-bold bg-gradient-to-r from-gold-light to-[#FFE55C] bg-clip-text text-transparent">
+          <div className="mt-8 animate-fade-in flex justify-center">
+            <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
+              <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
+              <span className="font-cormorant text-xl md:text-2xl gold-text">
                 30 March 2025
               </span>
             </div>
           </div>
           
-          {/* Enhanced countdown */}
-          <div className="mt-12">
+          <div className="mt-10">
             <Countdown targetDate={weddingDate} className="animate-fade-in" />
           </div>
           
-          {/* Enhanced action buttons */}
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
             <button 
               className={cn(
-                "group relative px-8 py-4 rounded-full transition-all duration-500",
-                "bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light",
-                "hover:shadow-2xl hover:shadow-gold-light/40 text-maroon font-bold",
-                "overflow-hidden transform hover:scale-105",
-                showHearts && "animate-pulse"
+                "relative px-6 py-3 rounded-full transition-all duration-300",
+                "bg-gold-gradient hover:shadow-gold text-maroon font-bold",
+                "overflow-hidden group",
+                showHearts && "bg-opacity-100"
               )}
               onClick={() => setShowHearts(!showHearts)}
             >
-              <span className="relative z-10 flex items-center font-cormorant text-lg">
+              <span className="relative z-10 flex items-center">
                 {showHearts ? "Stop Hearts" : "Shower Love"} 
                 <Heart className={cn(
-                  "ml-3 transition-transform duration-300",
-                  showHearts ? "animate-heart-beat scale-110" : "group-hover:scale-125"
-                )} size={20} fill="currentColor" />
+                  "ml-2 transition-transform duration-300",
+                  showHearts ? "animate-heart-beat" : "group-hover:scale-125"
+                )} size={18} />
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#FFE55C] to-gold-light opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
             
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button 
                   className={cn(
-                    "group relative px-8 py-4 rounded-full transition-all duration-500",
+                    "relative px-6 py-3 rounded-full transition-all duration-300",
                     "border-2 border-gold-light text-gold-light font-bold",
-                    "overflow-hidden hover:bg-gold-light/10 transform hover:scale-105",
-                    isMandalaVisible && "bg-gold-light/10 border-[#FFE55C]"
+                    "overflow-hidden hover:bg-gold-light/10 group",
+                    isMandalaVisible && "bg-gold-light/10"
                   )}
                   onClick={() => setIsMandalaVisible(!isMandalaVisible)}
                 >
-                  <span className="relative z-10 flex items-center font-cormorant text-lg">
+                  <span className="relative z-10 flex items-center">
                     {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
                     <Sparkle className={cn(
-                      "ml-3 transition-transform duration-300",
+                      "ml-2 transition-transform duration-300",
                       "group-hover:rotate-12 animate-pulse"
-                    )} size={20} />
+                    )} size={18} />
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-gold-light/10 to-[#FFE55C]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <span className="absolute inset-0 bg-gold-light/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
                 </button>
               </HoverCardTrigger>
-              <HoverCardContent className="bg-maroon/95 border-gold-light/40 text-cream p-6 w-80 backdrop-blur-sm">
-                <div className="space-y-3">
-                  <h4 className="text-gold-light text-xl font-cormorant font-bold">Experience the Magic</h4>
-                  <p className="text-cream/90 leading-relaxed">
-                    Click to reveal a mesmerizing display of sacred symbols and lotus flowers that bring blessings to our union.
-                  </p>
+              <HoverCardContent className="bg-maroon/90 border-gold-light/30 text-cream p-4 w-80">
+                <div className="flex justify-between space-x-4">
+                  <div className="space-y-1">
+                    <h4 className="gold-text text-lg font-cormorant">Experience the Magic</h4>
+                    <p className="text-sm text-cream/80">
+                      Click to reveal a mesmerizing display of sacred symbols and lotus flowers that bring blessings to our union.
+                    </p>
+                  </div>
                 </div>
               </HoverCardContent>
             </HoverCard>
@@ -485,86 +448,92 @@ const Index = () => {
         </div>
       </header>
       
-      {/* ... keep existing code (mandala container, decorative divider) */}
+      {isMandalaVisible && (
+        <div 
+          id="mandala-container"
+          className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+        ></div>
+      )}
       
-      {/* Enhanced family section */}
-      <section className="py-12 px-4 relative z-10">
+      <div className="relative py-4 overflow-hidden">
+        <div className="absolute left-0 w-full h-px bg-gold-light/30"></div>
+        <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 opacity-60">
+          {[...Array(isMobile ? 5 : 10)].map((_, i) => (
+            <div key={i} className="w-4 h-4 md:w-6 md:h-6 relative">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12,2 C14,5 17,7 21,7 C17,7 14,9 12,12 C10,9 7,7 3,7 C7,7 10,5 12,2 Z" fill="#FFD700" opacity="0.8" />
+                <path d="M12,12 C14,15 17,17 21,17 C17,17 14,19 12,22 C10,19 7,17 3,17 C7,17 10,15 12,12 Z" fill="#FFD700" opacity="0.8" />
+              </svg>
+            </div>
+          ))}
+        </div>
+        <div className="absolute right-0 w-full h-px bg-gold-light/30"></div>
+      </div>
+      
+      <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div 
-              className="group relative bg-gradient-to-br from-maroon/50 via-maroon/30 to-maroon/50 rounded-2xl p-8 border border-gold-light/30 cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/20 hover:-translate-y-2 animate-fade-in-left"
+              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
               onClick={() => handleFamilyClick(brideFamily)}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-gold-light/5 via-transparent to-gold-light/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative z-10">
-                <div className="flex justify-center mb-6">
-                  <div className="p-4 bg-gradient-to-r from-gold-light/20 to-[#FFE55C]/20 rounded-full group-hover:scale-110 transition-transform duration-300">
-                    <Flower className="text-gold-light w-8 h-8" />
-                  </div>
-                </div>
-                <h3 className="text-center font-cormorant text-2xl font-bold mb-3 flex items-center justify-center">
-                  <span className="bg-gradient-to-r from-gold-light to-[#FFE55C] bg-clip-text text-transparent">
-                    Bride's Parents
-                  </span>
-                  <Info size={18} className="ml-3 text-gold-light/70 group-hover:text-gold-light transition-colors" />
-                </h3>
-                <p className="text-center text-cream text-xl font-cormorant">Ramesh & Rameshi</p>
+              <div className="flex justify-center mb-4">
+                <Flower className="text-gold-light" size={28} />
               </div>
+              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
+                Bride's Parents
+                <Info size={16} className="ml-2 text-gold-light/70" />
+              </h3>
+              <p className="text-center text-cream text-lg font-cormorant">Ramesh & Rameshi</p>
             </div>
             
             <div 
-              className="group relative bg-gradient-to-br from-maroon/50 via-maroon/30 to-maroon/50 rounded-2xl p-8 border border-gold-light/30 cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/20 hover:-translate-y-2 animate-fade-in-right"
+              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
               onClick={() => handleFamilyClick(groomFamily)}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-gold-light/5 via-transparent to-gold-light/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative z-10">
-                <div className="flex justify-center mb-6">
-                  <div className="p-4 bg-gradient-to-r from-gold-light/20 to-[#FFE55C]/20 rounded-full group-hover:scale-110 transition-transform duration-300">
-                    <Star className="text-gold-light w-8 h-8" />
-                  </div>
-                </div>
-                <h3 className="text-center font-cormorant text-2xl font-bold mb-3 flex items-center justify-center">
-                  <span className="bg-gradient-to-r from-gold-light to-[#FFE55C] bg-clip-text text-transparent">
-                    Groom's Parents
-                  </span>
-                  <Info size={18} className="ml-3 text-gold-light/70 group-hover:text-gold-light transition-colors" />
-                </h3>
-                <p className="text-center text-cream text-xl font-cormorant">Harkesh & Harkeshi</p>
+              <div className="flex justify-center mb-4">
+                <Star className="text-gold-light" size={28} />
               </div>
+              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
+                Groom's Parents
+                <Info size={16} className="ml-2 text-gold-light/70" />
+              </h3>
+              <p className="text-center text-cream text-lg font-cormorant">Harkesh & Harkeshi</p>
             </div>
           </div>
         </div>
       </section>
       
-      {/* ... keep existing code (heart divider) */}
+      <div className="flex justify-center my-8">
+        <div className="relative px-16">
+          <div className="absolute inset-y-0 left-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
+          <Heart size={24} className="text-gold-light" />
+          <div className="absolute inset-y-0 right-0 w-12 h-0.5 bg-gold-gradient my-auto"></div>
+        </div>
+      </div>
       
-      {/* Enhanced events section */}
-      <section className="py-12 px-4 relative z-10" id="events">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-cormorant text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light bg-clip-text text-transparent">
-                Celebration Events
-              </span>
-            </h2>
-            <div className="flex justify-center">
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-light to-transparent rounded-full"></div>
-            </div>
-          </div>
+      <section className="py-10 px-4 relative z-10" id="events">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-center font-cormorant text-3xl md:text-4xl gold-text font-bold mb-10">
+            Celebration Events
+          </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {events.map((event, index) => (
-              <div key={index} className="animate-fade-in-up" style={{ animationDelay: `${index * 0.15}s` }}>
-                <EnhancedEventCard 
+              <div 
+                key={index}
+                className={`transform transition-all duration-500 ${
+                  index % 2 === 0 ? 'animate-fade-in-left' : 'animate-fade-in-right'
+                }`}
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <EventCard 
                   title={event.title}
                   date={event.date}
                   time={event.time}
                   venue={event.venue}
                   icon={event.icon}
                   googleMapsUrl={event.googleMapsUrl}
-                  index={index}
                 />
               </div>
             ))}
@@ -572,27 +541,218 @@ const Index = () => {
         </div>
       </section>
       
-      {/* ... keep existing code (decorative divider) */}
-      
-      {/* Enhanced photo section */}
-      <section className="py-12 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-cormorant text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-gold-light via-[#FFE55C] to-gold-light bg-clip-text text-transparent">
-                Our Journey
-              </span>
-            </h2>
-            <div className="flex justify-center">
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-light to-transparent rounded-full"></div>
-            </div>
+      <div className="flex justify-center my-8 overflow-hidden">
+        <div className="relative">
+          <div className="flex items-center gap-2">
+            <div className="w-32 h-px bg-gold-gradient"></div>
+            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50,10 C60,30 80,40 90,30 C80,50 90,70 70,75 C50,80 30,70 20,50 C10,30 30,10 50,10 Z" fill="url(#gold-gradient)" opacity="0.7" />
+              <defs>
+                <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="w-32 h-px bg-gold-gradient"></div>
           </div>
+        </div>
+      </div>
+      
+      <section className="py-10 px-2 md:px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+            Our Journey
+          </h2>
           
-          <EnhancedPhotoCarousel photos={photos} />
+          <style>
+            {`
+            .photo-item {
+              transition: all 0.3s ease;
+              position: relative;
+            }
+            
+            .photo-item::before {
+              content: '';
+              position: absolute;
+              inset: 0;
+              border-radius: 0.75rem;
+              padding: 3px;
+              background: linear-gradient(to right, #FFD700, #C5A20A);
+              -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+              -webkit-mask-composite: xor;
+              mask-composite: exclude;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+            }
+            
+            .photo-item:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            }
+            
+            .photo-item:hover::before {
+              opacity: 1;
+            }
+            `}
+          </style>
+          
+          <PhotoCarousel photos={photos} />
         </div>
       </section>
       
-      {/* ... keep existing code (dance section, invitation acceptance, footer) */}
+      <section className="py-10 px-4 relative overflow-hidden z-10">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+            Join Our Celebration
+          </h2>
+          
+          <div className="relative h-40 md:h-60">
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex items-end justify-center gap-4 md:gap-10">
+              <div className="w-10 h-20 md:w-16 md:h-32 bg-gold-gradient rounded-t-full animate-dance-slow">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
+                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
+                </div>
+              </div>
+              
+              <div className="w-10 h-24 md:w-16 md:h-40 bg-gold-gradient rounded-t-full animate-dance-medium">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-maroon rounded-full mx-auto -mt-4 relative">
+                  <div className="absolute inset-2 rounded-full bg-gold-light/30"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-cream/80 mt-8 font-cormorant text-xl italic">
+            "Dance with us as two hearts become one"
+          </p>
+          
+          <style>
+            {`
+            @keyframes dance-slow {
+              0%, 100% { transform: rotate(-5deg); }
+              50% { transform: rotate(5deg); }
+            }
+            @keyframes dance-medium {
+              0%, 100% { transform: rotate(5deg); }
+              50% { transform: rotate(-5deg); }
+            }
+            .animate-dance-slow {
+              animation: dance-slow 2s ease-in-out infinite;
+              transform-origin: bottom center;
+            }
+            .animate-dance-medium {
+              animation: dance-medium 1.8s ease-in-out infinite;
+              transform-origin: bottom center;
+            }
+            @keyframes float-heart {
+              0% { 
+                transform: translateY(0) rotate(var(--rotation, 0deg)) scale(0); 
+                opacity: 0; 
+              }
+              10% { 
+                opacity: 0.8; 
+                transform: translateY(10px) rotate(var(--rotation, 0deg)) scale(1); 
+              }
+              100% { 
+                transform: translateY(100vh) rotate(var(--rotation, 0deg)) scale(0.5); 
+                opacity: 0; 
+              }
+            }
+            .lotus-flower {
+              position: absolute;
+              pointer-events: none;
+              animation: float 20s linear infinite, spin-slow 40s linear infinite;
+            }
+            `}
+          </style>
+        </div>
+      </section>
+      
+      <section className="py-10 px-4 text-center relative z-10">
+        <div className="max-w-3xl mx-auto">
+          {!invitationAccepted ? (
+            <button
+              onClick={handleAcceptInvitation}
+              className="group relative overflow-hidden inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gold-gradient text-maroon font-bold text-lg transition-transform duration-300 hover:scale-105 animate-pulse-glow"
+            >
+              <span className="relative z-10 font-cormorant font-bold flex items-center">
+                <CheckCircle className="mr-2" size={20} />
+                Accept Invitation
+              </span>
+              <span className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+            </button>
+          ) : (
+            <div className="bg-gold-light/10 border border-gold-light/40 rounded-lg p-6 animate-fade-in">
+              <CheckCircle className="text-gold-light mx-auto mb-3" size={32} />
+              <h3 className="font-cormorant gold-text text-2xl font-bold mb-2">Thank You!</h3>
+              <p className="text-cream/90">We look forward to celebrating our special day with you!</p>
+            </div>
+          )}
+        </div>
+      </section>
+      
+      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
+        <div className="absolute top-0 left-0 w-full h-px bg-gold-gradient"></div>
+        
+        <div className="absolute top-10 left-10 w-12 h-12 opacity-20 hidden md:block">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="30" stroke="#FFD700" strokeWidth="2" fill="none" />
+            <circle cx="50" cy="50" r="20" stroke="#FFD700" strokeWidth="1" fill="none" />
+            <circle cx="50" cy="50" r="10" fill="#FFD700" opacity="0.5" />
+          </svg>
+        </div>
+        
+        <div className="absolute bottom-10 right-10 w-16 h-16 opacity-20 hidden md:block">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C65,10 80,25 80,40 C80,55 65,70 50,70 C35,70 20,55 20,40 C20,25 35,10 50,10 Z" stroke="#FFD700" strokeWidth="2" fill="none" />
+            <path d="M50,20 C60,20 70,30 70,40 C70,50 60,60 50,60 C40,60 30,50 30,40 C30,30 40,20 50,20 Z" stroke="#FFD700" strokeWidth="1" fill="none" />
+          </svg>
+        </div>
+        
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-6 flex justify-center">
+            <Heart className="text-gold-light animate-heart-beat" size={28} />
+          </div>
+          
+          <p className="font-cormorant text-xl gold-text italic mb-6">
+            "Your presence is the greatest blessing."
+          </p>
+          
+          <div className="mb-6 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
+            <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
+              <MapPin className="mr-2" size={18} />
+              Venue Location
+            </h3>
+            <p className="text-cream/90 mb-3">The Royal Celebration Hall, Wedding City</p>
+            <a 
+              href="https://maps.google.com/?q=Royal+Celebration+Hall+Wedding+City" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
+            >
+              <MapPin className="mr-2" size={14} />
+              View on Google Maps
+              <ExternalLink size={12} className="ml-2" />
+            </a>
+          </div>
+          
+          <div className="text-cream/80">
+            <p className="flex flex-wrap justify-center gap-4">
+              <a href="tel:+919876543210" className="text-gold-light hover:underline flex items-center">
+                <PhoneIcon className="mr-1" />
+                Priya's Family
+              </a>
+              <a href="tel:+919876543211" className="text-gold-light hover:underline flex items-center">
+                <PhoneIcon className="mr-1" />
+                Vijay's Family
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
       
       <FamilyDetailsDialog 
         open={familyDialogOpen} 
