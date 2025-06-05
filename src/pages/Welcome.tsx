@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Heart, ArrowRight, Crown, Trophy, Zap } from 'lucide-react';
+import { Sparkles, Heart, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AudioPlayer from '@/components/AudioPlayer';
-import TypingText from '@/components/TypingText';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -13,11 +11,11 @@ const Welcome = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   
-  // Set the guest name as requested
-  const guestName = "RCB Haters";
+  // Set the generic guest name instead of a specific name
+  const guestName = "Guest Name";
 
   useEffect(() => {
-    // Store the guest name
+    // Store the generic guest name
     localStorage.setItem('guestName', guestName);
     
     // Animation sequence
@@ -36,7 +34,8 @@ const Welcome = () => {
 
   const handleEnterClick = () => {
     setIsEntering(true);
-    setLoadingText(`${guestName}, Wait! We're opening the royal invitation... 🏆`);
+    // Set the loading text as requested by the user
+    setLoadingText(`${guestName}, Wait we are opening invitation...`);
     
     setTimeout(() => {
       navigate('/invitation');
@@ -53,14 +52,12 @@ const Welcome = () => {
     const x = Math.random() * container.offsetWidth;
     const y = Math.random() * container.offsetHeight;
     
-    const icons = ['🏆', '👑', '🔥', '⚡', '🎯'];
-    const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-    
-    particle.innerHTML = randomIcon;
-    particle.className = 'absolute text-yellow-400 pointer-events-none';
-    particle.style.fontSize = `${size}px`;
+    particle.className = 'absolute rounded-full';
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
     particle.style.left = `${x}px`;
     particle.style.top = `${y}px`;
+    particle.style.background = `radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%)`;
     particle.style.animation = 'particle-fade 3s ease-out forwards';
     
     container.appendChild(particle);
@@ -73,21 +70,21 @@ const Welcome = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-red-900 via-red-800 to-black">
-      {/* Enhanced background patterns */}
-      <div className="absolute inset-0 opacity-20">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-maroon">
+      {/* Background patterns */}
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627,10.361Q51.92,7.648 48.064,7.648Q44.208,7.648 41.445,10.361Q38.688,13.051 38.688,16.861Q38.688,20.671 41.445,23.353Q44.208,26.04 48.064,26.04Q51.92,26.04 54.627,23.353Q57.34,20.671 57.34,16.861Q57.34,13.051 54.627,10.361M54.627,10.361Z' fill='%23ffd700' fill-opacity='0.2'/%3E%3C/svg%3E")`,
           backgroundSize: '100px 100px'
         }}></div>
       </div>
       
-      {/* RCB themed decorative elements */}
+      {/* Decorative moving elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <div 
             key={i}
-            className="absolute w-8 h-8 opacity-30"
+            className="absolute w-6 h-6 opacity-20"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -95,50 +92,52 @@ const Welcome = () => {
               animationDelay: `${Math.random() * 5}s`
             }}
           >
-            {i % 4 === 0 ? (
-              <Crown className="text-yellow-400" fill="currentColor" />
-            ) : i % 4 === 1 ? (
-              <Trophy className="text-yellow-400" fill="currentColor" />
-            ) : i % 4 === 2 ? (
-              <Zap className="text-red-400" fill="currentColor" />
-            ) : (
-              <Heart className="text-red-400" fill="currentColor" />
-            )}
+            <Heart className="text-gold-light" fill="#FFD700" />
           </div>
         ))}
       </div>
       
-      {/* Enhanced decorative elements */}
-      <div className="absolute top-10 left-10 w-24 h-24 opacity-40 animate-pulse">
-        <div className="w-full h-full bg-gradient-to-br from-red-500 to-yellow-400 rounded-full flex items-center justify-center shadow-2xl">
-          <Crown className="text-white" size={40} />
-        </div>
+      {/* Decorative elements for wedding theme */}
+      <div className="absolute top-10 left-10 w-20 h-20 opacity-30 hidden md:block">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,20 C60,35 80,35 90,25 C80,45 90,65 70,70 C50,75 30,65 20,45 C10,25 30,5 50,20 Z" fill="url(#gold-gradient)" />
+          <defs>
+            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       
-      <div className="absolute bottom-10 right-10 w-28 h-28 opacity-40 animate-bounce">
-        <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 rounded-full flex items-center justify-center shadow-2xl">
-          <Trophy className="text-white" size={44} />
-        </div>
+      <div className="absolute bottom-10 right-10 w-24 h-24 opacity-30 hidden md:block">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50,20 C60,35 80,35 90,25 C80,45 90,65 70,70 C50,75 30,65 20,45 C10,25 30,5 50,20 Z" fill="url(#gold-gradient)" />
+        </svg>
       </div>
+      
+      {/* Traditional wedding patterns */}
+      <div className="absolute top-0 left-0 w-full h-12 opacity-20 wedding-pattern-top"></div>
+      <div className="absolute bottom-0 left-0 w-full h-12 opacity-20 wedding-pattern-bottom"></div>
       
       {/* Particles container */}
       <div id="particles-container" className="absolute inset-0 pointer-events-none z-10"></div>
       
       {/* Main content */}
       <div className={cn(
-        "relative z-20 w-full max-w-lg px-6 transition-all duration-1000",
+        "relative z-20 w-full max-w-md px-6 transition-all duration-1000",
         isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       )}>
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <div className="relative w-36 h-36 animate-float">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-red-500 rounded-full opacity-30 animate-pulse"></div>
+            <div className="relative w-32 h-32 animate-float">
+              <div className="absolute inset-0 bg-gold-gradient rounded-full opacity-20 animate-pulse"></div>
               <img 
                 src="/lovable-uploads/762354ab-cff9-4c6a-9800-94eeefc3c43c.png" 
                 alt="Lord Ganesha" 
-                className="w-full h-full object-contain drop-shadow-2xl"
-                width="144"
-                height="144"
+                className="w-full h-full object-contain drop-shadow-gold"
+                width="128"
+                height="128"
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -146,41 +145,46 @@ const Welcome = () => {
             </div>
           </div>
           
-          <h1 className="font-cormorant text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-300 to-red-400 font-bold mb-4 animate-scale-up">
-            RCB <span className="inline-block mx-1 md:mx-3 text-yellow-400">&</span> IPL Trophy
+          <h1 className="font-cormorant text-4xl md:text-5xl gold-text font-bold mb-4 animate-scale-up">
+            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
           </h1>
           
-          <div className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100 font-cormorant text-lg md:text-xl italic mb-6">
-            <p className="mb-1">🏆 Historic Victory Celebration 🏆</p>
-            <p className="text-yellow-400">3rd June 2025 - Ee Sala Cup Namde!</p>
+          <div className="gold-text font-cormorant text-lg md:text-xl italic mb-6">
+            <p className="mb-1">Welcome to our Wedding Celebration</p>
+            <p>30th March 2025</p>
           </div>
         </div>
         
-        <div className="bg-gradient-to-br from-red-800/60 to-black/60 backdrop-blur-sm p-6 rounded-xl border-2 border-yellow-400/40 relative overflow-hidden shadow-2xl">
-          {/* Enhanced decorative corner elements */}
-          <div className="absolute top-0 left-0 w-16 h-16">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-red-400"></div>
-            <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-yellow-400 to-red-400"></div>
-            <Crown className="absolute top-1 left-1 text-yellow-400" size={12} />
+        <div className="bg-maroon/50 p-6 rounded-xl gold-border relative overflow-hidden">
+          {/* Decorative corner elements */}
+          <div className="absolute top-0 left-0 w-12 h-12">
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gold-gradient transform origin-left"></div>
+            <div className="absolute top-0 left-0 h-full w-0.5 bg-gold-gradient transform origin-top"></div>
           </div>
           
-          <div className="absolute bottom-0 right-0 w-16 h-16">
-            <div className="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-l from-yellow-400 to-red-400"></div>
-            <div className="absolute bottom-0 right-0 h-full w-1 bg-gradient-to-t from-yellow-400 to-red-400"></div>
-            <Trophy className="absolute bottom-1 right-1 text-yellow-400" size={12} />
+          <div className="absolute bottom-0 right-0 w-12 h-12">
+            <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gold-gradient transform origin-right"></div>
+            <div className="absolute bottom-0 right-0 h-full w-0.5 bg-gold-gradient transform origin-bottom"></div>
+          </div>
+          
+          {/* Add decorative rangoli pattern */}
+          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-full h-12 opacity-15 pointer-events-none">
+            <svg viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100,5 C120,20 160,20 190,5 M100,5 C80,20 40,20 10,5 M100,10 C115,25 145,25 180,15 M100,10 C85,25 55,25 20,15" stroke="url(#gold-gradient)" strokeWidth="0.8" />
+            </svg>
           </div>
           
           {/* Main welcome or loading state */}
           {isEntering ? (
             <div className="flex flex-col items-center justify-center min-h-[16rem] transition-all duration-500">
               <div className="mb-6 relative">
-                <div className="w-16 h-16 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin"></div>
+                <div className="w-16 h-16 rounded-full border-4 border-gold-light border-t-transparent animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Crown className="text-yellow-400 animate-pulse" size={24} fill="currentColor" />
+                  <Heart className="text-gold-light animate-pulse" size={20} fill="#FFD700" />
                 </div>
               </div>
-              <p className="text-yellow-400 text-xl font-cormorant animate-pulse text-center">
-                <TypingText text={loadingText} typingSpeed={50} />
+              <p className="gold-text text-xl font-cormorant animate-pulse">
+                {loadingText}
               </p>
             </div>
           ) : (
@@ -188,36 +192,27 @@ const Welcome = () => {
               "text-center transition-all duration-500",
               isEntering ? "opacity-0 transform -translate-y-10" : "opacity-100"
             )}>
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Crown className="text-yellow-400" size={24} />
-                <p className="font-cormorant text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
-                  Namaste, <TypingText text={guestName} className="font-bold text-yellow-400" />!
-                </p>
-                <Crown className="text-yellow-400" size={24} />
-              </div>
+              <p className="font-cormorant text-2xl gold-text mb-2">
+                Namaste, <span className="font-bold">{guestName}</span>!
+              </p>
               
-              <p className="text-yellow-100 mb-6 font-opensans leading-relaxed">
-                You're cordially invited to witness the <span className="text-yellow-400 font-bold">HISTORIC MOMENT</span> when RCB finally lifts their first IPL trophy! 🏆
+              <p className="text-cream mb-6 font-opensans">
+                We are honored to invite you to witness the divine union of our hearts
               </p>
               
               <div className="flex justify-center mb-6">
-                <div className="flex items-center gap-2">
-                  <Trophy className="text-yellow-400 animate-bounce" size={32} fill="rgba(255,215,0,0.3)" />
-                  <Zap className="text-red-400 animate-pulse" size={28} fill="rgba(255,0,0,0.3)" />
-                  <Crown className="text-yellow-400 animate-bounce" size={32} fill="rgba(255,215,0,0.3)" />
-                </div>
+                <Heart className="text-gold-light animate-heart-beat" size={40} fill="rgba(255,215,0,0.3)" />
               </div>
               
-              <p className="text-yellow-100/90 italic mb-8 font-cormorant text-lg bg-gradient-to-r from-red-700/50 to-yellow-600/50 p-3 rounded-lg">
-                "18 years of wait, 18 years of faith... This is OUR moment! 🔥"
+              <p className="text-cream/80 italic mb-8 font-cormorant text-lg">
+                "In the garden of love, two souls have found their blooming season"
               </p>
               
               <button
                 onClick={handleEnterClick}
-                className="group bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-500 hover:to-yellow-400 text-white px-8 py-3 rounded-full font-bold transition-all hover:shadow-2xl hover:scale-105 flex items-center justify-center mx-auto transform"
+                className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto"
               >
-                <Crown className="mr-2" size={18} />
-                Enter the Royal Invitation
+                Enter Invitation
                 <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
               </button>
             </div>
@@ -225,33 +220,43 @@ const Welcome = () => {
         </div>
       </div>
       
-      {/* Enhanced header decoration */}
+      {/* Wedding themed decorative elements */}
       <div className="absolute top-0 left-0 w-full">
-        <svg width="100%" height="100" viewBox="0 0 1000 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100%" height="80" viewBox="0 0 1000 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,0 Q250,80 500,40 Q750,0 1000,40 L1000,0 L0,0 Z" fill="url(#gold-gradient-header)" opacity="0.15" />
           <defs>
-            <linearGradient id="rcb-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#dc2626" />
-              <stop offset="50%" stopColor="#fbbf24" />
-              <stop offset="100%" stopColor="#dc2626" />
+            <linearGradient id="gold-gradient-header" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="50%" stopColor="#B8860B" />
+              <stop offset="100%" stopColor="#FFD700" />
             </linearGradient>
           </defs>
-          <path d="M0,0 Q250,100 500,50 Q750,0 1000,50 L1000,0 L0,0 Z" fill="url(#rcb-gradient)" opacity="0.3" />
         </svg>
       </div>
       
       {/* Footer decoration */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-yellow-400 to-red-600 opacity-70"></div>
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gold-gradient opacity-50"></div>
       
       <style>{`
         @keyframes particle-fade {
-          0% { transform: scale(0) rotate(0deg); opacity: 0; }
-          50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
-          100% { transform: scale(1.5) rotate(360deg); opacity: 0; }
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(1.5); opacity: 0; }
         }
         
         @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(5deg); }
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        .wedding-pattern-top {
+          background-image: url("data:image/svg+xml,%3Csvg width='40' height='12' viewBox='0 0 40 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 L40,0 L40,2 C30,12 10,12 0,2 L0,0 Z' fill='%23FFD700' fill-opacity='0.2'/%3E%3C/svg%3E");
+          background-repeat: repeat-x;
+        }
+        
+        .wedding-pattern-bottom {
+          background-image: url("data:image/svg+xml,%3Csvg width='40' height='12' viewBox='0 0 40 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,12 L40,12 L40,10 C30,0 10,0 0,10 L0,12 Z' fill='%23FFD700' fill-opacity='0.2'/%3E%3C/svg%3E");
+          background-repeat: repeat-x;
         }
       `}</style>
     </div>

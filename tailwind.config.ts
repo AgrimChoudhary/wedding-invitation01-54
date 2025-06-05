@@ -1,161 +1,157 @@
 
-import { type Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        // Enhanced RCB color palette
-        maroon: "#7f1d1d", // darker red for better contrast
-        cream: "#fef3c7", // warmer cream with yellow tint
-        gold: {
-          light: "#fbbf24", // brighter gold
-          dark: "#d97706", // deeper amber
-        },
-        // New RCB themed colors
-        rcb: {
-          red: "#dc2626",
-          gold: "#fbbf24",
-          black: "#000000",
-          white: "#ffffff"
-        }
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        "heart-beat": {
-          "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.3)" },
-        },
-        "float": {
-          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
-          "50%": { transform: "translateY(-15px) rotate(3deg)" },
-        },
-        "scale-up": {
-          "0%": { transform: "scale(0.9)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
-        },
-        "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "fade-in-left": {
-          "0%": { opacity: "0", transform: "translateX(-20px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        "fade-in-right": {
-          "0%": { opacity: "0", transform: "translateX(20px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        "blink": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.3" },
-        },
-        "victory-glow": {
-          "0%, 100%": { 
-            boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)",
-            transform: "scale(1)"
-          },
-          "50%": { 
-            boxShadow: "0 0 40px rgba(251, 191, 36, 0.8), 0 0 60px rgba(220, 38, 38, 0.6)",
-            transform: "scale(1.05)"
-          },
-        },
-        "trophy-bounce": {
-          "0%, 20%, 50%, 80%, 100%": { transform: "translateY(0)" },
-          "40%": { transform: "translateY(-15px)" },
-          "60%": { transform: "translateY(-10px)" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "heart-beat": "heart-beat 1.5s ease-in-out infinite",
-        "float": "float 4s ease-in-out infinite",
-        "scale-up": "scale-up 0.8s forwards",
-        "fade-in": "fade-in 1s forwards",
-        "fade-in-left": "fade-in-left 0.8s forwards",
-        "fade-in-right": "fade-in-right 0.8s forwards",
-        "blink": "blink 1s infinite",
-        "victory-glow": "victory-glow 3s ease-in-out infinite",
-        "trophy-bounce": "trophy-bounce 2s infinite",
-      },
-      backgroundImage: {
-        "gold-gradient": "linear-gradient(to right, #fbbf24, #f59e0b, #fbbf24)",
-        "rcb-gradient": "linear-gradient(45deg, #dc2626, #fbbf24)",
-        "victory-gradient": "linear-gradient(135deg, #dc2626 0%, #fbbf24 50%, #dc2626 100%)",
-      },
-      boxShadow: {
-        gold: "0 0 20px rgba(251, 191, 36, 0.5)",
-        "gold-lg": "0 0 30px rgba(251, 191, 36, 0.7)",
-        "rcb": "0 0 25px rgba(220, 38, 38, 0.4), 0 0 50px rgba(251, 191, 36, 0.3)",
-        "victory": "0 0 40px rgba(251, 191, 36, 0.8), 0 0 80px rgba(220, 38, 38, 0.6)",
-      },
-      fontFamily: {
-        cormorant: ["Cormorant Garamond", "serif"],
-        opensans: ["Open Sans", "sans-serif"],
-      },
-      textShadow: {
-        'rcb': '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(251, 191, 36, 0.5)',
-        'victory': '0 0 10px rgba(251, 191, 36, 0.8), 0 0 20px rgba(220, 38, 38, 0.6)',
-      }
-    },
-  },
-  plugins: [require("tailwindcss-animate")],
+	darkMode: ["class"],
+	content: [
+		"./pages/**/*.{ts,tsx}",
+		"./components/**/*.{ts,tsx}",
+		"./app/**/*.{ts,tsx}",
+		"./src/**/*.{ts,tsx}",
+	],
+	prefix: "",
+	theme: {
+		container: {
+			center: true,
+			padding: '2rem',
+			screens: {
+				'2xl': '1400px'
+			}
+		},
+		extend: {
+			colors: {
+				border: 'hsl(var(--border))',
+				input: 'hsl(var(--input))',
+				ring: 'hsl(var(--ring))',
+				background: 'hsl(var(--background))',
+				foreground: 'hsl(var(--foreground))',
+				primary: {
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
+				},
+				secondary: {
+					DEFAULT: 'hsl(var(--secondary))',
+					foreground: 'hsl(var(--secondary-foreground))'
+				},
+				destructive: {
+					DEFAULT: 'hsl(var(--destructive))',
+					foreground: 'hsl(var(--destructive-foreground))'
+				},
+				muted: {
+					DEFAULT: 'hsl(var(--muted))',
+					foreground: 'hsl(var(--muted-foreground))'
+				},
+				accent: {
+					DEFAULT: 'hsl(var(--accent))',
+					foreground: 'hsl(var(--accent-foreground))'
+				},
+				popover: {
+					DEFAULT: 'hsl(var(--popover))',
+					foreground: 'hsl(var(--popover-foreground))'
+				},
+				card: {
+					DEFAULT: 'hsl(var(--card))',
+					foreground: 'hsl(var(--card-foreground))'
+				},
+				sidebar: {
+					DEFAULT: 'hsl(var(--sidebar-background))',
+					foreground: 'hsl(var(--sidebar-foreground))',
+					primary: 'hsl(var(--sidebar-primary))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+					accent: 'hsl(var(--sidebar-accent))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					border: 'hsl(var(--sidebar-border))',
+					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom wedding colors
+				maroon: '#800000',
+				gold: {
+					light: '#FFD700',
+					dark: '#C5A20A'
+				},
+				cream: '#FFF8E7',
+				rosegold: '#B76E79'
+			},
+			fontFamily: {
+				'cormorant': ['Cormorant Garamond', 'serif'],
+				'opensans': ['Open Sans', 'sans-serif']
+			},
+			backgroundImage: {
+				'gold-gradient': 'linear-gradient(to right, #FFD700, #C5A20A)',
+				'damask-pattern': "url('/patterns/damask.svg')"
+			},
+			keyframes: {
+				'accordion-down': {
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)'
+					}
+				},
+				'accordion-up': {
+					from: {
+						height: 'var(--radix-accordion-content-height)'
+					},
+					to: {
+						height: '0'
+					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { boxShadow: '0 0 10px 2px rgba(255, 215, 0, 0.4)' },
+					'50%': { boxShadow: '0 0 20px 5px rgba(255, 215, 0, 0.7)' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'fade-in-left': {
+					'0%': { opacity: '0', transform: 'translateX(-20px)' },
+					'100%': { opacity: '1', transform: 'translateX(0)' }
+				},
+				'fade-in-right': {
+					'0%': { opacity: '0', transform: 'translateX(20px)' },
+					'100%': { opacity: '1', transform: 'translateX(0)' }
+				},
+				'scale-up': {
+					'0%': { transform: 'scale(0.8)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'particles': {
+					'0%': { transform: 'translateY(0) rotate(0deg)', opacity: '1' },
+					'100%': { transform: 'translateY(-100px) rotate(360deg)', opacity: '0' }
+				},
+				'heart-beat': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.1)' }
+				}
+			},
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'spin-slow': 'spin-slow 8s linear infinite',
+				'fade-in': 'fade-in 0.8s ease-out',
+				'fade-in-left': 'fade-in-left 0.8s ease-out',
+				'fade-in-right': 'fade-in-right 0.8s ease-out',
+				'scale-up': 'scale-up 0.5s ease-out',
+				'particles': 'particles 3s ease-out forwards',
+				'heart-beat': 'heart-beat 1.5s ease-in-out infinite'
+			},
+			boxShadow: {
+				'gold': '0 0 10px rgba(255, 215, 0, 0.5)',
+				'gold-lg': '0 0 30px rgba(255, 215, 0, 0.7)'
+			}
+		}
+	},
+	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
