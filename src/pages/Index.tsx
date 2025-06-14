@@ -135,7 +135,7 @@ const Index = () => {
     setInvitationAccepted(true);
     toast({
       title: "Invitation Accepted!",
-      description: `Thank you ${guestName} for accepting our invitation. We look forward to celebrating with you!`,
+      description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
       variant: "default",
       duration: 5000,
     });
@@ -250,24 +250,6 @@ const Index = () => {
           </div>
           
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            {!invitationAccepted ? (
-              <button 
-                className="relative px-6 py-3 rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group"
-                onClick={handleAcceptInvitation}
-              >
-                <span className="relative z-10 flex items-center">
-                  Accept Invitation
-                  <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={18} />
-                </span>
-                <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
-              </button>
-            ) : (
-              <div className="px-6 py-3 rounded-full bg-green-600/80 text-white font-bold flex items-center">
-                <CheckCircle className="mr-2" size={18} />
-                Invitation Accepted!
-              </div>
-            )}
-            
             <button 
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
@@ -408,6 +390,29 @@ const Index = () => {
           </h2>
           
           <PhotoCarousel photos={photos} />
+        </div>
+      </section>
+      
+      {/* Accept Invitation Section - Moved to correct location after photos */}
+      <section className="py-10 px-4 relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          {!invitationAccepted ? (
+            <button 
+              className="relative px-8 py-4 rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold text-lg overflow-hidden group"
+              onClick={handleAcceptInvitation}
+            >
+              <span className="relative z-10 flex items-center">
+                Accept Invitation
+                <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={20} />
+              </span>
+              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+            </button>
+          ) : (
+            <div className="px-8 py-4 rounded-full bg-green-600/80 text-white font-bold text-lg flex items-center justify-center">
+              <CheckCircle className="mr-2" size={20} />
+              Thank you for accepting our invitation!
+            </div>
+          )}
         </div>
       </section>
       
