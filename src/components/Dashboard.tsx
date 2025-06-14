@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Countdown from './Countdown';
@@ -54,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({ open, onClose }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div className="bg-maroon/60 backdrop-blur-sm rounded-xl p-5 gold-border">
-                  <Countdown targetDate={weddingDate} />
+                  <Countdown />
                   
                   <div className="mt-6">
                     <h3 className="font-cormorant text-xl gold-text font-bold flex items-center mb-3">
