@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,6 +7,7 @@ import Countdown from '@/components/Countdown';
 import GaneshaHeader from '@/components/GaneshaHeader';
 import CoupleIllustration from '@/components/CoupleIllustration';
 import { initCursorGlitter, initTouchGlitter, createMandalaEffect } from '@/utils/animationUtils';
+import { createConfetti } from '@/utils/confettiUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
 import { useNavigate } from 'react-router-dom';
@@ -133,6 +133,7 @@ const Index = () => {
 
   const handleAcceptInvitation = () => {
     setInvitationAccepted(true);
+    createConfetti();
     toast({
       title: "Invitation Accepted!",
       description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
@@ -393,12 +394,12 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Accept Invitation Section - Moved to correct location after photos */}
+      {/* Accept Invitation Section - Enhanced with better design */}
       <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {!invitationAccepted ? (
             <button 
-              className="relative px-8 py-4 rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold text-lg overflow-hidden group"
+              className="relative px-8 py-4 rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold text-lg overflow-hidden group transform hover:scale-105"
               onClick={handleAcceptInvitation}
             >
               <span className="relative z-10 flex items-center">
@@ -408,9 +409,38 @@ const Index = () => {
               <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
             </button>
           ) : (
-            <div className="px-8 py-4 rounded-full bg-green-600/80 text-white font-bold text-lg flex items-center justify-center">
-              <CheckCircle className="mr-2" size={20} />
-              Thank you for accepting our invitation!
+            <div className="max-w-2xl mx-auto">
+              <div className="relative bg-maroon/60 p-8 rounded-2xl gold-border overflow-hidden">
+                {/* Decorative background pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+                  <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                  <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                  <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="mb-4">
+                    <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
+                  </div>
+                  
+                  <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                    Invitation Accepted!
+                  </h3>
+                  
+                  <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
+                    <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
+                      "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
+                    </p>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-center space-x-2">
+                    <Heart className="text-gold-light animate-heart-beat" size={20} />
+                    <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
+                    <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

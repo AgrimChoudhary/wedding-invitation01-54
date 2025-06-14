@@ -17,7 +17,7 @@ interface TimeLeft {
 
 const parseWeddingDateTime = () => {
   // Parse the wedding date and time from placeholders
-  // Format: "30 March 2025" and "5:00 PM - 8:00 PM"
+  // Format: "30 June 2025" and "5:00 PM - 8:00 PM"
   const timeStart = WEDDING_TIME.split(' - ')[0]; // Get start time
   const dateTimeString = `${WEDDING_DATE} ${timeStart}`;
   
@@ -26,7 +26,7 @@ const parseWeddingDateTime = () => {
   
   // If parsing fails, fallback to a default date
   if (isNaN(date.getTime())) {
-    return new Date("2025-03-30T17:00:00");
+    return new Date("2025-06-30T17:00:00");
   }
   
   return date;
