@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
+import { WEDDING_DATE, WEDDING_TIME } from '@/constants/placeholders';
 
 interface CountdownProps {
-  targetDate: Date;
   className?: string;
 }
 
@@ -14,6 +14,23 @@ interface TimeLeft {
   minutes: number;
   seconds: number;
 }
+
+const parseWeddingDateTime = () => {
+  // Parse the wedding date and time from placeholders
+  // Format: "30 March 2025" and "5:00 PM - 8:00 PM"
+  const timeStart = WEDDING_TIME.split(' - ')[0]; // Get start time
+  const dateTimeString = `${WEDDING_DATE} ${timeStart}`;
+  
+  // Convert to a proper date format
+  const date = new Date(dateTimeString);
+  
+  // If parsing fails, fallback to a default date
+  if (isNaN(date.getTime())) {
+    return new Date("2025-03-30T17:00:00");
+  }
+  
+  return date;
+};
 
 const calculateTimeLeft = (targetDate: Date): TimeLeft => {
   const difference = targetDate.getTime() - new Date().getTime();
@@ -30,7 +47,8 @@ const calculateTimeLeft = (targetDate: Date): TimeLeft => {
   };
 };
 
-const Countdown: React.FC<CountdownProps> = ({ targetDate, className }) => {
+const Countdown: React.FC<CountdownProps> = ({ className }) => {
+  const targetDate = parseWeddingDateTime();
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(targetDate));
   const [isFlipping, setIsFlipping] = useState<{[key: string]: boolean}>({
     days: false,

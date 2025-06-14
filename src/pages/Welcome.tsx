@@ -1,8 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AudioPlayer from '@/components/AudioPlayer';
+import { 
+  BRIDE_NAME, 
+  GROOM_NAME, 
+  WEDDING_DATE, 
+  GUEST_NAME,
+  getOrderedNames 
+} from '@/constants/placeholders';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -11,11 +19,11 @@ const Welcome = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   
-  // Set the generic guest name instead of a specific name
-  const guestName = "Guest Name";
+  const guestName = GUEST_NAME;
+  const orderedNames = getOrderedNames();
 
   useEffect(() => {
-    // Store the generic guest name
+    // Store the guest name
     localStorage.setItem('guestName', guestName);
     
     // Animation sequence
@@ -34,7 +42,6 @@ const Welcome = () => {
 
   const handleEnterClick = () => {
     setIsEntering(true);
-    // Set the loading text as requested by the user
     setLoadingText(`${guestName}, Wait we are opening invitation...`);
     
     setTimeout(() => {
@@ -146,12 +153,12 @@ const Welcome = () => {
           </div>
           
           <h1 className="font-cormorant text-4xl md:text-5xl gold-text font-bold mb-4 animate-scale-up">
-            Priya <span className="inline-block mx-1 md:mx-3">&</span> Vijay
+            {orderedNames.firstName} <span className="inline-block mx-1 md:mx-3">&</span> {orderedNames.secondName}
           </h1>
           
           <div className="gold-text font-cormorant text-lg md:text-xl italic mb-6">
             <p className="mb-1">Welcome to our Wedding Celebration</p>
-            <p>30th March 2025</p>
+            <p>{WEDDING_DATE}</p>
           </div>
         </div>
         

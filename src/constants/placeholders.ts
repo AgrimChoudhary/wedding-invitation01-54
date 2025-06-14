@@ -6,6 +6,21 @@ export const WEDDING_DATE = "30 March 2025";
 export const WEDDING_TIME = "5:00 PM - 8:00 PM";
 export const COUPLE_TAGLINE = "A journey written in the stars…";
 
+// Order Configuration - allows customization of display order
+export const ORDER_CONFIG = {
+  // true = Bride first, false = Groom first
+  BRIDE_FIRST: true,
+  // true = Bride family first, false = Groom family first  
+  BRIDE_FAMILY_FIRST: true
+};
+
+// Get ordered names based on configuration
+export const getOrderedNames = () => {
+  return ORDER_CONFIG.BRIDE_FIRST 
+    ? { firstName: BRIDE_NAME, secondName: GROOM_NAME }
+    : { firstName: GROOM_NAME, secondName: BRIDE_NAME };
+};
+
 // Guest Information Placeholder
 export const GUEST_NAME = "Guest Name";
 
@@ -98,6 +113,13 @@ export const GROOM_FAMILY = {
       MEMBER_DESCRIPTION: "An architect who loves designing sustainable buildings."
     }
   ]
+};
+
+// Get ordered families based on configuration
+export const getOrderedFamilies = () => {
+  return ORDER_CONFIG.BRIDE_FAMILY_FIRST 
+    ? { firstFamily: BRIDE_FAMILY, secondFamily: GROOM_FAMILY }
+    : { firstFamily: GROOM_FAMILY, secondFamily: BRIDE_FAMILY };
 };
 
 // Photo Gallery Placeholders

@@ -27,7 +27,9 @@ import {
   PHOTOS,
   VENUE_ADDRESS,
   VENUE_MAP_LINK,
-  CONTACTS
+  CONTACTS,
+  getOrderedNames,
+  getOrderedFamilies
 } from '@/constants/placeholders';
 
 const Index = () => {
@@ -42,6 +44,9 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [invitationAccepted, setInvitationAccepted] = useState(false);
   const { toast } = useToast();
+  
+  const orderedNames = getOrderedNames();
+  const orderedFamilies = getOrderedFamilies();
   
   useEffect(() => {
     const storedName = localStorage.getItem('guestName');
@@ -130,7 +135,7 @@ const Index = () => {
     setInvitationAccepted(true);
     toast({
       title: "Invitation Accepted!",
-      description: "Thank you for accepting our invitation. We look forward to celebrating with you!",
+      description: `Thank you ${guestName} for accepting our invitation. We look forward to celebrating with you!`,
       variant: "default",
       duration: 5000,
     });
@@ -158,25 +163,25 @@ const Index = () => {
     };
   });
 
-  // Transform family data to match FamilyDetails interface
-  const brideFamily: FamilyDetails = {
-    side: BRIDE_FAMILY.FAMILY_SIDE as "bride",
-    title: BRIDE_FAMILY.FAMILY_TITLE,
-    description: BRIDE_FAMILY.FAMILY_DESCRIPTION,
-    address: BRIDE_FAMILY.FAMILY_ADDRESS,
-    members: BRIDE_FAMILY.FAMILY_MEMBERS.map(member => ({
+  // Transform family data to match FamilyDetails interface using ordered families
+  const firstFamily: FamilyDetails = {
+    side: orderedFamilies.firstFamily.FAMILY_SIDE as "bride" | "groom",
+    title: orderedFamilies.firstFamily.FAMILY_TITLE,
+    description: orderedFamilies.firstFamily.FAMILY_DESCRIPTION,
+    address: orderedFamilies.firstFamily.FAMILY_ADDRESS,
+    members: orderedFamilies.firstFamily.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
       description: member.MEMBER_DESCRIPTION
     }))
   };
 
-  const groomFamily: FamilyDetails = {
-    side: GROOM_FAMILY.FAMILY_SIDE as "groom",
-    title: GROOM_FAMILY.FAMILY_TITLE,
-    description: GROOM_FAMILY.FAMILY_DESCRIPTION,
-    address: GROOM_FAMILY.FAMILY_ADDRESS,
-    members: GROOM_FAMILY.FAMILY_MEMBERS.map(member => ({
+  const secondFamily: FamilyDetails = {
+    side: orderedFamilies.secondFamily.FAMILY_SIDE as "bride" | "groom",
+    title: orderedFamilies.secondFamily.FAMILY_TITLE,
+    description: orderedFamilies.secondFamily.FAMILY_DESCRIPTION,
+    address: orderedFamilies.secondFamily.FAMILY_ADDRESS,
+    members: orderedFamilies.secondFamily.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
       description: member.MEMBER_DESCRIPTION
@@ -220,7 +225,7 @@ const Index = () => {
           </p>
           
           <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
-            {BRIDE_NAME} <span className="inline-block mx-1 md:mx-3">&</span> {GROOM_NAME}
+            {orderedNames.firstName} <span className="inline-block mx-1 md:mx-3">&</span> {orderedNames.secondName}
           </h1>
           
           <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
@@ -241,10 +246,28 @@ const Index = () => {
           </div>
           
           <div className="mt-10">
-            <Countdown targetDate={new Date("2025-03-30T17:00:00")} className="animate-fade-in" />
+            <Countdown className="animate-fade-in" />
           </div>
           
           <div className="mt-8 flex flex-wrap justify-center gap-4">
+            {!invitationAccepted ? (
+              <button 
+                className="relative px-6 py-3 rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group"
+                onClick={handleAcceptInvitation}
+              >
+                <span className="relative z-10 flex items-center">
+                  Accept Invitation
+                  <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={18} />
+                </span>
+                <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+              </button>
+            ) : (
+              <div className="px-6 py-3 rounded-full bg-green-600/80 text-white font-bold flex items-center">
+                <CheckCircle className="mr-2" size={18} />
+                Invitation Accepted!
+              </div>
+            )}
+            
             <button 
               className={cn(
                 "relative px-6 py-3 rounded-full transition-all duration-300",
@@ -312,30 +335,38 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div 
               className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(brideFamily)}
+              onClick={() => handleFamilyClick(firstFamily)}
             >
               <div className="flex justify-center mb-4">
-                <Flower className="text-gold-light" size={28} />
+                {firstFamily.side === "bride" ? (
+                  <Flower className="text-gold-light" size={28} />
+                ) : (
+                  <Star className="text-gold-light" size={28} />
+                )}
               </div>
               <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Bride's Parents
+                {firstFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
                 <Info size={16} className="ml-2 text-gold-light/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">{BRIDE_FAMILY.FAMILY_TITLE}</p>
+              <p className="text-center text-cream text-lg font-cormorant">{firstFamily.title}</p>
             </div>
             
             <div 
               className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(groomFamily)}
+              onClick={() => handleFamilyClick(secondFamily)}
             >
               <div className="flex justify-center mb-4">
-                <Star className="text-gold-light" size={28} />
+                {secondFamily.side === "bride" ? (
+                  <Flower className="text-gold-light" size={28} />
+                ) : (
+                  <Star className="text-gold-light" size={28} />
+                )}
               </div>
               <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                Groom's Parents
+                {secondFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
                 <Info size={16} className="ml-2 text-gold-light/70" />
               </h3>
-              <p className="text-center text-cream text-lg font-cormorant">{GROOM_FAMILY.FAMILY_TITLE}</p>
+              <p className="text-center text-cream text-lg font-cormorant">{secondFamily.title}</p>
             </div>
           </div>
         </div>
