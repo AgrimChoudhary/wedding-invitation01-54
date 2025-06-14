@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Heart, ArrowRight } from 'lucide-react';
+import { Sparkles, Heart, ArrowRight, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AudioPlayer from '@/components/AudioPlayer';
 import { 
@@ -47,6 +46,10 @@ const Welcome = () => {
     setTimeout(() => {
       navigate('/invitation');
     }, 1200);
+  };
+
+  const handleCustomizeClick = () => {
+    navigate('/customize');
   };
 
   // Create decorative particle effect
@@ -215,13 +218,23 @@ const Welcome = () => {
                 "In the garden of love, two souls have found their blooming season"
               </p>
               
-              <button
-                onClick={handleEnterClick}
-                className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto"
-              >
-                Enter Invitation
-                <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
-              </button>
+              <div className="space-y-4">
+                <button
+                  onClick={handleEnterClick}
+                  className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto w-full"
+                >
+                  Enter Invitation
+                  <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
+                </button>
+                
+                <button
+                  onClick={handleCustomizeClick}
+                  className="group border-2 border-gold-light text-gold-light px-8 py-3 rounded-full font-medium transition-all hover:bg-gold-light/10 hover:scale-105 flex items-center justify-center mx-auto w-full"
+                >
+                  Create Your Own Invitation
+                  <Settings className="ml-2 transition-transform group-hover:rotate-12" size={18} />
+                </button>
+              </div>
             </div>
           )}
         </div>
