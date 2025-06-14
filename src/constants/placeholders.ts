@@ -6,6 +6,9 @@ export const WEDDING_DATE = "30 March 2025";
 export const WEDDING_TIME = "5:00 PM - 8:00 PM";
 export const COUPLE_TAGLINE = "A journey written in the stars…";
 
+// Guest Information Placeholder
+export const GUEST_NAME = "Guest Name";
+
 // Event Details Placeholders (Array-based)
 export const EVENTS = [
   {
@@ -48,38 +51,22 @@ export const BRIDE_FAMILY = {
     {
       MEMBER_NAME: "Ramesh Kumar",
       MEMBER_RELATION: "Father of the Bride",
-      MEMBER_DESCRIPTION: "A respected businessman who loves gardening and classical music in his free time.",
-      MEMBER_PHONE: "+91 98765 43210",
-      MEMBER_EMAIL: "ramesh@example.com",
-      MEMBER_BIRTHDATE: "April 15, 1970",
-      MEMBER_LOCATION: "Wedding City"
+      MEMBER_DESCRIPTION: "A respected businessman who loves gardening and classical music in his free time."
     },
     {
       MEMBER_NAME: "Rameshi Devi",
       MEMBER_RELATION: "Mother of the Bride", 
-      MEMBER_DESCRIPTION: "A loving homemaker known for her delicious cooking and kind heart.",
-      MEMBER_PHONE: "+91 98765 43211",
-      MEMBER_EMAIL: "rameshi@example.com",
-      MEMBER_BIRTHDATE: "June 22, 1972",
-      MEMBER_LOCATION: "Wedding City"
+      MEMBER_DESCRIPTION: "A loving homemaker known for her delicious cooking and kind heart."
     },
     {
       MEMBER_NAME: "Priya Kumar",
       MEMBER_RELATION: "The Bride",
-      MEMBER_DESCRIPTION: "A software engineer who loves to paint and travel. She met Vijay during a company hackathon.",
-      MEMBER_PHONE: "+91 98765 43212",
-      MEMBER_EMAIL: "priya@example.com", 
-      MEMBER_BIRTHDATE: "May 5, 1995",
-      MEMBER_LOCATION: "Bangalore"
+      MEMBER_DESCRIPTION: "A software engineer who loves to paint and travel. She met Vijay during a company hackathon."
     },
     {
       MEMBER_NAME: "Rahul Kumar",
       MEMBER_RELATION: "Brother of the Bride",
-      MEMBER_DESCRIPTION: "Currently studying medicine and aspires to be a neurosurgeon.",
-      MEMBER_PHONE: "+91 98765 43213",
-      MEMBER_EMAIL: "rahul@example.com",
-      MEMBER_BIRTHDATE: "November 12, 1998", 
-      MEMBER_LOCATION: "Delhi"
+      MEMBER_DESCRIPTION: "Currently studying medicine and aspires to be a neurosurgeon."
     }
   ]
 };
@@ -93,38 +80,22 @@ export const GROOM_FAMILY = {
     {
       MEMBER_NAME: "Harkesh Singh",
       MEMBER_RELATION: "Father of the Groom",
-      MEMBER_DESCRIPTION: "A retired professor who now spends his time writing books on history.",
-      MEMBER_PHONE: "+91 98765 43215",
-      MEMBER_EMAIL: "harkesh@example.com",
-      MEMBER_BIRTHDATE: "October 7, 1968",
-      MEMBER_LOCATION: "Wedding City"
+      MEMBER_DESCRIPTION: "A retired professor who now spends his time writing books on history."
     },
     {
       MEMBER_NAME: "Harkeshi Kaur",
       MEMBER_RELATION: "Mother of the Groom",
-      MEMBER_DESCRIPTION: "A talented classical dancer who has taught dance to hundreds of students.",
-      MEMBER_PHONE: "+91 98765 43216", 
-      MEMBER_EMAIL: "harkeshi@example.com",
-      MEMBER_BIRTHDATE: "January 3, 1970",
-      MEMBER_LOCATION: "Wedding City"
+      MEMBER_DESCRIPTION: "A talented classical dancer who has taught dance to hundreds of students."
     },
     {
       MEMBER_NAME: "Vijay Singh",
       MEMBER_RELATION: "The Groom",
-      MEMBER_DESCRIPTION: "A product manager who is passionate about photography and mountain climbing.",
-      MEMBER_PHONE: "+91 98765 43217",
-      MEMBER_EMAIL: "vijay@example.com",
-      MEMBER_BIRTHDATE: "July 18, 1993",
-      MEMBER_LOCATION: "Bangalore"
+      MEMBER_DESCRIPTION: "A product manager who is passionate about photography and mountain climbing."
     },
     {
       MEMBER_NAME: "Anita Singh", 
       MEMBER_RELATION: "Sister of the Groom",
-      MEMBER_DESCRIPTION: "An architect who loves designing sustainable buildings.",
-      MEMBER_PHONE: "+91 98765 43218",
-      MEMBER_EMAIL: "anita@example.com",
-      MEMBER_BIRTHDATE: "February 25, 1996",
-      MEMBER_LOCATION: "Mumbai"
+      MEMBER_DESCRIPTION: "An architect who loves designing sustainable buildings."
     }
   ]
 };
@@ -162,11 +133,11 @@ export const VENUE_MAP_LINK = "https://maps.google.com/?q=Royal+Celebration+Hall
 // Contact Information Placeholders (Dynamic Array)
 export const CONTACTS = [
   {
-    CONTACT_NAME: "Bride's Family",
+    CONTACT_NAME: "Contact 1",
     CONTACT_NUMBER: "+91 98765 43210"
   },
   {
-    CONTACT_NAME: "Groom's Family", 
+    CONTACT_NAME: "Contact 2", 
     CONTACT_NUMBER: "+91 98765 43211"
   }
 ];

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,7 @@ import {
   GROOM_NAME, 
   WEDDING_DATE, 
   COUPLE_TAGLINE,
+  GUEST_NAME,
   EVENTS,
   BRIDE_FAMILY,
   GROOM_FAMILY,
@@ -34,7 +36,7 @@ const Index = () => {
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
-  const [guestName, setGuestName] = useState('Guest Name');
+  const [guestName, setGuestName] = useState(GUEST_NAME);
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -155,6 +157,31 @@ const Index = () => {
       height: 800
     };
   });
+
+  // Transform family data to match FamilyDetails interface
+  const brideFamily: FamilyDetails = {
+    side: BRIDE_FAMILY.FAMILY_SIDE as "bride",
+    title: BRIDE_FAMILY.FAMILY_TITLE,
+    description: BRIDE_FAMILY.FAMILY_DESCRIPTION,
+    address: BRIDE_FAMILY.FAMILY_ADDRESS,
+    members: BRIDE_FAMILY.FAMILY_MEMBERS.map(member => ({
+      name: member.MEMBER_NAME,
+      relation: member.MEMBER_RELATION,
+      description: member.MEMBER_DESCRIPTION
+    }))
+  };
+
+  const groomFamily: FamilyDetails = {
+    side: GROOM_FAMILY.FAMILY_SIDE as "groom",
+    title: GROOM_FAMILY.FAMILY_TITLE,
+    description: GROOM_FAMILY.FAMILY_DESCRIPTION,
+    address: GROOM_FAMILY.FAMILY_ADDRESS,
+    members: GROOM_FAMILY.FAMILY_MEMBERS.map(member => ({
+      name: member.MEMBER_NAME,
+      relation: member.MEMBER_RELATION,
+      description: member.MEMBER_DESCRIPTION
+    }))
+  };
   
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -285,7 +312,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <div 
               className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(BRIDE_FAMILY)}
+              onClick={() => handleFamilyClick(brideFamily)}
             >
               <div className="flex justify-center mb-4">
                 <Flower className="text-gold-light" size={28} />
@@ -299,7 +326,7 @@ const Index = () => {
             
             <div 
               className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
-              onClick={() => handleFamilyClick(GROOM_FAMILY)}
+              onClick={() => handleFamilyClick(groomFamily)}
             >
               <div className="flex justify-center mb-4">
                 <Star className="text-gold-light" size={28} />

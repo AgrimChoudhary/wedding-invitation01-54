@@ -10,12 +10,7 @@ export type FamilyMember = {
   name: string;
   relation: string;
   photo?: string;
-  age?: string;
-  phone?: string;
-  email?: string;
-  location?: string;
   description?: string;
-  birthdate?: string;
 };
 
 export type FamilyDetails = {
