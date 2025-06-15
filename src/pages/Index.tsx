@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import Countdown from '@/components/Countdown';
-import GaneshaHeader from '@/components/GaneshaHeader';
 import CoupleIllustration from '@/components/CoupleIllustration';
 import { initCursorGlitter, initTouchGlitter, createMandalaEffect } from '@/utils/animationUtils';
 import { createConfetti } from '@/utils/confettiUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
-import { useNavigate } from 'react-router-dom';
 import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
@@ -33,8 +31,6 @@ import {
 } from '@/constants/placeholders';
 
 const Index = () => {
-  const navigate = useNavigate();
-  const [dashboardOpen, setDashboardOpen] = useState(false);
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
@@ -75,7 +71,7 @@ const Index = () => {
     preloadImages();
     
     return cleanup;
-  }, [isMobile, navigate]);
+  }, [isMobile]);
 
   useEffect(() => {
     if (showHearts) {
@@ -109,7 +105,7 @@ const Index = () => {
     const duration = Math.random() * 3 + 3;
     const delay = Math.random();
     
-    heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+    heart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
     heart.className = 'fixed z-50 pointer-events-none text-gold-light';
     heart.style.width = `${size}px`;
     heart.style.height = `${size}px`;
@@ -285,7 +281,7 @@ const Index = () => {
                 >
                   <span className="relative z-10 flex items-center">
                     {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
-                    <Sparkle className={cn(
+                    <Sparkles className={cn(
                       "ml-2 transition-transform duration-300",
                       "group-hover:rotate-12 animate-pulse"
                     )} size={18} />
