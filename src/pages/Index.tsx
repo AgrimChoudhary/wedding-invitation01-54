@@ -9,7 +9,6 @@ import { initCursorGlitter, initTouchGlitter, createMandalaEffect } from '@/util
 import { createConfetti } from '@/utils/confettiUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PhoneIcon from '@/components/PhoneIcon';
-import { useNavigate } from 'react-router-dom';
 import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
@@ -32,7 +31,6 @@ import {
 } from '@/constants/placeholders';
 
 const Index = () => {
-  const navigate = useNavigate();
   const [showHearts, setShowHearts] = useState(false);
   const [isMandalaVisible, setIsMandalaVisible] = useState(false);
   const isMobile = useIsMobile();
@@ -73,7 +71,7 @@ const Index = () => {
     preloadImages();
     
     return cleanup;
-  }, [isMobile, navigate]);
+  }, [isMobile]);
 
   useEffect(() => {
     if (showHearts) {
