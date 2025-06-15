@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Welcome from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import AudioPlayer from "./components/AudioPlayer";
 
@@ -18,7 +19,8 @@ const App = () => (
       <BrowserRouter>
         <AudioPlayer />
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Welcome />} />
+          <Route path="/invitation" element={<Index />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
