@@ -315,43 +315,107 @@ const Index = () => {
         ></div>
       )}
       
-      <section className="py-10 px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+      <section className="py-12 px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-left cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40 rounded-2xl p-8 border-2 border-gold-light/40 hover:border-gold-light/80 animate-fade-in-left cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/25 hover:-translate-y-2 overflow-hidden"
               onClick={() => handleFamilyClick(firstFamily)}
             >
-              <div className="flex justify-center mb-4">
-                {firstFamily.side === "bride" ? (
-                  <Flower className="text-gold-light" size={28} />
-                ) : (
-                  <Star className="text-gold-light" size={28} />
-                )}
+              {/* Decorative corner elements */}
+              <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-gold-light/60"></div>
+              <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-gold-light/60"></div>
+              <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-gold-light/60"></div>
+              <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-gold-light/60"></div>
+              
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              
+              {/* Luxury pattern background */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="w-full h-full" style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.3'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                  backgroundSize: '60px 60px'
+                }}></div>
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                {firstFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
-                <Info size={16} className="ml-2 text-gold-light/70" />
-              </h3>
-              <p className="text-center text-cream text-lg font-cormorant">{firstFamily.title}</p>
+              
+              <div className="relative z-10">
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-4 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/40 transition-all duration-300">
+                      {firstFamily.side === "bride" ? (
+                        <Flower className="text-maroon h-8 w-8" />
+                      ) : (
+                        <Star className="text-maroon h-8 w-8" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <h3 className="text-center font-cormorant text-2xl gold-text mb-3 flex items-center justify-center group-hover:text-gold-light transition-colors duration-300">
+                  {firstFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
+                  <Info size={18} className="ml-2 text-gold-light/80 group-hover:text-gold-light transition-colors duration-300" />
+                </h3>
+                <div className="w-24 h-0.5 bg-gold-gradient mx-auto mb-4 rounded-full"></div>
+                <p className="text-center text-cream text-xl font-cormorant font-medium tracking-wide">{firstFamily.title}</p>
+                
+                {/* Decorative elements */}
+                <div className="flex justify-center mt-6 space-x-2">
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-60 animate-pulse"></div>
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-80 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-60 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+              </div>
             </div>
             
             <div 
-              className="bg-maroon/40 rounded-xl p-6 gold-border animate-fade-in-right cursor-pointer transform transition-all duration-300 hover:shadow-gold-lg hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40 rounded-2xl p-8 border-2 border-gold-light/40 hover:border-gold-light/80 animate-fade-in-right cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/25 hover:-translate-y-2 overflow-hidden"
               onClick={() => handleFamilyClick(secondFamily)}
             >
-              <div className="flex justify-center mb-4">
-                {secondFamily.side === "bride" ? (
-                  <Flower className="text-gold-light" size={28} />
-                ) : (
-                  <Star className="text-gold-light" size={28} />
-                )}
+              {/* Decorative corner elements */}
+              <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-gold-light/60"></div>
+              <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-gold-light/60"></div>
+              <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-gold-light/60"></div>
+              <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-gold-light/60"></div>
+              
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              
+              {/* Luxury pattern background */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="w-full h-full" style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.3'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                  backgroundSize: '60px 60px'
+                }}></div>
               </div>
-              <h3 className="text-center font-cormorant text-xl gold-text mb-2 flex items-center justify-center">
-                {secondFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
-                <Info size={16} className="ml-2 text-gold-light/70" />
-              </h3>
-              <p className="text-center text-cream text-lg font-cormorant">{secondFamily.title}</p>
+              
+              <div className="relative z-10">
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-4 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/40 transition-all duration-300">
+                      {secondFamily.side === "bride" ? (
+                        <Flower className="text-maroon h-8 w-8" />
+                      ) : (
+                        <Star className="text-maroon h-8 w-8" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <h3 className="text-center font-cormorant text-2xl gold-text mb-3 flex items-center justify-center group-hover:text-gold-light transition-colors duration-300">
+                  {secondFamily.side === "bride" ? "Bride's Parents" : "Groom's Parents"}
+                  <Info size={18} className="ml-2 text-gold-light/80 group-hover:text-gold-light transition-colors duration-300" />
+                </h3>
+                <div className="w-24 h-0.5 bg-gold-gradient mx-auto mb-4 rounded-full"></div>
+                <p className="text-center text-cream text-xl font-cormorant font-medium tracking-wide">{secondFamily.title}</p>
+                
+                {/* Decorative elements */}
+                <div className="flex justify-center mt-6 space-x-2">
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-60 animate-pulse"></div>
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-80 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-60 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
