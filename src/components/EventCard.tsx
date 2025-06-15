@@ -112,25 +112,30 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-gold-light/10 via-gold-light/15 to-gold-light/10 p-4 rounded-xl border border-gold-light/30 mb-4">
-          <div className="flex items-center text-cream font-opensans">
-            <MapPin size={18} className="text-gold-light mr-3 flex-shrink-0 animate-pulse" />
-            <p className="font-medium tracking-wide leading-relaxed">{venue}</p>
-          </div>
+        <div className="flex items-center text-cream font-opensans mb-4">
+          <MapPin size={18} className="text-gold-light mr-3 flex-shrink-0 animate-pulse" />
+          <p className="font-medium tracking-wide leading-relaxed">{venue}</p>
         </div>
+        
+        {/* Map button always visible */}
+        {googleMapsUrl && (
+          <button 
+            onClick={handleMapClick}
+            className="flex items-center justify-center w-full px-6 py-3 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark text-maroon font-bold hover:from-gold-dark hover:to-gold-light transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn mb-4"
+          >
+            <MapPin size={18} className="mr-2 group-hover/btn:animate-bounce" />
+            View Location on Map
+            <ExternalLink size={16} className="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+          </button>
+        )}
         
         {expanded && (
           <div className="mt-6 animate-fade-in">
-            {googleMapsUrl && (
-              <button 
-                onClick={handleMapClick}
-                className="flex items-center justify-center w-full px-6 py-3 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark text-maroon font-bold hover:from-gold-dark hover:to-gold-light transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
-              >
-                <MapPin size={18} className="mr-2 group-hover/btn:animate-bounce" />
-                View Location on Map
-                <ExternalLink size={16} className="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
-              </button>
-            )}
+            <div className="bg-gradient-to-r from-gold-light/10 via-gold-light/15 to-gold-light/10 p-4 rounded-xl border border-gold-light/30">
+              <p className="text-cream/90 text-sm text-center italic">
+                "Join us for this special celebration of love and tradition"
+              </p>
+            </div>
           </div>
         )}
         

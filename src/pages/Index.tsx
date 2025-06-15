@@ -328,133 +328,103 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div 
-              className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-8 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-left cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
+              className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-6 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-left cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
               onClick={() => handleFamilyClick(firstFamily)}
             >
               {/* Click indicator */}
-              <div className="absolute top-4 right-4 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+              <div className="absolute top-3 right-3 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                 Click to View
               </div>
               
               {/* Decorative corner elements */}
-              <div className="absolute top-4 left-4 w-10 h-10 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
-              <div className="absolute bottom-4 right-4 w-10 h-10 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
+              <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
+              <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               
               {/* Shine effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               
-              {/* Luxury pattern background */}
-              <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
-                <div className="w-full h-full" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.4'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                  backgroundSize: '60px 60px'
-                }}></div>
-              </div>
-              
               <div className="relative z-10">
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-5">
                   <div className="relative">
-                    <div className="absolute -inset-3 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-5 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/50 transition-all duration-300 group-hover:scale-110">
+                    <div className="absolute -inset-2 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-4 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/50 transition-all duration-300 group-hover:scale-110">
                       {firstFamily.side === "bride" ? (
-                        <Flower className="text-maroon h-10 w-10" />
+                        <Flower className="text-maroon h-8 w-8" />
                       ) : (
-                        <Star className="text-maroon h-10 w-10" />
+                        <Star className="text-maroon h-8 w-8" />
                       )}
                     </div>
                   </div>
                 </div>
                 
-                <h3 className="text-center font-cormorant text-2xl md:text-3xl gold-text mb-4 group-hover:text-gold-light transition-colors duration-300">
+                <h3 className="text-center font-cormorant text-xl md:text-2xl gold-text mb-3 group-hover:text-gold-light transition-colors duration-300">
                   {firstFamily.side === "bride" ? "Bride's Family" : "Groom's Family"}
                 </h3>
                 
-                <div className="w-32 h-0.5 bg-gold-gradient mx-auto mb-6 rounded-full group-hover:w-40 transition-all duration-300"></div>
+                <div className="w-24 h-0.5 bg-gold-gradient mx-auto mb-4 rounded-full group-hover:w-32 transition-all duration-300"></div>
                 
-                <p className="text-center text-cream text-xl font-cormorant font-medium tracking-wide mb-6">
+                <p className="text-center text-cream text-lg font-cormorant font-medium tracking-wide mb-4">
                   {firstFamily.title}
                 </p>
                 
                 {/* Member count indicator */}
                 <div className="flex justify-center">
-                  <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-4 py-2">
+                  <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-3 py-1">
                     <p className="text-gold-light text-sm font-medium">
-                      {firstFamily.members.length} Family Members
+                      {firstFamily.members.length} Members
                     </p>
                   </div>
-                </div>
-                
-                {/* Decorative dots */}
-                <div className="flex justify-center mt-6 space-x-2">
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-70 animate-pulse"></div>
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-90 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-70 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                 </div>
               </div>
             </div>
             
             <div 
-              className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-8 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-right cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
+              className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-6 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-right cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
               onClick={() => handleFamilyClick(secondFamily)}
             >
               {/* Click indicator */}
-              <div className="absolute top-4 right-4 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+              <div className="absolute top-3 right-3 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                 Click to View
               </div>
               
               {/* Decorative corner elements */}
-              <div className="absolute top-4 left-4 w-10 h-10 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
-              <div className="absolute bottom-4 right-4 w-10 h-10 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
+              <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
+              <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               
               {/* Shine effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               
-              {/* Luxury pattern background */}
-              <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
-                <div className="w-full h-full" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.4'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                  backgroundSize: '60px 60px'
-                }}></div>
-              </div>
-              
               <div className="relative z-10">
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-5">
                   <div className="relative">
-                    <div className="absolute -inset-3 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-5 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/50 transition-all duration-300 group-hover:scale-110">
+                    <div className="absolute -inset-2 bg-gold-gradient rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-gold-light to-gold-dark p-4 rounded-full shadow-xl ring-4 ring-gold-light/20 group-hover:ring-gold-light/50 transition-all duration-300 group-hover:scale-110">
                       {secondFamily.side === "bride" ? (
-                        <Flower className="text-maroon h-10 w-10" />
+                        <Flower className="text-maroon h-8 w-8" />
                       ) : (
-                        <Star className="text-maroon h-10 w-10" />
+                        <Star className="text-maroon h-8 w-8" />
                       )}
                     </div>
                   </div>
                 </div>
                 
-                <h3 className="text-center font-cormorant text-2xl md:text-3xl gold-text mb-4 group-hover:text-gold-light transition-colors duration-300">
+                <h3 className="text-center font-cormorant text-xl md:text-2xl gold-text mb-3 group-hover:text-gold-light transition-colors duration-300">
                   {secondFamily.side === "bride" ? "Bride's Family" : "Groom's Family"}
                 </h3>
                 
-                <div className="w-32 h-0.5 bg-gold-gradient mx-auto mb-6 rounded-full group-hover:w-40 transition-all duration-300"></div>
+                <div className="w-24 h-0.5 bg-gold-gradient mx-auto mb-4 rounded-full group-hover:w-32 transition-all duration-300"></div>
                 
-                <p className="text-center text-cream text-xl font-cormorant font-medium tracking-wide mb-6">
+                <p className="text-center text-cream text-lg font-cormorant font-medium tracking-wide mb-4">
                   {secondFamily.title}
                 </p>
                 
                 {/* Member count indicator */}
                 <div className="flex justify-center">
-                  <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-4 py-2">
+                  <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-3 py-1">
                     <p className="text-gold-light text-sm font-medium">
-                      {secondFamily.members.length} Family Members
+                      {secondFamily.members.length} Members
                     </p>
                   </div>
-                </div>
-                
-                {/* Decorative dots */}
-                <div className="flex justify-center mt-6 space-x-2">
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-70 animate-pulse"></div>
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-90 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="w-2 h-2 bg-gold-light rounded-full opacity-70 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                 </div>
               </div>
             </div>
