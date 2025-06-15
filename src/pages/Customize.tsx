@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -89,22 +88,10 @@ const Customize = () => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Authentication Required",
-          description: "Please log in to create an invitation.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Create main invitation record
+      // Create main invitation record without user_id requirement
       const { data: invitation, error: invitationError } = await supabase
         .from('invitations')
         .insert({
-          user_id: user.id,
           wedding_date: new Date(data.weddingDate + 'T' + data.weddingTime),
           couple_names: `${data.brideName} & ${data.groomName}`,
           venue: data.venueAddress,
