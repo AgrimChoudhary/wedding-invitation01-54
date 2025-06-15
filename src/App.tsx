@@ -8,8 +8,6 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
-import Customize from "./pages/Customize";
-import GuestManagement from "./pages/GuestManagement";
 import AudioPlayer from "./components/AudioPlayer";
 
 const queryClient = new QueryClient();
@@ -25,8 +23,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/invitation" element={<Index />} />
-          <Route path="/customize" element={<Customize />} />
-          <Route path="/guest-management/:invitationId" element={<GuestManagement />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
