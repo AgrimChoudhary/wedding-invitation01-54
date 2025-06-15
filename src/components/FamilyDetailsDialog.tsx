@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Flower, Heart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -74,20 +73,12 @@ const FamilyDetailsDialog = ({
               >
                 <CardContent className="p-4 flex flex-col items-center text-center">
                   <div className="mb-3">
-                    {member.photo ? (
-                      <Avatar className="h-20 w-20 border-2 border-gold-light/50">
-                        <AvatarImage src={member.photo} alt={member.name} />
-                        <AvatarFallback className="bg-gold-light/20 text-lg font-medium text-gold-light">
-                          {member.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <Avatar className="h-20 w-20 border-2 border-gold-light/50">
-                        <AvatarFallback className="bg-gold-light/20 text-lg font-medium text-gold-light">
-                          {member.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                    <Avatar className="h-20 w-20 border-2 border-gold-light/50">
+                      <AvatarImage src={member.photo} alt={member.name} />
+                      <AvatarFallback className="bg-gold-light/20 text-lg font-medium text-gold-light">
+                        {member.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   
                   <h3 className="gold-text text-lg font-cormorant font-bold mt-1">{member.name}</h3>

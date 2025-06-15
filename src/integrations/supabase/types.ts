@@ -100,6 +100,246 @@ export type Database = {
           },
         ]
       }
+      invitation_contacts: {
+        Row: {
+          contact_name: string
+          contact_number: string
+          created_at: string
+          id: string
+          invitation_id: string
+        }
+        Insert: {
+          contact_name: string
+          contact_number: string
+          created_at?: string
+          id?: string
+          invitation_id: string
+        }
+        Update: {
+          contact_name?: string
+          contact_number?: string
+          created_at?: string
+          id?: string
+          invitation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_contacts_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitation_customizations: {
+        Row: {
+          bride_name: string
+          couple_tagline: string | null
+          created_at: string
+          groom_first: boolean | null
+          groom_name: string
+          guest_name_placeholder: string | null
+          id: string
+          invitation_id: string
+          updated_at: string
+          venue_address: string | null
+          venue_map_link: string | null
+          wedding_date: string
+          wedding_time: string
+        }
+        Insert: {
+          bride_name: string
+          couple_tagline?: string | null
+          created_at?: string
+          groom_first?: boolean | null
+          groom_name: string
+          guest_name_placeholder?: string | null
+          id?: string
+          invitation_id: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_map_link?: string | null
+          wedding_date: string
+          wedding_time: string
+        }
+        Update: {
+          bride_name?: string
+          couple_tagline?: string | null
+          created_at?: string
+          groom_first?: boolean | null
+          groom_name?: string
+          guest_name_placeholder?: string | null
+          id?: string
+          invitation_id?: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_map_link?: string | null
+          wedding_date?: string
+          wedding_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_customizations_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: true
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitation_events: {
+        Row: {
+          created_at: string
+          event_date: string
+          event_name: string
+          event_order: number | null
+          event_time: string
+          event_venue: string
+          event_venue_map_link: string | null
+          id: string
+          invitation_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          event_name: string
+          event_order?: number | null
+          event_time: string
+          event_venue: string
+          event_venue_map_link?: string | null
+          id?: string
+          invitation_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          event_name?: string
+          event_order?: number | null
+          event_time?: string
+          event_venue?: string
+          event_venue_map_link?: string | null
+          id?: string
+          invitation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_events_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitation_families: {
+        Row: {
+          created_at: string
+          family_address: string | null
+          family_description: string | null
+          family_side: string
+          family_title: string
+          id: string
+          invitation_id: string
+        }
+        Insert: {
+          created_at?: string
+          family_address?: string | null
+          family_description?: string | null
+          family_side: string
+          family_title: string
+          id?: string
+          invitation_id: string
+        }
+        Update: {
+          created_at?: string
+          family_address?: string | null
+          family_description?: string | null
+          family_side?: string
+          family_title?: string
+          id?: string
+          invitation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_families_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitation_family_members: {
+        Row: {
+          created_at: string
+          family_id: string
+          id: string
+          member_description: string | null
+          member_name: string
+          member_relation: string
+        }
+        Insert: {
+          created_at?: string
+          family_id: string
+          id?: string
+          member_description?: string | null
+          member_name: string
+          member_relation: string
+        }
+        Update: {
+          created_at?: string
+          family_id?: string
+          id?: string
+          member_description?: string | null
+          member_name?: string
+          member_relation?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "invitation_families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitation_photos: {
+        Row: {
+          created_at: string
+          id: string
+          invitation_id: string
+          photo_alt: string | null
+          photo_order: number | null
+          photo_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invitation_id: string
+          photo_alt?: string | null
+          photo_order?: number | null
+          photo_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invitation_id?: string
+          photo_alt?: string | null
+          photo_order?: number | null
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_photos_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           couple_names: string

@@ -1,4 +1,3 @@
-
 // Configuration for ordering - allows customization of which comes first
 export const ORDER_CONFIG = {
   // Set to true if groom should be first, false if bride should be first
@@ -78,40 +77,94 @@ export const EVENTS = [
 ];
 
 // Family information
+import { FAMILY_PHOTOS } from './familyPhotos';
+
 export const BRIDE_FAMILY = {
   FAMILY_SIDE: "bride",
-  FAMILY_TITLE: "Parents of the Bride",
-  FAMILY_DESCRIPTION: "With great joy and pleasure, we invite you to celebrate",
-  FAMILY_ADDRESS: "Family Address Here",
+  FAMILY_TITLE: "Sharma Family",
+  FAMILY_DESCRIPTION: "A loving family rooted in tradition and values, welcoming everyone with open hearts.",
+  FAMILY_ADDRESS: "123 Heritage Lane, Mumbai, Maharashtra 400001",
   FAMILY_MEMBERS: [
     {
-      MEMBER_NAME: "Father Name",
-      MEMBER_RELATION: "Father",
-      MEMBER_DESCRIPTION: "Father of the bride"
+      MEMBER_NAME: "Sunita Sharma",
+      MEMBER_RELATION: "Mother of the Bride",
+      MEMBER_DESCRIPTION: "A caring mother who has been the pillar of strength for the family.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_MOTHER
     },
     {
-      MEMBER_NAME: "Mother Name", 
-      MEMBER_RELATION: "Mother",
-      MEMBER_DESCRIPTION: "Mother of the bride"
+      MEMBER_NAME: "Rajesh Sharma",
+      MEMBER_RELATION: "Father of the Bride",
+      MEMBER_DESCRIPTION: "A devoted father and successful businessman who values family above all.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_FATHER
+    },
+    {
+      MEMBER_NAME: "Rohit Sharma",
+      MEMBER_RELATION: "Brother",
+      MEMBER_DESCRIPTION: "The protective elder brother who has always been a friend and guide.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_BROTHER
+    },
+    {
+      MEMBER_NAME: "Kavya Sharma",
+      MEMBER_RELATION: "Sister",
+      MEMBER_DESCRIPTION: "The fun-loving younger sister who brings joy and laughter to every gathering.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_SISTER
+    },
+    {
+      MEMBER_NAME: "Kamala Devi",
+      MEMBER_RELATION: "Grandmother",
+      MEMBER_DESCRIPTION: "The wise matriarch whose blessings and stories have shaped the family.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_GRANDMOTHER
+    },
+    {
+      MEMBER_NAME: "Mohan Sharma",
+      MEMBER_RELATION: "Grandfather",
+      MEMBER_DESCRIPTION: "The respected elder whose teachings and values guide the family.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.BRIDE_GRANDFATHER
     }
   ]
 };
 
 export const GROOM_FAMILY = {
   FAMILY_SIDE: "groom",
-  FAMILY_TITLE: "Parents of the Groom",
-  FAMILY_DESCRIPTION: "With great joy and pleasure, we invite you to celebrate",
-  FAMILY_ADDRESS: "Family Address Here", 
+  FAMILY_TITLE: "Gupta Family",
+  FAMILY_DESCRIPTION: "A warm and welcoming family that believes in love, unity, and celebrating life together.",
+  FAMILY_ADDRESS: "456 Garden Street, Delhi, Delhi 110001",
   FAMILY_MEMBERS: [
     {
-      MEMBER_NAME: "Father Name",
-      MEMBER_RELATION: "Father", 
-      MEMBER_DESCRIPTION: "Father of the groom"
+      MEMBER_NAME: "Meera Gupta",
+      MEMBER_RELATION: "Mother of the Groom",
+      MEMBER_DESCRIPTION: "A loving mother known for her culinary skills and warm hospitality.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_MOTHER
     },
     {
-      MEMBER_NAME: "Mother Name",
-      MEMBER_RELATION: "Mother",
-      MEMBER_DESCRIPTION: "Mother of the groom"
+      MEMBER_NAME: "Vikram Gupta",
+      MEMBER_RELATION: "Father of the Groom",
+      MEMBER_DESCRIPTION: "A wise father and respected teacher who has instilled strong values.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_FATHER
+    },
+    {
+      MEMBER_NAME: "Arjun Gupta",
+      MEMBER_RELATION: "Brother",
+      MEMBER_DESCRIPTION: "The supportive younger brother who is always ready with a helping hand.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_BROTHER
+    },
+    {
+      MEMBER_NAME: "Riya Gupta",
+      MEMBER_RELATION: "Sister",
+      MEMBER_DESCRIPTION: "The artistic sister who adds creativity and beauty to every celebration.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_SISTER
+    },
+    {
+      MEMBER_NAME: "Lakshmi Devi",
+      MEMBER_RELATION: "Grandmother",
+      MEMBER_DESCRIPTION: "The beloved grandmother whose prayers and love bless the entire family.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_GRANDMOTHER
+    },
+    {
+      MEMBER_NAME: "Ram Gupta",
+      MEMBER_RELATION: "Grandfather",
+      MEMBER_DESCRIPTION: "The gentle grandfather who shares wisdom and stories from the past.",
+      MEMBER_PHOTO: FAMILY_PHOTOS.GROOM_GRANDFATHER
     }
   ]
 };

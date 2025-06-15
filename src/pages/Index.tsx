@@ -173,7 +173,8 @@ const Index = () => {
     members: orderedFamilies.firstFamily.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
-      description: member.MEMBER_DESCRIPTION
+      description: member.MEMBER_DESCRIPTION,
+      photo: member.MEMBER_PHOTO
     }))
   };
 
@@ -185,7 +186,8 @@ const Index = () => {
     members: orderedFamilies.secondFamily.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
-      description: member.MEMBER_DESCRIPTION
+      description: member.MEMBER_DESCRIPTION,
+      photo: member.MEMBER_PHOTO
     }))
   };
   
