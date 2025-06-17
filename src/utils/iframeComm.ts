@@ -1,0 +1,218 @@
+
+export interface IframeMessage {
+  type: string;
+  data?: any;
+  source: 'wedding-invitation';
+}
+
+export interface InvitationEvents {
+  invitationAccepted: {
+    guestName: string;
+    timestamp: string;
+  };
+  invitationViewed: {
+    guestName: string;
+    timestamp: string;
+    section?: string;
+  };
+  eventClicked: {
+    eventName: string;
+    guestName: string;
+    timestamp: string;
+  };
+  familyViewed: {
+    familySide: 'bride' | 'groom';
+    guestName: string;
+    timestamp: string;
+  };
+  photoViewed: {
+    photoIndex: number;
+    guestName: string;
+    timestamp: string;
+  };
+  contactClicked: {
+    contactName: string;
+    contactNumber: string;
+    guestName: string;
+    timestamp: string;
+  };
+  mapClicked: {
+    venue: string;
+    guestName: string;
+    timestamp: string;
+  };
+  error: {
+    message: string;
+    timestamp: string;
+  };
+}
+
+class IframeMessenger {
+  private listeners: Map<string, Function[]> = new Map();
+  private guestName: string = '';
+  
+  constructor() {
+    this.setupMessageListener();
+  }
+  
+  private setupMessageListener() {
+    window.addEventListener('message', (event) => {
+      try {
+        // Add origin validation for security
+        const allowedOrigins = [
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'https://utsavy2.vercel.app',
+          // Add your main platform domain here
+        ];
+        
+        // Only validate origin if we're in an iframe
+        if (window.parent !== window && !allowedOrigins.includes(event.origin)) {
+          console.warn('Message from unauthorized origin:', event.origin);
+          return;
+        }
+        
+        if (event.data && typeof event.data === 'object' && event.data.source === 'parent-platform') {
+          this.handleParentMessage(event.data);
+        }
+      } catch (error) {
+        console.error('Error handling iframe message:', error);
+        this.sendMessage('error', { message: 'Failed to handle parent message', timestamp: new Date().toISOString() });
+      }
+    });
+  }
+  
+  private handleParentMessage(message: any) {
+    const listeners = this.listeners.get(message.type) || [];
+    listeners.forEach(listener => {
+      try {
+        listener(message.data);
+      } catch (error) {
+        console.error('Error in message listener:', error);
+      }
+    });
+  }
+  
+  public setGuestName(name: string) {
+    this.guestName = name;
+  }
+  
+  public sendMessage<T extends keyof InvitationEvents>(type: T, data: InvitationEvents[T]) {
+    if (window.parent === window) {
+      // Not in iframe, just log for development
+      console.log('Iframe message:', { type, data });
+      return;
+    }
+    
+    const message: IframeMessage = {
+      type,
+      data,
+      source: 'wedding-invitation'
+    };
+    
+    try {
+      window.parent.postMessage(message, '*');
+    } catch (error) {
+      console.error('Failed to send iframe message:', error);
+    }
+  }
+  
+  public onMessage(type: string, callback: Function) {
+    if (!this.listeners.has(type)) {
+      this.listeners.set(type, []);
+    }
+    this.listeners.get(type)!.push(callback);
+  }
+  
+  public removeListener(type: string, callback: Function) {
+    const listeners = this.listeners.get(type) || [];
+    const index = listeners.indexOf(callback);
+    if (index > -1) {
+      listeners.splice(index, 1);
+    }
+  }
+  
+  // Convenience methods for common events
+  public trackInvitationAccepted() {
+    this.sendMessage('invitationAccepted', {
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackInvitationViewed(section?: string) {
+    this.sendMessage('invitationViewed', {
+      guestName: this.guestName,
+      timestamp: new Date().toISOString(),
+      section
+    });
+  }
+  
+  public trackEventClicked(eventName: string) {
+    this.sendMessage('eventClicked', {
+      eventName,
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackFamilyViewed(familySide: 'bride' | 'groom') {
+    this.sendMessage('familyViewed', {
+      familySide,
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackPhotoViewed(photoIndex: number) {
+    this.sendMessage('photoViewed', {
+      photoIndex,
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackContactClicked(contactName: string, contactNumber: string) {
+    this.sendMessage('contactClicked', {
+      contactName,
+      contactNumber,
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackMapClicked(venue: string) {
+    this.sendMessage('mapClicked', {
+      venue,
+      guestName: this.guestName,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackError(message: string) {
+    this.sendMessage('error', {
+      message,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+// Export singleton instance
+export const iframeMessenger = new IframeMessenger();
+
+// Initialize iframe communication
+export const initIframeComm = (guestName: string) => {
+  iframeMessenger.setGuestName(guestName);
+  
+  // Track initial page view
+  iframeMessenger.trackInvitationViewed('initial-load');
+  
+  // Track page visibility changes
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      iframeMessenger.trackInvitationViewed('page-focus');
+    }
+  });
+  
+  return iframeMessenger;
+};

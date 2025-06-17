@@ -1,20 +1,30 @@
+
+import { getDynamicData } from '@/utils/urlParams';
+import { FAMILY_PHOTOS } from './familyPhotos';
+
+// Get dynamic data from URL params or localStorage
+const dynamicData = getDynamicData();
+
 // Configuration for ordering - allows customization of which comes first
 export const ORDER_CONFIG = {
   // Set to true if groom should be first, false if bride should be first
-  GROOM_FIRST: true, // Change this to false to put bride first
+  GROOM_FIRST: dynamicData.groomFirst !== undefined ? dynamicData.groomFirst : true,
 };
 
 // Helper function to get ordered names based on configuration
 export const getOrderedNames = () => {
+  const brideName = dynamicData.brideName || "Bride Name";
+  const groomName = dynamicData.groomName || "Groom Name";
+  
   if (ORDER_CONFIG.GROOM_FIRST) {
     return {
-      firstName: GROOM_NAME,
-      secondName: BRIDE_NAME
+      firstName: groomName,
+      secondName: brideName
     };
   } else {
     return {
-      firstName: BRIDE_NAME,
-      secondName: GROOM_NAME
+      firstName: brideName,
+      secondName: groomName
     };
   }
 };
@@ -34,53 +44,69 @@ export const getOrderedFamilies = () => {
   }
 };
 
-// Main couple information
-export const BRIDE_NAME = "Bride Name";
-export const GROOM_NAME = "Groom Name";
-export const WEDDING_DATE = "30 June 2025";
-export const WEDDING_TIME = "5:00 PM - 8:00 PM";
-export const COUPLE_TAGLINE = "Two hearts, one soul, forever together";
+// Main couple information with dynamic data support
+export const BRIDE_NAME = dynamicData.brideName || "Bride Name";
+export const GROOM_NAME = dynamicData.groomName || "Groom Name";
+export const WEDDING_DATE = dynamicData.weddingDate || "30 June 2025";
+export const WEDDING_TIME = dynamicData.weddingTime || "5:00 PM - 8:00 PM";
+export const COUPLE_TAGLINE = dynamicData.coupleTagline || "Two hearts, one soul, forever together";
 
 // Guest information
-export const GUEST_NAME = "Guest Name";
+export const GUEST_NAME = dynamicData.guestName || "Guest Name";
 
-// Events information
-export const EVENTS = [
-  {
-    EVENT_NAME: "Mehndi Ceremony",
-    EVENT_DATE: "28 June 2025",
-    EVENT_TIME: "4:00 PM - 8:00 PM",
-    EVENT_VENUE: "Venue Name, Address",
-    EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
-  },
-  {
-    EVENT_NAME: "Sangeet Night",
-    EVENT_DATE: "29 June 2025", 
-    EVENT_TIME: "7:00 PM - 11:00 PM",
-    EVENT_VENUE: "Venue Name, Address",
-    EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
-  },
-  {
-    EVENT_NAME: "Haldi Ceremony",
-    EVENT_DATE: "30 June 2025",
-    EVENT_TIME: "10:00 AM - 12:00 PM", 
-    EVENT_VENUE: "Venue Name, Address",
-    EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
-  },
-  {
-    EVENT_NAME: "Wedding Ceremony",
-    EVENT_DATE: "30 June 2025",
-    EVENT_TIME: "5:00 PM - 8:00 PM",
-    EVENT_VENUE: "Venue Name, Address", 
-    EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
-  }
-];
+// Events information with dynamic data support
+export const EVENTS = dynamicData.events && dynamicData.events.length > 0 ? 
+  dynamicData.events.map(event => ({
+    EVENT_NAME: event.name,
+    EVENT_DATE: event.date,
+    EVENT_TIME: event.time,
+    EVENT_VENUE: event.venue,
+    EVENT_VENUE_MAP_LINK: event.mapLink || "https://maps.google.com/"
+  })) : [
+    {
+      EVENT_NAME: "Mehndi Ceremony",
+      EVENT_DATE: "28 June 2025",
+      EVENT_TIME: "4:00 PM - 8:00 PM",
+      EVENT_VENUE: "Venue Name, Address",
+      EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
+    },
+    {
+      EVENT_NAME: "Sangeet Night",
+      EVENT_DATE: "29 June 2025", 
+      EVENT_TIME: "7:00 PM - 11:00 PM",
+      EVENT_VENUE: "Venue Name, Address",
+      EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
+    },
+    {
+      EVENT_NAME: "Haldi Ceremony",
+      EVENT_DATE: "30 June 2025",
+      EVENT_TIME: "10:00 AM - 12:00 PM", 
+      EVENT_VENUE: "Venue Name, Address",
+      EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
+    },
+    {
+      EVENT_NAME: "Wedding Ceremony",
+      EVENT_DATE: "30 June 2025",
+      EVENT_TIME: "5:00 PM - 8:00 PM",
+      EVENT_VENUE: "Venue Name, Address", 
+      EVENT_VENUE_MAP_LINK: "https://maps.google.com/"
+    }
+  ];
 
-// Family information
-import { FAMILY_PHOTOS } from './familyPhotos';
-
-export const BRIDE_FAMILY = {
-  FAMILY_SIDE: "bride",
+// Family information with dynamic data support
+export const BRIDE_FAMILY = dynamicData.brideFamily ? {
+  FAMILY_SIDE: "bride" as const,
+  FAMILY_TITLE: dynamicData.brideFamily.title,
+  FAMILY_DESCRIPTION: dynamicData.brideFamily.description,
+  FAMILY_ADDRESS: dynamicData.brideFamily.address,
+  FAMILY_MEMBERS: dynamicData.brideFamily.members.map(member => ({
+    MEMBER_NAME: member.name,
+    MEMBER_RELATION: member.relation,
+    MEMBER_DESCRIPTION: member.description,
+    MEMBER_PHOTO: member.photo
+  }))
+} : {
+  FAMILY_SIDE: "bride" as const,
   FAMILY_TITLE: "Sharma Family",
   FAMILY_DESCRIPTION: "A loving family rooted in tradition and values, welcoming everyone with open hearts.",
   FAMILY_ADDRESS: "123 Heritage Lane, Mumbai, Maharashtra 400001",
@@ -124,8 +150,19 @@ export const BRIDE_FAMILY = {
   ]
 };
 
-export const GROOM_FAMILY = {
-  FAMILY_SIDE: "groom",
+export const GROOM_FAMILY = dynamicData.groomFamily ? {
+  FAMILY_SIDE: "groom" as const,
+  FAMILY_TITLE: dynamicData.groomFamily.title,
+  FAMILY_DESCRIPTION: dynamicData.groomFamily.description,
+  FAMILY_ADDRESS: dynamicData.groomFamily.address,
+  FAMILY_MEMBERS: dynamicData.groomFamily.members.map(member => ({
+    MEMBER_NAME: member.name,
+    MEMBER_RELATION: member.relation,
+    MEMBER_DESCRIPTION: member.description,
+    MEMBER_PHOTO: member.photo
+  }))
+} : {
+  FAMILY_SIDE: "groom" as const,
   FAMILY_TITLE: "Gupta Family",
   FAMILY_DESCRIPTION: "A warm and welcoming family that believes in love, unity, and celebrating life together.",
   FAMILY_ADDRESS: "456 Garden Street, Delhi, Delhi 110001",
@@ -169,34 +206,41 @@ export const GROOM_FAMILY = {
   ]
 };
 
-// Photos
-export const PHOTOS = [
-  {
-    PHOTO_1: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png"
-  },
-  {
-    PHOTO_2: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png"
-  },
-  {
-    PHOTO_3: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png"
-  },
-  {
-    PHOTO_4: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png"
-  }
-];
+// Photos with dynamic data support
+export const PHOTOS = dynamicData.photos && dynamicData.photos.length > 0 ?
+  dynamicData.photos.map((photo, index) => ({
+    [`PHOTO_${index + 1}`]: photo
+  })) : [
+    {
+      PHOTO_1: "/lovable-uploads/5d906655-818b-462e-887e-0a392db20d48.png"
+    },
+    {
+      PHOTO_2: "/lovable-uploads/e1d52835-2f4a-42a2-8647-66379e0cc295.png"
+    },
+    {
+      PHOTO_3: "/lovable-uploads/6d392f5b-28f1-4710-9eda-8e7c1a9bfe8e.png"
+    },
+    {
+      PHOTO_4: "/lovable-uploads/fd7253c5-605a-4dee-ac79-cd585063976d.png"
+    }
+  ];
 
-// Venue information
-export const VENUE_ADDRESS = "Wedding Venue Name, Complete Address, City, State";
-export const VENUE_MAP_LINK = "https://maps.google.com/";
+// Venue information with dynamic data support
+export const VENUE_ADDRESS = dynamicData.venueAddress || "Wedding Venue Name, Complete Address, City, State";
+export const VENUE_MAP_LINK = dynamicData.venueMapLink || "https://maps.google.com/";
 
-// Contact information
-export const CONTACTS = [
-  {
-    CONTACT_NAME: "Contact Person 1",
-    CONTACT_NUMBER: "+1234567890"
-  },
-  {
-    CONTACT_NAME: "Contact Person 2", 
-    CONTACT_NUMBER: "+1234567890"
-  }
-];
+// Contact information with dynamic data support
+export const CONTACTS = dynamicData.contacts && dynamicData.contacts.length > 0 ?
+  dynamicData.contacts.map(contact => ({
+    CONTACT_NAME: contact.name,
+    CONTACT_NUMBER: contact.number
+  })) : [
+    {
+      CONTACT_NAME: "Contact Person 1",
+      CONTACT_NUMBER: "+1234567890"
+    },
+    {
+      CONTACT_NAME: "Contact Person 2", 
+      CONTACT_NUMBER: "+1234567890"
+    }
+  ];
