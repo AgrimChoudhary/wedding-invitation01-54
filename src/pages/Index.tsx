@@ -48,22 +48,30 @@ const Index = () => {
   const [invitationAccepted, setInvitationAccepted] = useState(false);
   const { toast } = useToast();
   
-  const orderedNames = getOrderedNames();
-  const orderedFamilies = getOrderedFamilies();
-  
   // Get dynamic data from URL parameters
   const dynamicData = getDynamicData();
   
+  // Determine names order based on groomFirst parameter
+  const firstName = dynamicData.groomFirst ? (dynamicData.groomName || GROOM_NAME) : (dynamicData.brideName || BRIDE_NAME);
+  const secondName = dynamicData.groomFirst ? (dynamicData.brideName || BRIDE_NAME) : (dynamicData.groomName || GROOM_NAME);
+  
+  // Determine families order based on groomFirst parameter
+  const firstFamilyData = dynamicData.groomFirst ? (dynamicData.groomFamily || GROOM_FAMILY) : (dynamicData.brideFamily || BRIDE_FAMILY);
+  const secondFamilyData = dynamicData.groomFirst ? (dynamicData.brideFamily || BRIDE_FAMILY) : (dynamicData.groomFamily || GROOM_FAMILY);
+  
   useEffect(() => {
     // Initialize iframe communication with guest name
-    const guestName = dynamicData.guestName || GUEST_NAME;
-    setGuestName(guestName);
-    initIframeComm(guestName);
+    const currentGuestName = dynamicData.guestName || GUEST_NAME;
+    setGuestName(currentGuestName);
+    initIframeComm(currentGuestName);
     
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     
     const preloadImages = () => {
-      const imagesToPreload = Object.values(PHOTOS).slice(0, 2).map(photo => Object.values(photo)[0]);
+      const imagesToPreload = dynamicData.photos && dynamicData.photos.length > 0 
+        ? dynamicData.photos.slice(0, 2)
+        : Object.values(PHOTOS).slice(0, 2).map(photo => Object.values(photo)[0] as string);
+      
       let loadedCount = 0;
       
       imagesToPreload.forEach(src => {
@@ -74,14 +82,14 @@ const Index = () => {
             setImagesLoaded(true);
           }
         };
-        img.src = src as string;
+        img.src = src;
       });
     };
     
     preloadImages();
     
     return cleanup;
-  }, [isMobile, navigate]);
+  }, [isMobile, navigate, dynamicData]);
 
   useEffect(() => {
     if (showHearts) {
@@ -140,6 +148,18 @@ const Index = () => {
   const handleAcceptInvitation = () => {
     setInvitationAccepted(true);
     createConfetti();
+    
+    // Send postMessage to parent (main platform) about invitation acceptance
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'invitation_accepted',
+        data: {
+          guestName: guestName,
+          timestamp: new Date().toISOString()
+        }
+      }, '*');
+    }
+    
     toast({
       title: "Invitation Accepted!",
       description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
@@ -148,35 +168,45 @@ const Index = () => {
     });
   };
 
-  const events = EVENTS.map(event => ({
-    title: event.EVENT_NAME,
-    date: event.EVENT_DATE,
-    time: event.EVENT_TIME,
-    venue: event.EVENT_VENUE,
-    icon: event.EVENT_NAME.includes('Mehndi') ? <Paintbrush size={24} className="text-maroon" /> :
-          event.EVENT_NAME.includes('Sangeet') ? <Music size={24} className="text-maroon" /> :
-          event.EVENT_NAME.includes('Haldi') ? <Sparkles size={24} className="text-maroon" /> :
+  // Prepare events data from dynamic data or fallback to constants
+  const eventsData = dynamicData.events && dynamicData.events.length > 0 ? dynamicData.events : EVENTS;
+  const events = eventsData.map(event => ({
+    title: dynamicData.events ? event.name : event.EVENT_NAME,
+    date: dynamicData.events ? event.date : event.EVENT_DATE,
+    time: dynamicData.events ? event.time : event.EVENT_TIME,
+    venue: dynamicData.events ? event.venue : event.EVENT_VENUE,
+    icon: (dynamicData.events ? event.name : event.EVENT_NAME).includes('Mehndi') ? <Paintbrush size={24} className="text-maroon" /> :
+          (dynamicData.events ? event.name : event.EVENT_NAME).includes('Sangeet') ? <Music size={24} className="text-maroon" /> :
+          (dynamicData.events ? event.name : event.EVENT_NAME).includes('Haldi') ? <Sparkles size={24} className="text-maroon" /> :
           <Heart size={24} className="text-maroon" />,
-    googleMapsUrl: event.EVENT_VENUE_MAP_LINK
+    googleMapsUrl: dynamicData.events ? event.mapLink : event.EVENT_VENUE_MAP_LINK
   }));
   
-  const photos = PHOTOS.map((photo, index) => {
-    const photoKey = Object.keys(photo).find(key => key.startsWith('PHOTO_'));
-    return {
-      src: photo[photoKey as keyof typeof photo] as string,
-      alt: `Couple photo ${index + 1}`,
-      width: 600,
-      height: 800
-    };
-  });
+  // Prepare photos data - only show if photos are provided
+  const photosToDisplay = dynamicData.photos && dynamicData.photos.length > 0 
+    ? dynamicData.photos.map((photoUrl, index) => ({
+        src: photoUrl,
+        alt: `Couple photo ${index + 1}`,
+        width: 600,
+        height: 800
+      }))
+    : PHOTOS.map((photo, index) => {
+        const photoKey = Object.keys(photo).find(key => key.startsWith('PHOTO_'));
+        return {
+          src: photo[photoKey as keyof typeof photo] as string,
+          alt: `Couple photo ${index + 1}`,
+          width: 600,
+          height: 800
+        };
+      });
 
-  // Transform family data to match FamilyDetails interface using ordered families
+  // Transform family data to match FamilyDetails interface
   const firstFamily: FamilyDetails = {
-    side: orderedFamilies.firstFamily.FAMILY_SIDE as "bride" | "groom",
-    title: orderedFamilies.firstFamily.FAMILY_TITLE,
-    description: orderedFamilies.firstFamily.FAMILY_DESCRIPTION,
-    address: orderedFamilies.firstFamily.FAMILY_ADDRESS,
-    members: orderedFamilies.firstFamily.FAMILY_MEMBERS.map(member => ({
+    side: dynamicData.groomFirst ? "groom" : "bride",
+    title: firstFamilyData.FAMILY_TITLE,
+    description: firstFamilyData.FAMILY_DESCRIPTION,
+    address: firstFamilyData.FAMILY_ADDRESS,
+    members: firstFamilyData.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
       description: member.MEMBER_DESCRIPTION,
@@ -185,11 +215,11 @@ const Index = () => {
   };
 
   const secondFamily: FamilyDetails = {
-    side: orderedFamilies.secondFamily.FAMILY_SIDE as "bride" | "groom",
-    title: orderedFamilies.secondFamily.FAMILY_TITLE,
-    description: orderedFamilies.secondFamily.FAMILY_DESCRIPTION,
-    address: orderedFamilies.secondFamily.FAMILY_ADDRESS,
-    members: orderedFamilies.secondFamily.FAMILY_MEMBERS.map(member => ({
+    side: dynamicData.groomFirst ? "bride" : "groom",
+    title: secondFamilyData.FAMILY_TITLE,
+    description: secondFamilyData.FAMILY_DESCRIPTION,
+    address: secondFamilyData.FAMILY_ADDRESS,
+    members: secondFamilyData.FAMILY_MEMBERS.map(member => ({
       name: member.MEMBER_NAME,
       relation: member.MEMBER_RELATION,
       description: member.MEMBER_DESCRIPTION,
@@ -197,7 +227,7 @@ const Index = () => {
     }))
   };
   
-  // Use dynamic contacts data if available, otherwise fall back to constants
+  // Use dynamic contacts data if available
   const contactsToDisplay = dynamicData.contacts && dynamicData.contacts.length > 0 
     ? dynamicData.contacts 
     : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, number: contact.CONTACT_NUMBER }));
@@ -239,11 +269,11 @@ const Index = () => {
           </p>
           
           <h1 className="font-cormorant text-5xl md:text-7xl lg:text-8xl gold-text font-bold mb-4 animate-scale-up">
-            {orderedNames.firstName} <span className="inline-block mx-1 md:mx-3">&</span> {orderedNames.secondName}
+            {firstName} <span className="inline-block mx-1 md:mx-3">&</span> {secondName}
           </h1>
           
           <p className="text-cream text-xl md:text-2xl italic font-cormorant animate-fade-in">
-            "{COUPLE_TAGLINE}"
+            "{dynamicData.coupleTagline || COUPLE_TAGLINE}"
           </p>
           
           <div className="mt-8 flex justify-center">
@@ -254,7 +284,7 @@ const Index = () => {
             <div className="bg-maroon/50 px-6 py-3 rounded-lg gold-border inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={20} />
               <span className="font-cormorant text-xl md:text-2xl gold-text">
-                {WEDDING_DATE}
+                {dynamicData.weddingDate || WEDDING_DATE}
               </span>
             </div>
           </div>
@@ -472,17 +502,20 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-10 px-2 md:px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-            Our Journey
-          </h2>
-          
-          <PhotoCarousel photos={photos} />
-        </div>
-      </section>
+      {/* Conditional Photo Gallery - Only show if photos are available */}
+      {((dynamicData.photos && dynamicData.photos.length > 0) || (!dynamicData.photos && PHOTOS.length > 0)) && (
+        <section className="py-10 px-2 md:px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+              Our Journey
+            </h2>
+            
+            <PhotoCarousel photos={photosToDisplay} />
+          </div>
+        </section>
+      )}
       
-      {/* Accept Invitation Section - Enhanced with better design */}
+      {/* Accept Invitation Section */}
       <section className="py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {!invitationAccepted ? (
@@ -499,7 +532,6 @@ const Index = () => {
           ) : (
             <div className="max-w-2xl mx-auto">
               <div className="relative bg-maroon/60 p-8 rounded-2xl gold-border overflow-hidden">
-                {/* Decorative background pattern */}
                 <div className="absolute inset-0 opacity-10">
                   <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
                   <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
@@ -544,14 +576,16 @@ const Index = () => {
             "Your presence is the greatest blessing."
           </p>
           
-          {/* Venue Information Section */}
-          {(dynamicData.venueAddress || VENUE_ADDRESS) && (
+          {/* Conditional Venue Information Section - Only show if venue data is available */}
+          {(dynamicData.venueAddress || dynamicData.venueMapLink || VENUE_ADDRESS || VENUE_MAP_LINK) && (
             <div className="mb-8 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
               <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
                 <MapPin className="mr-2" size={18} />
                 Venue Location
               </h3>
-              <p className="text-cream/90 mb-3">{dynamicData.venueAddress || VENUE_ADDRESS}</p>
+              {(dynamicData.venueAddress || VENUE_ADDRESS) && (
+                <p className="text-cream/90 mb-3">{dynamicData.venueAddress || VENUE_ADDRESS}</p>
+              )}
               {(dynamicData.venueMapLink || VENUE_MAP_LINK) && (
                 <a 
                   href={dynamicData.venueMapLink || VENUE_MAP_LINK} 
@@ -567,7 +601,7 @@ const Index = () => {
             </div>
           )}
           
-          {/* Enhanced Contact Information Section */}
+          {/* Conditional Contact Information Section - Only show if contacts are available */}
           {contactsToDisplay.length > 0 && (
             <div className="mb-6">
               <h3 className="font-cormorant text-2xl gold-text font-bold mb-6 flex items-center justify-center">

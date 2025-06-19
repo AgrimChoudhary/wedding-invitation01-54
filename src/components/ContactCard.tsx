@@ -8,21 +8,26 @@ interface ContactCardProps {
   number: string;
   index: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-const ContactCard: React.FC<ContactCardProps> = ({ name, number, index, className }) => {
+const ContactCard: React.FC<ContactCardProps> = ({ name, number, index, className, style }) => {
   const handleCall = () => {
     window.open(`tel:${number}`, '_self');
   };
 
   return (
-    <div className={cn(
-      "group relative bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40",
-      "rounded-xl p-4 border border-gold-light/30 hover:border-gold-light/70",
-      "transition-all duration-300 hover:shadow-lg hover:shadow-gold-light/20",
-      "hover:-translate-y-1 overflow-hidden cursor-pointer",
-      className
-    )} onClick={handleCall}>
+    <div 
+      className={cn(
+        "group relative bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40",
+        "rounded-xl p-4 border border-gold-light/30 hover:border-gold-light/70",
+        "transition-all duration-300 hover:shadow-lg hover:shadow-gold-light/20",
+        "hover:-translate-y-1 overflow-hidden cursor-pointer",
+        className
+      )} 
+      onClick={handleCall}
+      style={style}
+    >
       {/* Decorative corner elements */}
       <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>
       <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>

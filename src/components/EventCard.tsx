@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, MapPin, ExternalLink, Calendar, Clock } from 'lucide-react';
@@ -117,8 +116,8 @@ const EventCard: React.FC<EventCardProps> = ({
           <p className="font-medium tracking-wide leading-relaxed">{venue}</p>
         </div>
         
-        {/* Map button always visible */}
-        {googleMapsUrl && (
+        {/* Conditional Map button - Only show if googleMapsUrl is provided and valid */}
+        {googleMapsUrl && googleMapsUrl.trim() !== '' && (
           <button 
             onClick={handleMapClick}
             className="flex items-center justify-center w-full px-6 py-3 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark text-maroon font-bold hover:from-gold-dark hover:to-gold-light transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn mb-4"
