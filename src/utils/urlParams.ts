@@ -131,7 +131,7 @@ export const parseUrlParams = (): WeddingData => {
   // Parse contacts (JSON format expected)
   if (urlParams.get('contacts')) {
     try {
-      const contactsData = JSON.parse(urlParams.get('contacts')!);
+      const contactsData = JSON.parse(decodeURIComponent(urlParams.get('contacts')!));
       if (Array.isArray(contactsData)) {
         data.contacts = contactsData.map(contact => ({
           name: sanitizeString(contact.name || ''),

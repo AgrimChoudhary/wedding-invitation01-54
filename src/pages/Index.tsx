@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -31,6 +31,9 @@ import {
   getOrderedNames,
   getOrderedFamilies
 } from '@/constants/placeholders';
+import ContactCard from '@/components/ContactCard';
+import { getDynamicData } from '@/utils/urlParams';
+import { initIframeComm } from '@/utils/iframeComm';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -48,11 +51,14 @@ const Index = () => {
   const orderedNames = getOrderedNames();
   const orderedFamilies = getOrderedFamilies();
   
+  // Get dynamic data from URL parameters
+  const dynamicData = getDynamicData();
+  
   useEffect(() => {
-    const storedName = localStorage.getItem('guestName');
-    if (storedName) {
-      setGuestName(storedName);
-    }
+    // Initialize iframe communication with guest name
+    const guestName = dynamicData.guestName || GUEST_NAME;
+    setGuestName(guestName);
+    initIframeComm(guestName);
     
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     
@@ -191,6 +197,11 @@ const Index = () => {
     }))
   };
   
+  // Use dynamic contacts data if available, otherwise fall back to constants
+  const contactsToDisplay = dynamicData.contacts && dynamicData.contacts.length > 0 
+    ? dynamicData.contacts 
+    : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, number: contact.CONTACT_NUMBER }));
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {!imagesLoaded && (
@@ -533,38 +544,55 @@ const Index = () => {
             "Your presence is the greatest blessing."
           </p>
           
-          <div className="mb-6 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
-            <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
-              <MapPin className="mr-2" size={18} />
-              Venue Location
-            </h3>
-            <p className="text-cream/90 mb-3">{VENUE_ADDRESS}</p>
-            <a 
-              href={VENUE_MAP_LINK} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
-            >
-              <MapPin className="mr-2" size={14} />
-              View on Google Maps
-              <ExternalLink size={12} className="ml-2" />
-            </a>
-          </div>
-          
-          <div className="text-cream/80">
-            <p className="flex flex-wrap justify-center gap-4">
-              {CONTACTS.map((contact, index) => (
+          {/* Venue Information Section */}
+          {(dynamicData.venueAddress || VENUE_ADDRESS) && (
+            <div className="mb-8 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
+              <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
+                <MapPin className="mr-2" size={18} />
+                Venue Location
+              </h3>
+              <p className="text-cream/90 mb-3">{dynamicData.venueAddress || VENUE_ADDRESS}</p>
+              {(dynamicData.venueMapLink || VENUE_MAP_LINK) && (
                 <a 
-                  key={index}
-                  href={`tel:${contact.CONTACT_NUMBER}`} 
-                  className="text-gold-light hover:underline flex items-center"
+                  href={dynamicData.venueMapLink || VENUE_MAP_LINK} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
                 >
-                  <PhoneIcon className="mr-1" />
-                  {contact.CONTACT_NAME}
+                  <MapPin className="mr-2" size={14} />
+                  View on Google Maps
+                  <ExternalLink size={12} className="ml-2" />
                 </a>
-              ))}
-            </p>
-          </div>
+              )}
+            </div>
+          )}
+          
+          {/* Enhanced Contact Information Section */}
+          {contactsToDisplay.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-cormorant text-2xl gold-text font-bold mb-6 flex items-center justify-center">
+                <Phone className="mr-3" size={20} />
+                Contact Information
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                {contactsToDisplay.map((contact, index) => (
+                  <ContactCard
+                    key={index}
+                    name={contact.name}
+                    number={contact.number}
+                    index={index}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  />
+                ))}
+              </div>
+              
+              <p className="text-cream/60 text-sm mt-4 italic">
+                Tap any contact card to call directly
+              </p>
+            </div>
+          )}
         </div>
       </footer>
       

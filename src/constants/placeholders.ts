@@ -1,4 +1,3 @@
-
 import { getDynamicData } from '@/utils/urlParams';
 import { FAMILY_PHOTOS } from './familyPhotos';
 
@@ -229,18 +228,14 @@ export const PHOTOS = dynamicData.photos && dynamicData.photos.length > 0 ?
 export const VENUE_ADDRESS = dynamicData.venueAddress || "Wedding Venue Name, Complete Address, City, State";
 export const VENUE_MAP_LINK = dynamicData.venueMapLink || "https://maps.google.com/";
 
-// Contact information with dynamic data support
-export const CONTACTS = dynamicData.contacts && dynamicData.contacts.length > 0 ?
-  dynamicData.contacts.map(contact => ({
-    CONTACT_NAME: contact.name,
-    CONTACT_NUMBER: contact.number
-  })) : [
-    {
-      CONTACT_NAME: "Contact Person 1",
-      CONTACT_NUMBER: "+1234567890"
-    },
-    {
-      CONTACT_NAME: "Contact Person 2", 
-      CONTACT_NUMBER: "+1234567890"
-    }
-  ];
+// Contact Information with proper structure
+export const CONTACTS = [
+  {
+    CONTACT_NAME: "Rajesh Kumar",
+    CONTACT_NUMBER: "+91 98765 43210"
+  },
+  {
+    CONTACT_NAME: "Priya Sharma", 
+    CONTACT_NUMBER: "+91 87654 32109"
+  }
+];
