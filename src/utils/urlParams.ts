@@ -11,7 +11,8 @@ export interface WeddingData {
   // Guest Information
   guestName?: string;
   
-  // Venue Information
+  // Main Venue Information
+  venueName?: string;
   venueAddress?: string;
   venueMapLink?: string;
   
@@ -117,7 +118,10 @@ export const parseUrlParams = (): WeddingData => {
     data.guestName = sanitizeString(urlParams.get('guestName')!);
   }
   
-  // Venue information
+  // Main venue information (enhanced parsing)
+  if (urlParams.get('venueName')) {
+    data.venueName = sanitizeString(urlParams.get('venueName')!);
+  }
   if (urlParams.get('venueAddress')) {
     data.venueAddress = sanitizeString(urlParams.get('venueAddress')!);
   }
@@ -128,51 +132,51 @@ export const parseUrlParams = (): WeddingData => {
     }
   }
   
-  // Parse contacts (JSON format expected)
+  // Parse contacts (JSON format expected) - Enhanced with better error handling
   if (urlParams.get('contacts')) {
     try {
-      const contactsData = JSON.parse(urlParams.get('contacts')!);
+      const contactsData = JSON.parse(decodeURIComponent(urlParams.get('contacts')!));
       if (Array.isArray(contactsData)) {
         data.contacts = contactsData.map(contact => ({
           name: sanitizeString(contact.name || ''),
           number: sanitizeString(contact.number || '')
-        })).filter(contact => contact.name && isValidPhoneNumber(contact.number));
+        })).filter(contact => contact.name && contact.number);
       }
     } catch (error) {
-      console.warn('Invalid contacts JSON format');
+      console.warn('Invalid contacts JSON format:', error);
     }
   }
   
-  // Parse photos (comma-separated URLs)
+  // Parse photos (comma-separated URLs) - Enhanced validation
   if (urlParams.get('photos')) {
     const photosParam = urlParams.get('photos')!;
     data.photos = photosParam.split(',')
-      .map(url => url.trim())
-      .filter(url => isValidUrl(url));
+      .map(url => decodeURIComponent(url.trim()))
+      .filter(url => url && isValidUrl(url));
   }
   
-  // Parse events (JSON format expected)
+  // Parse events (JSON format expected) - Enhanced with better error handling
   if (urlParams.get('events')) {
     try {
-      const eventsData = JSON.parse(urlParams.get('events')!);
+      const eventsData = JSON.parse(decodeURIComponent(urlParams.get('events')!));
       if (Array.isArray(eventsData)) {
         data.events = eventsData.map(event => ({
           name: sanitizeString(event.name || ''),
           date: sanitizeString(event.date || ''),
           time: sanitizeString(event.time || ''),
           venue: sanitizeString(event.venue || ''),
-          mapLink: isValidUrl(event.mapLink) ? event.mapLink : ''
+          mapLink: event.mapLink && isValidUrl(event.mapLink) ? event.mapLink : ''
         })).filter(event => event.name && event.date);
       }
     } catch (error) {
-      console.warn('Invalid events JSON format');
+      console.warn('Invalid events JSON format:', error);
     }
   }
   
-  // Parse family data (JSON format expected)
+  // Parse family data (JSON format expected) - Enhanced with better error handling
   if (urlParams.get('brideFamily')) {
     try {
-      const brideFamilyData = JSON.parse(urlParams.get('brideFamily')!);
+      const brideFamilyData = JSON.parse(decodeURIComponent(urlParams.get('brideFamily')!));
       data.brideFamily = {
         title: sanitizeString(brideFamilyData.title || ''),
         description: sanitizeString(brideFamilyData.description || ''),
@@ -181,17 +185,17 @@ export const parseUrlParams = (): WeddingData => {
           name: sanitizeString(member.name || ''),
           relation: sanitizeString(member.relation || ''),
           description: sanitizeString(member.description || ''),
-          photo: isValidUrl(member.photo) ? member.photo : ''
+          photo: member.photo && isValidUrl(member.photo) ? member.photo : ''
         })).filter((member: any) => member.name)
       };
     } catch (error) {
-      console.warn('Invalid bride family JSON format');
+      console.warn('Invalid bride family JSON format:', error);
     }
   }
   
   if (urlParams.get('groomFamily')) {
     try {
-      const groomFamilyData = JSON.parse(urlParams.get('groomFamily')!);
+      const groomFamilyData = JSON.parse(decodeURIComponent(urlParams.get('groomFamily')!));
       data.groomFamily = {
         title: sanitizeString(groomFamilyData.title || ''),
         description: sanitizeString(groomFamilyData.description || ''),
@@ -200,11 +204,11 @@ export const parseUrlParams = (): WeddingData => {
           name: sanitizeString(member.name || ''),
           relation: sanitizeString(member.relation || ''),
           description: sanitizeString(member.description || ''),
-          photo: isValidUrl(member.photo) ? member.photo : ''
+          photo: member.photo && isValidUrl(member.photo) ? member.photo : ''
         })).filter((member: any) => member.name)
       };
     } catch (error) {
-      console.warn('Invalid groom family JSON format');
+      console.warn('Invalid groom family JSON format:', error);
     }
   }
   

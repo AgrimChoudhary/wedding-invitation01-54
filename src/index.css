@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -46,14 +47,28 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Ensure full height for iframe compatibility */
   html {
     scroll-behavior: smooth;
+    height: 100%;
+    min-height: 100%;
   }
 
   body {
     @apply bg-maroon text-cream font-opensans;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627,10.361Q51.92,7.648 48.064,7.648Q44.208,7.648 41.445,10.361Q38.688,13.051 38.688,16.861Q38.688,20.671 41.445,23.353Q44.208,26.04 48.064,26.04Q51.92,26.04 54.627,23.353Q57.34,20.671 57.34,16.861Q57.34,13.051 54.627,10.361M54.627,10.361ZM33.532,45.652Q30.825,42.94 26.969,42.94Q23.113,42.94 20.355,45.652Q17.593,48.343 17.593,52.153Q17.593,55.963 20.355,58.644Q23.113,61.332 26.969,61.332Q30.825,61.332 33.532,58.644Q36.245,55.963 36.245,52.153Q36.245,48.343 33.532,45.652M33.532,45.652ZM54.627,31.652Q51.92,28.94 48.064,28.94Q44.208,28.94 41.445,31.652Q38.688,34.343 38.688,38.153Q38.688,41.963 41.445,44.644Q44.208,47.332 48.064,47.332Q51.92,47.332 54.627,44.644Q57.34,41.963 57.34,38.153Q57.34,34.343 54.627,31.652M54.627,31.652ZM33.532,24.652Q30.825,21.94 26.969,21.94Q23.113,21.94 20.355,24.652Q17.593,27.343 17.593,31.153Q17.593,34.963 20.355,37.644Q23.113,40.332 26.969,40.332Q30.825,40.332 33.532,37.644Q36.245,34.963 36.245,31.153Q36.245,27.343 33.532,24.652M33.532,24.652ZM12.437,10.361Q9.73,7.648 5.874,7.648Q2.018,7.648 -0.74,10.361Q-3.502,13.051 -3.502,16.861Q-3.502,20.671 -0.74,23.353Q2.018,26.04 5.874,26.04Q9.73,26.04 12.437,23.353Q15.15,20.671 15.15,16.861Q15.15,13.051 12.437,10.361M12.437,10.361Z' fill='%23ffd700' fill-opacity='0.1'/%3E%3C/svg%3E");
     background-repeat: repeat;
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ensure root div takes full height */
+  #root {
+    height: 100%;
+    min-height: 100vh;
+    width: 100%;
   }
 
   /* Custom scrollbar */
@@ -97,6 +112,12 @@
   /* Add touch tap highlight color for mobile devices */
   * {
     -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+  }
+
+  /* UTF-8 support for all languages */
+  * {
+    unicode-bidi: inherit;
+    direction: inherit;
   }
 }
 
