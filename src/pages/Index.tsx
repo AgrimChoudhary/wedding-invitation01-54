@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone, Users } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -16,12 +16,6 @@ import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDi
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  trackInvitationViewed, 
-  trackInvitationAccepted, 
-  trackPageInteraction,
-  trackError
-} from '@/utils/iframeComm';
-import { 
   BRIDE_NAME, 
   GROOM_NAME, 
   WEDDING_DATE, 
@@ -31,13 +25,9 @@ import {
   BRIDE_FAMILY,
   GROOM_FAMILY,
   PHOTOS,
-  VENUE_NAME,
   VENUE_ADDRESS,
   VENUE_MAP_LINK,
   CONTACTS,
-  SHOW_PHOTO_GALLERY,
-  SHOW_VENUE_DETAILS,
-  SHOW_CONTACT_DETAILS,
   getOrderedNames,
   getOrderedFamilies
 } from '@/constants/placeholders';
@@ -53,7 +43,6 @@ const Index = () => {
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [invitationAccepted, setInvitationAccepted] = useState(false);
-  const [invitationViewed, setInvitationViewed] = useState(false);
   const { toast } = useToast();
   
   const orderedNames = getOrderedNames();
@@ -68,49 +57,25 @@ const Index = () => {
     const cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
     
     const preloadImages = () => {
-      if (SHOW_PHOTO_GALLERY && PHOTOS.length > 0) {
-        const imagesToPreload = PHOTOS.slice(0, 2).map(photo => Object.values(photo)[0]);
-        let loadedCount = 0;
-        
-        imagesToPreload.forEach(src => {
-          const img = new Image();
-          img.onload = () => {
-            loadedCount++;
-            if (loadedCount === imagesToPreload.length) {
-              setImagesLoaded(true);
-            }
-          };
-          img.onerror = () => {
-            trackError('Image loading failed', { src });
-            loadedCount++;
-            if (loadedCount === imagesToPreload.length) {
-              setImagesLoaded(true);
-            }
-          };
-          img.src = src as string;
-        });
-      } else {
-        setImagesLoaded(true);
-      }
+      const imagesToPreload = Object.values(PHOTOS).slice(0, 2).map(photo => Object.values(photo)[0]);
+      let loadedCount = 0;
+      
+      imagesToPreload.forEach(src => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === imagesToPreload.length) {
+            setImagesLoaded(true);
+          }
+        };
+        img.src = src as string;
+      });
     };
     
     preloadImages();
     
     return cleanup;
   }, [isMobile, navigate]);
-
-  // Track invitation viewed when component mounts and content is loaded
-  useEffect(() => {
-    if (imagesLoaded && !invitationViewed) {
-      const timer = setTimeout(() => {
-        trackInvitationViewed(GUEST_NAME);
-        setInvitationViewed(true);
-        console.log('Invitation viewed event tracked');
-      }, 1000); // Wait 1 second to ensure full load
-      
-      return () => clearTimeout(timer);
-    }
-  }, [imagesLoaded, invitationViewed]);
 
   useEffect(() => {
     if (showHearts) {
@@ -162,7 +127,6 @@ const Index = () => {
   };
 
   const handleFamilyClick = (family: FamilyDetails) => {
-    trackPageInteraction('family_details_viewed', { familySide: family.side });
     setSelectedFamily(family);
     setFamilyDialogOpen(true);
   };
@@ -170,7 +134,6 @@ const Index = () => {
   const handleAcceptInvitation = () => {
     setInvitationAccepted(true);
     createConfetti();
-    trackInvitationAccepted(GUEST_NAME, guestName);
     toast({
       title: "Invitation Accepted!",
       description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
@@ -191,7 +154,7 @@ const Index = () => {
     googleMapsUrl: event.EVENT_VENUE_MAP_LINK
   }));
   
-  const photos = SHOW_PHOTO_GALLERY ? PHOTOS.map((photo, index) => {
+  const photos = PHOTOS.map((photo, index) => {
     const photoKey = Object.keys(photo).find(key => key.startsWith('PHOTO_'));
     return {
       src: photo[photoKey as keyof typeof photo] as string,
@@ -199,7 +162,7 @@ const Index = () => {
       width: 600,
       height: 800
     };
-  }) : [];
+  });
 
   // Transform family data to match FamilyDetails interface using ordered families
   const firstFamily: FamilyDetails = {
@@ -297,10 +260,7 @@ const Index = () => {
                 "overflow-hidden group",
                 showHearts && "bg-opacity-100"
               )}
-              onClick={() => {
-                setShowHearts(!showHearts);
-                trackPageInteraction('hearts_toggled', { enabled: !showHearts });
-              }}
+              onClick={() => setShowHearts(!showHearts)}
             >
               <span className="relative z-10 flex items-center">
                 {showHearts ? "Stop Hearts" : "Shower Love"} 
@@ -321,10 +281,7 @@ const Index = () => {
                     "overflow-hidden hover:bg-gold-light/10 group",
                     isMandalaVisible && "bg-gold-light/10"
                   )}
-                  onClick={() => {
-                    setIsMandalaVisible(!isMandalaVisible);
-                    trackPageInteraction('mandala_toggled', { enabled: !isMandalaVisible });
-                  }}
+                  onClick={() => setIsMandalaVisible(!isMandalaVisible)}
                 >
                   <span className="relative z-10 flex items-center">
                     {isMandalaVisible ? "Hide Magic" : "Show Magic"} 
@@ -374,13 +331,16 @@ const Index = () => {
               className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-6 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-left cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
               onClick={() => handleFamilyClick(firstFamily)}
             >
+              {/* Click indicator */}
               <div className="absolute top-3 right-3 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                 Click to View
               </div>
               
+              {/* Decorative corner elements */}
               <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               
+              {/* Shine effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               
               <div className="relative z-10">
@@ -407,6 +367,7 @@ const Index = () => {
                   {firstFamily.title}
                 </p>
                 
+                {/* Member count indicator */}
                 <div className="flex justify-center">
                   <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-3 py-1">
                     <p className="text-gold-light text-sm font-medium">
@@ -421,13 +382,16 @@ const Index = () => {
               className="group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60 rounded-2xl p-6 border-2 border-gold-light/50 hover:border-gold-light/90 animate-fade-in-right cursor-pointer transform transition-all duration-500 hover:shadow-2xl hover:shadow-gold-light/30 hover:-translate-y-3 overflow-hidden"
               onClick={() => handleFamilyClick(secondFamily)}
             >
+              {/* Click indicator */}
               <div className="absolute top-3 right-3 bg-gold-gradient text-maroon px-3 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                 Click to View
               </div>
               
+              {/* Decorative corner elements */}
               <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-gold-light/70 group-hover:border-gold-light transition-colors duration-300"></div>
               
+              {/* Shine effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-light/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               
               <div className="relative z-10">
@@ -454,6 +418,7 @@ const Index = () => {
                   {secondFamily.title}
                 </p>
                 
+                {/* Member count indicator */}
                 <div className="flex justify-center">
                   <div className="bg-gradient-to-r from-gold-light/20 to-gold-dark/20 backdrop-blur-sm border border-gold-light/30 rounded-full px-3 py-1">
                     <p className="text-gold-light text-sm font-medium">
@@ -496,18 +461,15 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Conditional Photo Gallery Section */}
-      {SHOW_PHOTO_GALLERY && (
-        <section className="py-10 px-2 md:px-4 relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
-              Our Journey
-            </h2>
-            
-            <PhotoCarousel photos={photos} />
-          </div>
-        </section>
-      )}
+      <section className="py-10 px-2 md:px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-cormorant text-3xl md:text-4xl gold-text font-bold mb-8">
+            Our Journey
+          </h2>
+          
+          <PhotoCarousel photos={photos} />
+        </div>
+      </section>
       
       {/* Accept Invitation Section - Enhanced with better design */}
       <section className="py-10 px-4 relative z-10">
@@ -526,6 +488,7 @@ const Index = () => {
           ) : (
             <div className="max-w-2xl mx-auto">
               <div className="relative bg-maroon/60 p-8 rounded-2xl gold-border overflow-hidden">
+                {/* Decorative background pattern */}
                 <div className="absolute inset-0 opacity-10">
                   <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
                   <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
@@ -560,98 +523,48 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Enhanced Footer Section with Improved Design */}
-      <footer className="py-12 px-4 relative mt-10 border-t border-gold-light/30 z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8 flex justify-center">
-            <Heart className="text-gold-light animate-heart-beat" size={32} />
+      <footer className="py-10 px-4 relative mt-10 border-t border-gold-light/30 z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-6 flex justify-center">
+            <Heart className="text-gold-light animate-heart-beat" size={28} />
           </div>
           
-          <p className="font-cormorant text-2xl gold-text italic mb-10 text-center">
+          <p className="font-cormorant text-xl gold-text italic mb-6">
             "Your presence is the greatest blessing."
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* Main Venue Section - Only show if venue data exists */}
-            {SHOW_VENUE_DETAILS && (
-              <div className="bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40 p-6 rounded-2xl gold-border hover:shadow-2xl hover:shadow-gold-light/20 transition-all duration-300">
-                <div className="flex items-center mb-4">
-                  <div className="bg-gold-gradient p-3 rounded-full mr-4">
-                    <MapPin className="text-maroon" size={24} />
-                  </div>
-                  <h3 className="font-cormorant text-2xl gold-text font-bold">
-                    {VENUE_NAME || "Venue Location"}
-                  </h3>
-                </div>
-                
-                {VENUE_ADDRESS && (
-                  <p className="text-cream/90 mb-4 text-lg leading-relaxed">
-                    {VENUE_ADDRESS}
-                  </p>
-                )}
-                
-                {VENUE_MAP_LINK && (
-                  <a 
-                    href={VENUE_MAP_LINK} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    onClick={() => trackPageInteraction('venue_map_clicked')}
-                    className="inline-flex items-center justify-center px-6 py-3 bg-gold-gradient text-maroon rounded-xl hover:scale-105 transition-transform text-base font-medium shadow-lg hover:shadow-gold"
-                  >
-                    <MapPin className="mr-2" size={18} />
-                    View on Google Maps
-                    <ExternalLink size={16} className="ml-2" />
-                  </a>
-                )}
-              </div>
-            )}
-            
-            {/* Contact Section - Only show if contact data exists */}
-            {SHOW_CONTACT_DETAILS && (
-              <div className="bg-gradient-to-br from-maroon/60 via-maroon/50 to-maroon/40 p-6 rounded-2xl gold-border hover:shadow-2xl hover:shadow-gold-light/20 transition-all duration-300">
-                <div className="flex items-center mb-4">
-                  <div className="bg-gold-gradient p-3 rounded-full mr-4">
-                    <Users className="text-maroon" size={24} />
-                  </div>
-                  <h3 className="font-cormorant text-2xl gold-text font-bold">
-                    Contact Details
-                  </h3>
-                </div>
-                
-                <div className="space-y-4">
-                  {CONTACTS.map((contact, index) => (
-                    <div key={index} className="flex items-center p-3 bg-gold-gradient/10 rounded-xl border border-gold-light/20 hover:bg-gold-gradient/20 transition-colors duration-300">
-                      <div className="bg-gold-light/20 p-2 rounded-full mr-3">
-                        <Phone className="text-gold-light" size={18} />
-                      </div>
-                      <div className="flex-1">
-                        <p className="gold-text font-medium text-lg">{contact.CONTACT_NAME}</p>
-                        <a 
-                          href={`tel:${contact.CONTACT_NUMBER}`} 
-                          onClick={() => trackPageInteraction('contact_called', { contact: contact.CONTACT_NAME })}
-                          className="text-cream/80 hover:text-gold-light transition-colors duration-300 text-base"
-                        >
-                          {contact.CONTACT_NUMBER}
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="mb-6 bg-maroon/40 p-5 rounded-lg gold-border max-w-md mx-auto">
+            <h3 className="font-cormorant text-xl gold-text mb-3 flex items-center justify-center">
+              <MapPin className="mr-2" size={18} />
+              Venue Location
+            </h3>
+            <p className="text-cream/90 mb-3">{VENUE_ADDRESS}</p>
+            <a 
+              href={VENUE_MAP_LINK} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
+            >
+              <MapPin className="mr-2" size={14} />
+              View on Google Maps
+              <ExternalLink size={12} className="ml-2" />
+            </a>
           </div>
           
-          {/* Fallback message if no venue or contact details */}
-          {!SHOW_VENUE_DETAILS && !SHOW_CONTACT_DETAILS && (
-            <div className="text-center py-8">
-              <div className="bg-maroon/40 p-6 rounded-xl gold-border max-w-md mx-auto">
-                <Heart className="mx-auto text-gold-light mb-3" size={32} />
-                <p className="text-cream/80 font-cormorant text-lg">
-                  Contact details will be shared soon
-                </p>
-              </div>
-            </div>
-          )}
+          <div className="text-cream/80">
+            <p className="flex flex-wrap justify-center gap-4">
+              {CONTACTS.map((contact, index) => (
+                <a 
+                  key={index}
+                  href={`tel:${contact.CONTACT_NUMBER}`} 
+                  className="text-gold-light hover:underline flex items-center"
+                >
+                  <PhoneIcon className="mr-1" />
+                  {contact.CONTACT_NAME}
+                </a>
+              ))}
+            </p>
+          </div>
         </div>
       </footer>
       
