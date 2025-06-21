@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -97,6 +98,53 @@
   /* Add touch tap highlight color for mobile devices */
   * {
     -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+  }
+
+  /* Iframe optimization styles */
+  .iframe-optimized {
+    /* Optimize for iframe rendering */
+    will-change: auto;
+    contain: layout style paint;
+    
+    /* Disable some expensive effects in iframe */
+    * {
+      will-change: auto;
+    }
+    
+    /* Reduce animation complexity */
+    .animate-float {
+      animation-duration: 2s;
+    }
+    
+    .animate-heart-beat {
+      animation-duration: 2s;
+    }
+    
+    /* Ensure proper sizing in iframe */
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Iframe-specific responsive adjustments */
+  @media (max-width: 768px) {
+    .iframe-optimized {
+      font-size: 14px;
+      
+      h1 {
+        font-size: 2rem !important;
+        line-height: 1.1;
+      }
+      
+      h2 {
+        font-size: 1.5rem !important;
+      }
+      
+      h3 {
+        font-size: 1.25rem !important;
+      }
+    }
   }
 }
 
@@ -202,6 +250,19 @@
     .animate-float {
       animation-duration: 3s;
     }
+    
+    /* Iframe mobile optimizations */
+    .iframe-optimized {
+      padding: 0.5rem;
+      
+      .animate-float {
+        animation: none;
+      }
+      
+      .animate-heart-beat {
+        animation-duration: 1.5s;
+      }
+    }
   }
   
   /* New wedding-themed decorative elements */
@@ -263,6 +324,27 @@
     opacity: 0.05;
     pointer-events: none;
     z-index: -1;
+  }
+  
+  /* Performance optimizations for iframe */
+  .iframe-optimized * {
+    /* Reduce transform and animation complexity */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    /* Optimize rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Disable expensive animations in iframe */
+  .iframe-optimized .animate-pulse-glow,
+  .iframe-optimized .animate-ping {
+    animation: none;
+  }
+  
+  .iframe-optimized .group:hover {
+    transform: none;
   }
 }
 
@@ -358,5 +440,21 @@
   }
   100% { 
     background-position: 300% 0; 
+  }
+}
+
+/* Additional iframe optimizations */
+@media (max-width: 480px) {
+  .iframe-optimized {
+    /* Very small screen optimizations */
+    font-size: 13px;
+    
+    .gold-text {
+      font-size: 1.8rem !important;
+    }
+    
+    .font-cormorant {
+      line-height: 1.2;
+    }
   }
 }
