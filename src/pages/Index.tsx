@@ -64,10 +64,10 @@ const Index = () => {
     // Check if we're in an iframe
     setIsInIframe(window.self !== window.top);
     
-    // Initialize iframe communication with guest name
+    // Initialize iframe communication with guest name, guestId, and eventId
     const currentGuestName = dynamicData.guestName || GUEST_NAME;
     setGuestName(currentGuestName);
-    initIframeComm(currentGuestName);
+    initIframeComm(currentGuestName, dynamicData.guestId, dynamicData.eventId);
     
     // Disable animations in iframe for better performance
     const cleanup = !isInIframe && (isMobile ? initTouchGlitter() : initCursorGlitter());
@@ -174,16 +174,9 @@ const Index = () => {
       createConfetti();
     }
     
-    // Send postMessage to parent (main platform) about invitation acceptance
+    // Send RSVP_ACCEPTED postMessage to parent as specified in the guide
     if (window.parent !== window) {
-      window.parent.postMessage({
-        type: 'invitation_accepted',
-        data: {
-          guestName: guestName,
-          timestamp: new Date().toISOString()
-        },
-        source: 'wedding-invitation'
-      }, '*');
+      iframeMessenger.trackRSVPAccepted();
     }
     
     toast({
@@ -208,7 +201,7 @@ const Index = () => {
     googleMapsUrl: dynamicData.events ? event.mapLink : event.EVENT_VENUE_MAP_LINK
   }));
   
-  // Prepare photos data - only show if photos are provided
+  // Prepare photos data - only show if photos are provided and valid
   const photosToDisplay = dynamicData.photos && dynamicData.photos.length > 0 
     ? dynamicData.photos.map((photoUrl, index) => ({
         src: photoUrl,
@@ -226,37 +219,37 @@ const Index = () => {
         };
       });
 
-  // Transform family data to match FamilyDetails interface
+  // Transform family data to match FamilyDetails interface - Always show family title even if members are empty
   const firstFamily: FamilyDetails = {
     side: dynamicData.groomFirst ? "groom" : "bride",
-    title: firstFamilyData.FAMILY_TITLE,
-    description: firstFamilyData.FAMILY_DESCRIPTION,
-    address: firstFamilyData.FAMILY_ADDRESS,
-    members: firstFamilyData.FAMILY_MEMBERS.map(member => ({
-      name: member.MEMBER_NAME,
-      relation: member.MEMBER_RELATION,
-      description: member.MEMBER_DESCRIPTION,
-      photo: member.MEMBER_PHOTO
+    title: firstFamilyData.FAMILY_TITLE || firstFamilyData.title,
+    description: firstFamilyData.FAMILY_DESCRIPTION || firstFamilyData.description || '',
+    address: firstFamilyData.FAMILY_ADDRESS || firstFamilyData.address || '',
+    members: (firstFamilyData.FAMILY_MEMBERS || firstFamilyData.members || []).map(member => ({
+      name: member.MEMBER_NAME || member.name,
+      relation: member.MEMBER_RELATION || member.relation,
+      description: member.MEMBER_DESCRIPTION || member.description || '',
+      photo: member.MEMBER_PHOTO || member.photo
     }))
   };
 
   const secondFamily: FamilyDetails = {
     side: dynamicData.groomFirst ? "bride" : "groom",
-    title: secondFamilyData.FAMILY_TITLE,
-    description: secondFamilyData.FAMILY_DESCRIPTION,
-    address: secondFamilyData.FAMILY_ADDRESS,
-    members: secondFamilyData.FAMILY_MEMBERS.map(member => ({
-      name: member.MEMBER_NAME,
-      relation: member.MEMBER_RELATION,
-      description: member.MEMBER_DESCRIPTION,
-      photo: member.MEMBER_PHOTO
+    title: secondFamilyData.FAMILY_TITLE || secondFamilyData.title,
+    description: secondFamilyData.FAMILY_DESCRIPTION || secondFamilyData.description || '',
+    address: secondFamilyData.FAMILY_ADDRESS || secondFamilyData.address || '',
+    members: (secondFamilyData.FAMILY_MEMBERS || secondFamilyData.members || []).map(member => ({
+      name: member.MEMBER_NAME || member.name,
+      relation: member.MEMBER_RELATION || member.relation,
+      description: member.MEMBER_DESCRIPTION || member.description || '',
+      photo: member.MEMBER_PHOTO || member.photo
     }))
   };
   
-  // Use dynamic contacts data if available
+  // Use dynamic contacts data if available - with correct field name "phone"
   const contactsToDisplay = dynamicData.contacts && dynamicData.contacts.length > 0 
     ? dynamicData.contacts 
-    : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, number: contact.CONTACT_NUMBER }));
+    : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, phone: contact.CONTACT_NUMBER }));
 
   return (
     <div className={cn(
@@ -330,6 +323,17 @@ const Index = () => {
               )}>
                 {dynamicData.weddingDate || WEDDING_DATE}
               </span>
+              {dynamicData.weddingTime && (
+                <>
+                  <span className="mx-2 text-gold-light">•</span>
+                  <span className={cn(
+                    "font-cormorant gold-text",
+                    isInIframe ? "text-base md:text-lg" : "text-lg md:text-xl"
+                  )}>
+                    {dynamicData.weddingTime}
+                  </span>
+                </>
+              )}
             </div>
           </div>
           
@@ -519,14 +523,14 @@ const Index = () => {
           </p>
           
           {/* Conditional Venue Information Section - Only show if venue data is available */}
-          {(dynamicData.venueAddress || dynamicData.venueMapLink || VENUE_ADDRESS || VENUE_MAP_LINK) && (
+          {(dynamicData.venueName || dynamicData.venueAddress || dynamicData.venueMapLink || VENUE_ADDRESS || VENUE_MAP_LINK) && (
             <div className="mb-6 md:mb-8 bg-maroon/40 p-4 md:p-5 rounded-lg gold-border max-w-md mx-auto">
               <h3 className={cn(
                 "font-cormorant gold-text mb-3 flex items-center justify-center",
                 isInIframe ? "text-lg" : "text-xl"
               )}>
                 <MapPin className="mr-2" size={16} />
-                Venue Location
+                {dynamicData.venueName || "Venue Location"}
               </h3>
               {(dynamicData.venueAddress || VENUE_ADDRESS) && (
                 <p className="text-cream/90 mb-3 text-sm md:text-base">{dynamicData.venueAddress || VENUE_ADDRESS}</p>
@@ -562,7 +566,7 @@ const Index = () => {
                   <ContactCard
                     key={index}
                     name={contact.name}
-                    number={contact.number}
+                    phone={contact.phone}
                     index={index}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}

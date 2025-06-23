@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 interface ContactCardProps {
   name: string;
-  number: string;
+  phone: string;
   index: number;
   className?: string;
   style?: React.CSSProperties;
@@ -14,14 +14,14 @@ interface ContactCardProps {
 
 const ContactCard: React.FC<ContactCardProps> = ({ 
   name, 
-  number, 
+  phone, 
   index, 
   className, 
   style, 
   isInIframe = false 
 }) => {
   const handleCall = () => {
-    window.open(`tel:${number}`, '_self');
+    window.open(`tel:${phone}`, '_self');
   };
 
   return (
@@ -89,7 +89,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
             <span className={cn(
               "text-cream font-medium tracking-wide truncate",
               isInIframe ? "text-xs" : "text-sm sm:text-base"
-            )}>{number}</span>
+            )}>{phone}</span>
           </div>
           <div className={cn(
             "bg-gold-light/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 flex-shrink-0",

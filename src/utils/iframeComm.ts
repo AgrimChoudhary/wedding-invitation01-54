@@ -6,8 +6,10 @@ export interface IframeMessage {
 }
 
 export interface InvitationEvents {
-  invitationAccepted: {
+  RSVP_ACCEPTED: {
     guestName: string;
+    guestId?: string;
+    eventId?: string;
     timestamp: string;
   };
   invitationViewed: {
@@ -50,6 +52,8 @@ export interface InvitationEvents {
 class IframeMessenger {
   private listeners: Map<string, Function[]> = new Map();
   private guestName: string = '';
+  private guestId?: string;
+  private eventId?: string;
   
   constructor() {
     this.setupMessageListener();
@@ -93,8 +97,10 @@ class IframeMessenger {
     });
   }
   
-  public setGuestName(name: string) {
+  public setGuestInfo(name: string, guestId?: string, eventId?: string) {
     this.guestName = name;
+    this.guestId = guestId;
+    this.eventId = eventId;
   }
   
   public sendMessage<T extends keyof InvitationEvents>(type: T, data: InvitationEvents[T]) {
@@ -133,9 +139,11 @@ class IframeMessenger {
   }
   
   // Convenience methods for common events
-  public trackInvitationAccepted() {
-    this.sendMessage('invitationAccepted', {
+  public trackRSVPAccepted() {
+    this.sendMessage('RSVP_ACCEPTED', {
       guestName: this.guestName,
+      guestId: this.guestId,
+      eventId: this.eventId,
       timestamp: new Date().toISOString()
     });
   }
@@ -201,8 +209,8 @@ class IframeMessenger {
 export const iframeMessenger = new IframeMessenger();
 
 // Initialize iframe communication
-export const initIframeComm = (guestName: string) => {
-  iframeMessenger.setGuestName(guestName);
+export const initIframeComm = (guestName: string, guestId?: string, eventId?: string) => {
+  iframeMessenger.setGuestInfo(guestName, guestId, eventId);
   
   // Track initial page view
   iframeMessenger.trackInvitationViewed('initial-load');

@@ -12,13 +12,18 @@ export interface WeddingData {
   guestName?: string;
   
   // Venue Information
+  venueName?: string;
   venueAddress?: string;
   venueMapLink?: string;
+  
+  // Event and Guest IDs
+  eventId?: string;
+  guestId?: string;
   
   // Contact Information
   contacts?: Array<{
     name: string;
-    number: string;
+    phone: string;
   }>;
   
   // Photos
@@ -30,31 +35,25 @@ export interface WeddingData {
     date: string;
     time: string;
     venue: string;
-    mapLink: string;
+    mapLink?: string;
   }>;
   
   // Family Members
   brideFamily?: {
     title: string;
-    description: string;
-    address: string;
     members: Array<{
       name: string;
       relation: string;
-      description: string;
-      photo: string;
+      photo?: string;
     }>;
   };
   
   groomFamily?: {
     title: string;
-    description: string;
-    address: string;
     members: Array<{
       name: string;
       relation: string;
-      description: string;
-      photo: string;
+      photo?: string;
     }>;
   };
 }
@@ -117,7 +116,18 @@ export const parseUrlParams = (): WeddingData => {
     data.guestName = sanitizeString(urlParams.get('guestName')!);
   }
   
+  // Event and Guest IDs
+  if (urlParams.get('eventId')) {
+    data.eventId = sanitizeString(urlParams.get('eventId')!);
+  }
+  if (urlParams.get('guestId')) {
+    data.guestId = sanitizeString(urlParams.get('guestId')!);
+  }
+  
   // Venue information
+  if (urlParams.get('venueName')) {
+    data.venueName = sanitizeString(urlParams.get('venueName')!);
+  }
   if (urlParams.get('venueAddress')) {
     data.venueAddress = sanitizeString(urlParams.get('venueAddress')!);
   }
@@ -135,33 +145,43 @@ export const parseUrlParams = (): WeddingData => {
       if (Array.isArray(contactsData)) {
         data.contacts = contactsData.map(contact => ({
           name: sanitizeString(contact.name || ''),
-          number: sanitizeString(contact.number || '')
-        })).filter(contact => contact.name && isValidPhoneNumber(contact.number));
+          phone: sanitizeString(contact.phone || contact.number || '')
+        })).filter(contact => contact.name && isValidPhoneNumber(contact.phone));
       }
     } catch (error) {
       console.warn('Invalid contacts JSON format');
     }
   }
   
-  // Parse photos (comma-separated URLs)
+  // Parse photos (JSON array of URLs)
   if (urlParams.get('photos')) {
-    const photosParam = urlParams.get('photos')!;
-    data.photos = photosParam.split(',')
-      .map(url => url.trim())
-      .filter(url => isValidUrl(url));
+    try {
+      const photosData = JSON.parse(decodeURIComponent(urlParams.get('photos')!));
+      if (Array.isArray(photosData)) {
+        data.photos = photosData.filter(url => isValidUrl(url));
+      }
+    } catch (error) {
+      // Fallback: try comma-separated URLs
+      const photosParam = urlParams.get('photos')!;
+      data.photos = photosParam.split(',')
+        .map(url => url.trim())
+        .filter(url => isValidUrl(url));
+    }
   }
   
   // Parse events (JSON format expected)
   if (urlParams.get('events')) {
     try {
-      const eventsData = JSON.parse(urlParams.get('events')!);
+      const eventsData = JSON.parse(decodeURIComponent(urlParams.get('events')!));
       if (Array.isArray(eventsData)) {
         data.events = eventsData.map(event => ({
-          name: sanitizeString(event.name || ''),
-          date: sanitizeString(event.date || ''),
-          time: sanitizeString(event.time || ''),
-          venue: sanitizeString(event.venue || ''),
-          mapLink: isValidUrl(event.mapLink) ? event.mapLink : ''
+          name: sanitizeString(event.name || event.EVENT_NAME || ''),
+          date: sanitizeString(event.date || event.EVENT_DATE || ''),
+          time: sanitizeString(event.time || event.EVENT_TIME || ''),
+          venue: sanitizeString(event.venue || event.EVENT_VENUE || ''),
+          mapLink: isValidUrl(event.mapLink || event.EVENT_VENUE_MAP_LINK) 
+            ? (event.mapLink || event.EVENT_VENUE_MAP_LINK) 
+            : undefined
         })).filter(event => event.name && event.date);
       }
     } catch (error) {
@@ -172,16 +192,13 @@ export const parseUrlParams = (): WeddingData => {
   // Parse family data (JSON format expected)
   if (urlParams.get('brideFamily')) {
     try {
-      const brideFamilyData = JSON.parse(urlParams.get('brideFamily')!);
+      const brideFamilyData = JSON.parse(decodeURIComponent(urlParams.get('brideFamily')!));
       data.brideFamily = {
         title: sanitizeString(brideFamilyData.title || ''),
-        description: sanitizeString(brideFamilyData.description || ''),
-        address: sanitizeString(brideFamilyData.address || ''),
         members: (brideFamilyData.members || []).map((member: any) => ({
           name: sanitizeString(member.name || ''),
           relation: sanitizeString(member.relation || ''),
-          description: sanitizeString(member.description || ''),
-          photo: isValidUrl(member.photo) ? member.photo : ''
+          photo: isValidUrl(member.photo) ? member.photo : undefined
         })).filter((member: any) => member.name)
       };
     } catch (error) {
@@ -191,16 +208,13 @@ export const parseUrlParams = (): WeddingData => {
   
   if (urlParams.get('groomFamily')) {
     try {
-      const groomFamilyData = JSON.parse(urlParams.get('groomFamily')!);
+      const groomFamilyData = JSON.parse(decodeURIComponent(urlParams.get('groomFamily')!));
       data.groomFamily = {
         title: sanitizeString(groomFamilyData.title || ''),
-        description: sanitizeString(groomFamilyData.description || ''),
-        address: sanitizeString(groomFamilyData.address || ''),
         members: (groomFamilyData.members || []).map((member: any) => ({
           name: sanitizeString(member.name || ''),
           relation: sanitizeString(member.relation || ''),
-          description: sanitizeString(member.description || ''),
-          photo: isValidUrl(member.photo) ? member.photo : ''
+          photo: isValidUrl(member.photo) ? member.photo : undefined
         })).filter((member: any) => member.name)
       };
     } catch (error) {
