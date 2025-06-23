@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -33,7 +34,7 @@ import {
 } from '@/constants/placeholders';
 import ContactCard from '@/components/ContactCard';
 import { getDynamicData } from '@/utils/urlParams';
-import { initIframeComm } from '@/utils/iframeComm';
+import { initIframeComm, iframeMessenger } from '@/utils/iframeComm';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -166,6 +167,9 @@ const Index = () => {
   const handleFamilyClick = (family: FamilyDetails) => {
     setSelectedFamily(family);
     setFamilyDialogOpen(true);
+    
+    // Track family viewed event
+    iframeMessenger.trackFamilyViewed(family.side);
   };
 
   const handleAcceptInvitation = () => {
@@ -175,9 +179,7 @@ const Index = () => {
     }
     
     // Send RSVP_ACCEPTED postMessage to parent as specified in the guide
-    if (window.parent !== window) {
-      iframeMessenger.trackRSVPAccepted();
-    }
+    iframeMessenger.trackRSVPAccepted();
     
     toast({
       title: "Invitation Accepted!",
@@ -256,6 +258,7 @@ const Index = () => {
       "min-h-screen relative overflow-x-hidden",
       isInIframe ? "iframe-optimized" : ""
     )}>
+      {/* Loading screen */}
       {!imagesLoaded && (
         <div className="fixed inset-0 bg-maroon/90 z-50 flex items-center justify-center">
           <div className="text-center">
@@ -265,6 +268,7 @@ const Index = () => {
         </div>
       )}
       
+      {/* Guest welcome banner */}
       {guestName && (
         <div className="bg-gold-gradient text-maroon py-2 px-4 text-center animate-fade-in">
           <p className="font-cormorant text-base md:text-lg lg:text-xl">
@@ -273,6 +277,7 @@ const Index = () => {
         </div>
       )}
       
+      {/* Decorative diyas */}
       {!isInIframe && (
         <>
           <Diya className="top-20" position="left" />
@@ -280,6 +285,7 @@ const Index = () => {
         </>
       )}
       
+      {/* Header section with improved couple illustration */}
       <header className="pt-6 md:pt-10 lg:pt-12 pb-8 md:pb-10 px-4 relative text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-4 md:mb-6 animate-float">
@@ -295,26 +301,73 @@ const Index = () => {
           </p>
           
           <h1 className={cn(
-            "font-cormorant gold-text font-bold mb-3 md:mb-4 animate-scale-up leading-tight",
+            "font-cormorant gold-text font-bold mb-6 md:mb-8 animate-scale-up leading-tight",
             isInIframe ? "text-3xl md:text-5xl lg:text-6xl" : "text-4xl md:text-6xl lg:text-8xl"
           )}>
             {firstName} <span className="inline-block mx-1 md:mx-2 lg:mx-3">&</span> {secondName}
           </h1>
           
+          {/* Enhanced Traditional Couple Image Frame */}
+          <div className="relative mt-8 md:mt-12 mb-8 md:mb-10 flex justify-center">
+            <div className="relative">
+              {/* Outer decorative frame */}
+              <div className="absolute -inset-8 md:-inset-12">
+                <div className="w-full h-full border-4 border-gold-light/30 rounded-full"></div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
+                  <div className="w-8 h-8 md:w-12 md:h-12 bg-gold-gradient rounded-full flex items-center justify-center">
+                    <Heart className="text-maroon w-4 h-4 md:w-6 md:h-6" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-gold-gradient rounded-full flex items-center justify-center">
+                    <Flower className="text-maroon w-3 h-3 md:w-4 md:h-4" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Traditional ornamental corners */}
+              <div className="absolute -top-4 -left-4 md:-top-6 md:-left-6">
+                <div className="w-8 h-8 md:w-12 md:h-12 border-l-4 border-t-4 border-gold-light rounded-tl-2xl"></div>
+              </div>
+              <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6">
+                <div className="w-8 h-8 md:w-12 md:h-12 border-r-4 border-t-4 border-gold-light rounded-tr-2xl"></div>
+              </div>
+              <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6">
+                <div className="w-8 h-8 md:w-12 md:h-12 border-l-4 border-b-4 border-gold-light rounded-bl-2xl"></div>
+              </div>
+              <div className="absolute -bottom-4 -right-4 md:-bottom-6 md:-right-6">
+                <div className="w-8 h-8 md:w-12 md:h-12 border-r-4 border-b-4 border-gold-light rounded-br-2xl"></div>
+              </div>
+              
+              {/* Main couple illustration with luxury styling */}
+              <div className="relative bg-gradient-to-br from-maroon/20 via-transparent to-maroon/20 p-4 md:p-6 rounded-full">
+                <CoupleIllustration className={cn(
+                  "drop-shadow-2xl",
+                  isInIframe ? "w-48 h-48 md:w-64 md:h-64" : "w-64 h-64 md:w-80 md:h-80"
+                )} />
+                
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-gold-gradient opacity-5 rounded-full blur-xl"></div>
+              </div>
+              
+              {/* Floating decorative elements */}
+              <div className="absolute -top-2 left-8 md:left-12 animate-float opacity-60">
+                <Sparkles className="text-gold-light w-4 h-4 md:w-6 md:h-6" />
+              </div>
+              <div className="absolute -bottom-2 right-8 md:right-12 animate-float opacity-60" style={{ animationDelay: '0.5s' }}>
+                <Star className="text-gold-light w-4 h-4 md:w-6 md:h-6" />
+              </div>
+            </div>
+          </div>
+          
           <p className={cn(
-            "text-cream italic font-cormorant animate-fade-in",
+            "text-cream italic font-cormorant animate-fade-in mb-6 md:mb-8",
             isInIframe ? "text-lg md:text-xl" : "text-xl md:text-2xl"
           )}>
             "{dynamicData.coupleTagline || COUPLE_TAGLINE}"
           </p>
           
-          <div className="mt-6 md:mt-8 flex justify-center">
-            <CoupleIllustration className={cn(
-              isInIframe ? "w-48 h-48 md:w-64 md:h-64" : "w-64 h-64 md:w-80 md:h-80"
-            )} />
-          </div>
-          
-          <div className="mt-6 md:mt-8 animate-fade-in flex justify-center">
+          <div className="animate-fade-in flex justify-center">
             <div className="bg-maroon/50 px-4 md:px-6 py-2 md:py-3 rounded-lg gold-border inline-block">
               <Calendar className="inline-block text-gold-light mr-2 mb-1" size={isInIframe ? 16 : 20} />
               <span className={cn(
@@ -341,6 +394,7 @@ const Index = () => {
             <Countdown className="animate-fade-in" />
           </div>
           
+          {/* Interactive buttons - only show outside iframe */}
           {!isInIframe && (
             <div className="mt-6 md:mt-8 flex flex-wrap justify-center gap-3 md:gap-4">
               <button 
@@ -399,6 +453,7 @@ const Index = () => {
         </div>
       </header>
       
+      {/* Mandala container */}
       {isMandalaVisible && !isInIframe && (
         <div 
           id="mandala-container"
@@ -406,6 +461,7 @@ const Index = () => {
         ></div>
       )}
       
+      {/* Events section */}
       <section className="py-8 md:py-10 lg:py-12 px-4 relative z-10" id="events">
         <div className="max-w-5xl mx-auto">
           <h2 className={cn(
@@ -438,6 +494,106 @@ const Index = () => {
           </div>
         </div>
       </section>
+      
+      {/* Family section - Always show if family data is available */}
+      {((dynamicData.brideFamily && dynamicData.brideFamily.title) || (dynamicData.groomFamily && dynamicData.groomFamily.title) || 
+        (!dynamicData.brideFamily && !dynamicData.groomFamily && (BRIDE_FAMILY.FAMILY_TITLE || GROOM_FAMILY.FAMILY_TITLE))) && (
+        <section className="py-8 md:py-10 px-4 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <h2 className={cn(
+              "text-center font-cormorant gold-text font-bold mb-8 md:mb-10",
+              isInIframe ? "text-2xl md:text-3xl" : "text-3xl md:text-4xl"
+            )}>
+              Our Families
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {/* First Family Card */}
+              {firstFamily.title && (
+                <div 
+                  className="group relative bg-gradient-to-br from-maroon/70 via-maroon/60 to-maroon/50 rounded-xl border border-gold-light/40 hover:border-gold-light/80 transition-all duration-300 hover:shadow-lg hover:shadow-gold-light/25 hover:-translate-y-1 overflow-hidden cursor-pointer p-6 md:p-8 text-center animate-fade-in-left"
+                  onClick={() => handleFamilyClick(firstFamily)}
+                >
+                  {/* Decorative elements */}
+                  <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>
+                  <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>
+                  
+                  {/* Family icon */}
+                  <div className="mb-4 flex justify-center">
+                    <div className="bg-gold-gradient p-3 rounded-full group-hover:scale-110 transition-transform duration-300">
+                      {firstFamily.side === "bride" ? (
+                        <Flower className="text-maroon w-8 h-8" />
+                      ) : (
+                        <Heart className="text-maroon w-8 h-8" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Family title */}
+                  <h3 className="font-cormorant gold-text text-2xl md:text-3xl font-bold mb-3 group-hover:text-gold-light transition-colors duration-300">
+                    {firstFamily.title}
+                  </h3>
+                  
+                  {/* Member count */}
+                  <p className="text-cream/80 text-sm mb-4">
+                    {firstFamily.members.length > 0 
+                      ? `${firstFamily.members.length} ${firstFamily.members.length === 1 ? 'Member' : 'Members'}`
+                      : 'Family Details'
+                    }
+                  </p>
+                  
+                  {/* Click indicator */}
+                  <div className="bg-gold-light/20 rounded-full px-4 py-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 inline-block">
+                    <span className="text-gold-light font-medium text-sm">Click to view details</span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Second Family Card */}
+              {secondFamily.title && (
+                <div 
+                  className="group relative bg-gradient-to-br from-maroon/70 via-maroon/60 to-maroon/50 rounded-xl border border-gold-light/40 hover:border-gold-light/80 transition-all duration-300 hover:shadow-lg hover:shadow-gold-light/25 hover:-translate-y-1 overflow-hidden cursor-pointer p-6 md:p-8 text-center animate-fade-in-right"
+                  onClick={() => handleFamilyClick(secondFamily)}
+                  style={{ animationDelay: '0.2s' }}
+                >
+                  {/* Decorative elements */}
+                  <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>
+                  <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-gold-light/50 group-hover:border-gold-light transition-colors duration-300"></div>
+                  
+                  {/* Family icon */}
+                  <div className="mb-4 flex justify-center">
+                    <div className="bg-gold-gradient p-3 rounded-full group-hover:scale-110 transition-transform duration-300">
+                      {secondFamily.side === "bride" ? (
+                        <Flower className="text-maroon w-8 h-8" />
+                      ) : (
+                        <Heart className="text-maroon w-8 h-8" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Family title */}
+                  <h3 className="font-cormorant gold-text text-2xl md:text-3xl font-bold mb-3 group-hover:text-gold-light transition-colors duration-300">
+                    {secondFamily.title}
+                  </h3>
+                  
+                  {/* Member count */}
+                  <p className="text-cream/80 text-sm mb-4">
+                    {secondFamily.members.length > 0 
+                      ? `${secondFamily.members.length} ${secondFamily.members.length === 1 ? 'Member' : 'Members'}`
+                      : 'Family Details'
+                    }
+                  </p>
+                  
+                  {/* Click indicator */}
+                  <div className="bg-gold-light/20 rounded-full px-4 py-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 inline-block">
+                    <span className="text-gold-light font-medium text-sm">Click to view details</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
       
       {/* Conditional Photo Gallery - Only show if photos are available */}
       {((dynamicData.photos && dynamicData.photos.length > 0) || (!dynamicData.photos && PHOTOS.length > 0)) && (
@@ -509,6 +665,7 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Footer with venue and contacts */}
       <footer className="py-8 md:py-10 px-4 relative mt-8 md:mt-10 border-t border-gold-light/30 z-10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-4 md:mb-6 flex justify-center">
@@ -522,7 +679,7 @@ const Index = () => {
             "Your presence is the greatest blessing."
           </p>
           
-          {/* Conditional Venue Information Section - Only show if venue data is available */}
+          {/* Conditional Venue Information Section */}
           {(dynamicData.venueName || dynamicData.venueAddress || dynamicData.venueMapLink || VENUE_ADDRESS || VENUE_MAP_LINK) && (
             <div className="mb-6 md:mb-8 bg-maroon/40 p-4 md:p-5 rounded-lg gold-border max-w-md mx-auto">
               <h3 className={cn(
@@ -541,6 +698,7 @@ const Index = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-3 md:px-4 py-2 bg-gold-gradient text-maroon rounded-lg hover:scale-105 transition-transform text-sm font-medium"
+                  onClick={() => iframeMessenger.trackMapClicked(dynamicData.venueName || "Main Venue")}
                 >
                   <MapPin className="mr-2" size={14} />
                   View on Google Maps
@@ -550,7 +708,7 @@ const Index = () => {
             </div>
           )}
           
-          {/* Conditional Contact Information Section - Only show if contacts are available */}
+          {/* Conditional Contact Information Section */}
           {contactsToDisplay.length > 0 && (
             <div className="mb-4 md:mb-6">
               <h3 className={cn(
@@ -583,6 +741,7 @@ const Index = () => {
         </div>
       </footer>
       
+      {/* Family Details Dialog */}
       <FamilyDetailsDialog 
         open={familyDialogOpen} 
         onOpenChange={setFamilyDialogOpen} 
