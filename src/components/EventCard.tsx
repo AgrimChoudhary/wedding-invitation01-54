@@ -37,7 +37,7 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <div 
       className={cn(
-        "group relative bg-gradient-to-br from-maroon/70 via-maroon/60 to-maroon/50",
+        "group relative bg-gradient-to-br from-maroon/80 via-maroon/70 to-maroon/60",
         "rounded-xl border border-gold-light/40 hover:border-gold-light/80",
         "transition-all duration-300 hover:shadow-lg hover:shadow-gold-light/25",
         "hover:-translate-y-1 overflow-hidden cursor-pointer",
@@ -69,7 +69,7 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
           <h3 className={cn(
             "font-cormorant gold-text font-bold group-hover:text-gold-light transition-colors duration-300 leading-tight",
-            isInIframe ? "text-lg md:text-xl" : "text-xl md:text-2xl"
+            isInIframe ? "text-lg md:text-xl" : "text-xl md:text-2xl lg:text-3xl"
           )}>
             {title}
           </h3>
@@ -79,34 +79,34 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="space-y-3 flex-1">
           <div className="flex items-center text-cream">
             <Calendar className={cn(
-              "text-gold-light mr-2 flex-shrink-0",
+              "text-gold-light mr-3 flex-shrink-0",
               isInIframe ? "w-4 h-4" : "w-5 h-5"
             )} />
             <span className={cn(
-              "font-medium",
-              isInIframe ? "text-sm" : "text-base"
+              "font-medium font-opensans",
+              isInIframe ? "text-sm" : "text-base md:text-lg"
             )}>{date}</span>
           </div>
           
           <div className="flex items-center text-cream">
             <Clock className={cn(
-              "text-gold-light mr-2 flex-shrink-0",
+              "text-gold-light mr-3 flex-shrink-0",
               isInIframe ? "w-4 h-4" : "w-5 h-5"
             )} />
             <span className={cn(
-              "font-medium",
-              isInIframe ? "text-sm" : "text-base"
+              "font-medium font-opensans",
+              isInIframe ? "text-sm" : "text-base md:text-lg"
             )}>{time}</span>
           </div>
           
           <div className="flex items-start text-cream">
             <MapPin className={cn(
-              "text-gold-light mr-2 mt-0.5 flex-shrink-0",
+              "text-gold-light mr-3 mt-0.5 flex-shrink-0",
               isInIframe ? "w-4 h-4" : "w-5 h-5"
             )} />
             <span className={cn(
-              "font-medium leading-tight",
-              isInIframe ? "text-sm" : "text-base"
+              "font-medium leading-tight font-opensans",
+              isInIframe ? "text-sm" : "text-base md:text-lg"
             )}>{venue}</span>
           </div>
         </div>
@@ -120,7 +120,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 handleMapClick();
               }}
               className={cn(
-                "bg-gold-light/20 hover:bg-gold-light/30 text-gold-light rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center font-medium",
+                "bg-gold-light/20 hover:bg-gold-light/30 text-gold-light rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center font-medium font-opensans",
                 isInIframe ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm"
               )}
             >
