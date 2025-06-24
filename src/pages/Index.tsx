@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -35,6 +34,7 @@ import {
 import ContactCard from '@/components/ContactCard';
 import { getDynamicData } from '@/utils/urlParams';
 import { initIframeComm, iframeMessenger } from '@/utils/iframeComm';
+import DynamicRSVPForm from '@/components/DynamicRSVPForm';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -69,6 +69,12 @@ const Index = () => {
     const currentGuestName = dynamicData.guestName || GUEST_NAME;
     setGuestName(currentGuestName);
     initIframeComm(currentGuestName, dynamicData.guestId, dynamicData.eventId);
+    
+    // Track invitation viewed - this is critical for platform tracking
+    const trackingTimer = setTimeout(() => {
+      iframeMessenger.trackInvitationViewed();
+      console.log('INVITATION_VIEWED message sent to parent platform');
+    }, 1000); // Wait 1 second to ensure content is rendered and visible
     
     // Disable animations in iframe for better performance
     const cleanup = !isInIframe && (isMobile ? initTouchGlitter() : initCursorGlitter());
@@ -112,7 +118,10 @@ const Index = () => {
       }, '*');
     }
     
-    return cleanup || (() => {});
+    return () => {
+      clearTimeout(trackingTimer);
+      return cleanup || (() => {});
+    };
   }, [isMobile, navigate, dynamicData, isInIframe]);
 
   useEffect(() => {
@@ -178,7 +187,7 @@ const Index = () => {
       createConfetti();
     }
     
-    // Send RSVP_ACCEPTED postMessage to parent as specified in the guide
+    // Send RSVP_ACCEPTED postMessage to parent as specified in the platform requirements
     iframeMessenger.trackRSVPAccepted();
     
     toast({
@@ -187,6 +196,20 @@ const Index = () => {
       variant: "default",
       duration: 5000,
     });
+  };
+
+  const handleDetailedRSVPSubmit = async (formData: Record<string, any>) => {
+    // Set invitation as accepted
+    setInvitationAccepted(true);
+    
+    if (!isInIframe) {
+      createConfetti();
+    }
+    
+    // Send detailed RSVP data to parent platform
+    iframeMessenger.trackDetailedRSVPSubmitted(formData);
+    
+    console.log('RSVP_DETAILED_SUBMITTED message sent to parent platform:', formData);
   };
 
   // Prepare events data from dynamic data or fallback to constants
@@ -252,6 +275,105 @@ const Index = () => {
   const contactsToDisplay = dynamicData.contacts && dynamicData.contacts.length > 0 
     ? dynamicData.contacts 
     : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, phone: contact.CONTACT_NUMBER }));
+
+  // Determine RSVP section display logic based on platform requirements
+  const shouldShowRSVPSection = !dynamicData.hasResponded;
+  const shouldShowDetailedForm = dynamicData.showDetailedRsvpForm && dynamicData.rsvpFields && dynamicData.rsvpFields.length > 0;
+  
+  const renderRSVPSection = () => {
+    // If guest has already responded, show their previous response
+    if (dynamicData.hasResponded) {
+      const responseMessage = dynamicData.accepted 
+        ? "Thank you for your response! You have already accepted this invitation."
+        : "You have already responded to this invitation.";
+      
+      return (
+        <div className="max-w-2xl mx-auto">
+          <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
+            <div className="relative z-10 text-center">
+              <div className="mb-4">
+                <CheckCircle className="mx-auto text-green-400" size={48} />
+              </div>
+              <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                Response Recorded
+              </h3>
+              <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
+                {responseMessage}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // If guest hasn't responded yet
+    if (shouldShowDetailedForm) {
+      // Show detailed RSVP form
+      return (
+        <DynamicRSVPForm
+          fields={dynamicData.rsvpFields!}
+          guestName={guestName}
+          onSubmit={handleDetailedRSVPSubmit}
+          isInIframe={isInIframe}
+        />
+      );
+    } else {
+      // Show simple accept button
+      if (!invitationAccepted) {
+        return (
+          <button 
+            className={cn(
+              "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
+              isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+            )}
+            onClick={handleAcceptInvitation}
+          >
+            <span className="relative z-10 flex items-center">
+              Accept Invitation
+              <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+            </span>
+            <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+          </button>
+        );
+      } else {
+        // Show thank you message for simple acceptance
+        return (
+          <div className="max-w-2xl mx-auto">
+            <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+              </div>
+              
+              <div className="relative z-10">
+                <div className="mb-4">
+                  <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
+                </div>
+                
+                <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                  Invitation Accepted!
+                </h3>
+                
+                <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
+                  <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
+                    "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
+                  </p>
+                </div>
+                
+                <div className="mt-6 flex justify-center space-x-2">
+                  <Heart className="text-gold-light animate-heart-beat" size={20} />
+                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
+                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    }
+  };
 
   return (
     <div className={cn(
@@ -697,6 +819,24 @@ const Index = () => {
           )}
         </div>
       </section>
+      
+      {/* RSVP Section - Updated with dynamic functionality */}
+      {shouldShowRSVPSection && (
+        <section className="py-8 md:py-10 px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            {renderRSVPSection()}
+          </div>
+        </section>
+      )}
+      
+      {/* Show thank you section if guest has already responded */}
+      {dynamicData.hasResponded && (
+        <section className="py-8 md:py-10 px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            {renderRSVPSection()}
+          </div>
+        </section>
+      )}
       
       {/* Footer with venue and contacts */}
       <footer className="py-8 md:py-10 px-4 relative mt-8 md:mt-10 border-t border-gold-light/30 z-10">

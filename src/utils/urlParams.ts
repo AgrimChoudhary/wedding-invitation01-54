@@ -1,4 +1,3 @@
-
 export interface WeddingData {
   // Couple Information
   brideName?: string;
@@ -19,6 +18,18 @@ export interface WeddingData {
   // Event and Guest IDs
   eventId?: string;
   guestId?: string;
+  
+  // RSVP Related Fields
+  showDetailedRsvpForm?: boolean;
+  rsvpFields?: Array<{
+    name: string;
+    label: string;
+    type: string;
+    options?: string[];
+    required?: boolean;
+  }>;
+  hasResponded?: boolean;
+  accepted?: boolean;
   
   // Contact Information
   contacts?: Array<{
@@ -122,6 +133,36 @@ export const parseUrlParams = (): WeddingData => {
   }
   if (urlParams.get('guestId')) {
     data.guestId = sanitizeString(urlParams.get('guestId')!);
+  }
+  
+  // RSVP Related Parameters
+  if (urlParams.get('showDetailedRsvpForm')) {
+    data.showDetailedRsvpForm = urlParams.get('showDetailedRsvpForm') === 'true';
+  }
+  
+  if (urlParams.get('hasResponded')) {
+    data.hasResponded = urlParams.get('hasResponded') === 'true';
+  }
+  
+  if (urlParams.get('accepted')) {
+    data.accepted = urlParams.get('accepted') === 'true';
+  }
+  
+  if (urlParams.get('rsvpFields')) {
+    try {
+      const rsvpFieldsData = JSON.parse(decodeURIComponent(urlParams.get('rsvpFields')!));
+      if (Array.isArray(rsvpFieldsData)) {
+        data.rsvpFields = rsvpFieldsData.map(field => ({
+          name: sanitizeString(field.name || ''),
+          label: sanitizeString(field.label || ''),
+          type: sanitizeString(field.type || 'text'),
+          options: field.options ? field.options.map((option: string) => sanitizeString(option)) : undefined,
+          required: field.required === true
+        })).filter(field => field.name && field.label);
+      }
+    } catch (error) {
+      console.warn('Invalid rsvpFields JSON format');
+    }
   }
   
   // Venue information

@@ -1,4 +1,3 @@
-
 export interface IframeMessage {
   type: string;
   data?: any;
@@ -6,7 +5,20 @@ export interface IframeMessage {
 }
 
 export interface InvitationEvents {
+  INVITATION_VIEWED: {
+    guestName: string;
+    timestamp: string;
+    guestId?: string;
+    eventId?: string;
+  };
   RSVP_ACCEPTED: {
+    guestName: string;
+    guestId?: string;
+    eventId?: string;
+    timestamp: string;
+  };
+  RSVP_DETAILED_SUBMITTED: {
+    rsvpData: Record<string, any>;
     guestName: string;
     guestId?: string;
     eventId?: string;
@@ -139,8 +151,27 @@ class IframeMessenger {
   }
   
   // Convenience methods for common events
+  public trackInvitationViewed() {
+    this.sendMessage('INVITATION_VIEWED', {
+      guestName: this.guestName,
+      guestId: this.guestId,
+      eventId: this.eventId,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
   public trackRSVPAccepted() {
     this.sendMessage('RSVP_ACCEPTED', {
+      guestName: this.guestName,
+      guestId: this.guestId,
+      eventId: this.eventId,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  public trackDetailedRSVPSubmitted(rsvpData: Record<string, any>) {
+    this.sendMessage('RSVP_DETAILED_SUBMITTED', {
+      rsvpData,
       guestName: this.guestName,
       guestId: this.guestId,
       eventId: this.eventId,
