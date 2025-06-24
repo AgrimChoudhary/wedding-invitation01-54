@@ -1,3 +1,4 @@
+
 export interface IframeMessage {
   type: string;
   data?: any;
@@ -179,14 +180,6 @@ class IframeMessenger {
     });
   }
   
-  public trackInvitationViewed(section?: string) {
-    this.sendMessage('invitationViewed', {
-      guestName: this.guestName,
-      timestamp: new Date().toISOString(),
-      section
-    });
-  }
-  
   public trackEventClicked(eventName: string) {
     this.sendMessage('eventClicked', {
       eventName,
@@ -243,13 +236,13 @@ export const iframeMessenger = new IframeMessenger();
 export const initIframeComm = (guestName: string, guestId?: string, eventId?: string) => {
   iframeMessenger.setGuestInfo(guestName, guestId, eventId);
   
-  // Track initial page view
-  iframeMessenger.trackInvitationViewed('initial-load');
+  // Track initial page view with proper message type
+  iframeMessenger.trackInvitationViewed();
   
   // Track page visibility changes
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
-      iframeMessenger.trackInvitationViewed('page-focus');
+      iframeMessenger.trackInvitationViewed();
     }
   });
   

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -34,7 +35,6 @@ import {
 import ContactCard from '@/components/ContactCard';
 import { getDynamicData } from '@/utils/urlParams';
 import { initIframeComm, iframeMessenger } from '@/utils/iframeComm';
-import DynamicRSVPForm from '@/components/DynamicRSVPForm';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -76,8 +76,11 @@ const Index = () => {
       console.log('INVITATION_VIEWED message sent to parent platform');
     }, 1000); // Wait 1 second to ensure content is rendered and visible
     
-    // Disable animations in iframe for better performance
-    const cleanup = !isInIframe && (isMobile ? initTouchGlitter() : initCursorGlitter());
+    // Disable animations in iframe for better performance and setup cursor glitter
+    let cleanup: (() => void) | undefined;
+    if (!isInIframe) {
+      cleanup = isMobile ? initTouchGlitter() : initCursorGlitter();
+    }
     
     const preloadImages = () => {
       const imagesToPreload = dynamicData.photos && dynamicData.photos.length > 0 
@@ -120,7 +123,7 @@ const Index = () => {
     
     return () => {
       clearTimeout(trackingTimer);
-      return cleanup || (() => {});
+      if (cleanup) cleanup();
     };
   }, [isMobile, navigate, dynamicData, isInIframe]);
 
@@ -198,20 +201,6 @@ const Index = () => {
     });
   };
 
-  const handleDetailedRSVPSubmit = async (formData: Record<string, any>) => {
-    // Set invitation as accepted
-    setInvitationAccepted(true);
-    
-    if (!isInIframe) {
-      createConfetti();
-    }
-    
-    // Send detailed RSVP data to parent platform
-    iframeMessenger.trackDetailedRSVPSubmitted(formData);
-    
-    console.log('RSVP_DETAILED_SUBMITTED message sent to parent platform:', formData);
-  };
-
   // Prepare events data from dynamic data or fallback to constants
   const eventsData = dynamicData.events && dynamicData.events.length > 0 ? dynamicData.events : EVENTS;
   const events = eventsData.map(event => ({
@@ -277,11 +266,10 @@ const Index = () => {
     : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, phone: contact.CONTACT_NUMBER }));
 
   // Determine RSVP section display logic based on platform requirements
-  const shouldShowRSVPSection = !dynamicData.hasResponded;
-  const shouldShowDetailedForm = dynamicData.showDetailedRsvpForm && dynamicData.rsvpFields && dynamicData.rsvpFields.length > 0;
+  const shouldShowRSVPSection = !dynamicData.hasResponded && !invitationAccepted;
   
   const renderRSVPSection = () => {
-    // If guest has already responded, show their previous response
+    // If guest has already responded via URL parameter, show their previous response
     if (dynamicData.hasResponded) {
       const responseMessage = dynamicData.accepted 
         ? "Thank you for your response! You have already accepted this invitation."
@@ -306,73 +294,60 @@ const Index = () => {
       );
     }
     
-    // If guest hasn't responded yet
-    if (shouldShowDetailedForm) {
-      // Show detailed RSVP form
+    // If guest accepted via button click, show thank you message
+    if (invitationAccepted) {
       return (
-        <DynamicRSVPForm
-          fields={dynamicData.rsvpFields!}
-          guestName={guestName}
-          onSubmit={handleDetailedRSVPSubmit}
-          isInIframe={isInIframe}
-        />
-      );
-    } else {
-      // Show simple accept button
-      if (!invitationAccepted) {
-        return (
-          <button 
-            className={cn(
-              "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
-              isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
-            )}
-            onClick={handleAcceptInvitation}
-          >
-            <span className="relative z-10 flex items-center">
-              Accept Invitation
-              <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
-            </span>
-            <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
-          </button>
-        );
-      } else {
-        // Show thank you message for simple acceptance
-        return (
-          <div className="max-w-2xl mx-auto">
-            <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
-                <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-                <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-                <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+        <div className="max-w-2xl mx-auto">
+          <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+              <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+              <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+              <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+            </div>
+            
+            <div className="relative z-10">
+              <div className="mb-4">
+                <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
               </div>
               
-              <div className="relative z-10">
-                <div className="mb-4">
-                  <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
-                </div>
-                
-                <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
-                  Invitation Accepted!
-                </h3>
-                
-                <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
-                  <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
-                    "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
-                  </p>
-                </div>
-                
-                <div className="mt-6 flex justify-center space-x-2">
-                  <Heart className="text-gold-light animate-heart-beat" size={20} />
-                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
-                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
-                </div>
+              <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                Invitation Accepted!
+              </h3>
+              
+              <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
+                <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
+                  "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
+                </p>
+              </div>
+              
+              <div className="mt-6 flex justify-center space-x-2">
+                <Heart className="text-gold-light animate-heart-beat" size={20} />
+                <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
+                <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
               </div>
             </div>
           </div>
-        );
-      }
+        </div>
+      );
     }
+    
+    // Show accept button if guest hasn't responded
+    return (
+      <button 
+        className={cn(
+          "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
+          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+        )}
+        onClick={handleAcceptInvitation}
+      >
+        <span className="relative z-10 flex items-center">
+          Accept Invitation
+          <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+        </span>
+        <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+      </button>
+    );
   };
 
   return (
@@ -429,88 +404,59 @@ const Index = () => {
             {firstName} <span className="text-gold-light font-bold mx-2 md:mx-3 lg:mx-4">&</span> {secondName}
           </h1>
           
-          {/* Enhanced Premium Couple Image Frame */}
+          {/* Enhanced Premium Couple Image Frame - Mobile Friendly */}
           <div className="relative mt-8 md:mt-12 mb-8 md:mb-10 flex justify-center">
             <div className="relative">
-              {/* Outer luxury frame with gradient border */}
-              <div className="absolute -inset-6 md:-inset-8 lg:-inset-10">
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-gold-light via-gold-light/80 to-gold-light/60 p-1">
-                  <div className="w-full h-full rounded-full bg-maroon"></div>
+              {/* Main circular frame with luxury gradient border */}
+              <div className="relative p-2 md:p-3 lg:p-4 rounded-full bg-gradient-to-br from-gold-light via-gold-light/90 to-gold-light/70">
+                <div className="bg-maroon rounded-full p-3 md:p-4 lg:p-6">
+                  {/* Premium ornamental elements at cardinal points - Responsive */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-3 md:-translate-y-4">
+                    <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg border-2 border-maroon">
+                      <Heart className="text-maroon w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-3 md:translate-y-4">
+                    <div className="w-5 h-5 md:w-7 md:h-7 lg:w-9 lg:h-9 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg border-2 border-maroon">
+                      <Flower className="text-maroon w-2.5 h-2.5 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4" />
+                    </div>
+                  </div>
+                  <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-3 md:-translate-x-4">
+                    <div className="w-4 h-4 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg border-2 border-maroon">
+                      <Star className="text-maroon w-2 h-2 md:w-3 md:h-3 lg:w-4 lg:h-4" />
+                    </div>
+                  </div>
+                  <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-3 md:translate-x-4">
+                    <div className="w-4 h-4 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg border-2 border-maroon">
+                      <Sparkles className="text-maroon w-2 h-2 md:w-3 md:h-3 lg:w-4 lg:h-4" />
+                    </div>
+                  </div>
+                  
+                  {/* Main couple illustration with enhanced luxury styling */}
+                  <div className="relative bg-gradient-to-br from-maroon/5 via-transparent to-maroon/5 rounded-full">
+                    <CoupleIllustration className={cn(
+                      "drop-shadow-2xl relative z-10",
+                      isInIframe ? "w-40 h-40 md:w-52 md:h-52 lg:w-64 lg:h-64" : "w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80"
+                    )} />
+                    
+                    {/* Enhanced glow effect */}
+                    <div className="absolute inset-0 bg-gold-gradient opacity-10 rounded-full blur-xl animate-pulse"></div>
+                  </div>
+                  
+                  {/* Floating decorative elements - Mobile optimized */}
+                  <div className="absolute -top-2 left-4 md:left-8 lg:left-12 animate-float opacity-60">
+                    <Sparkles className="text-gold-light w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
+                  </div>
+                  <div className="absolute -bottom-2 right-4 md:right-8 lg:right-12 animate-float opacity-60" style={{ animationDelay: '0.5s' }}>
+                    <Star className="text-gold-light w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
+                  </div>
+                  <div className="absolute top-6 -right-1 md:-right-2 lg:-right-3 animate-float opacity-40" style={{ animationDelay: '1s' }}>
+                    <Heart className="text-gold-light w-2.5 h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4" />
+                  </div>
+                  <div className="absolute bottom-6 -left-1 md:-left-2 lg:-left-3 animate-float opacity-40" style={{ animationDelay: '1.5s' }}>
+                    <Flower className="text-gold-light w-2.5 h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4" />
+                  </div>
                 </div>
-              </div>
-              
-              {/* Premium ornamental corners with better spacing */}
-              <div className="absolute -top-6 -left-6 md:-top-8 md:-left-8 lg:-top-10 lg:-left-10">
-                <div className="relative">
-                  <div className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 border-l-4 border-t-4 border-gold-light rounded-tl-3xl"></div>
-                  <div className="absolute top-2 left-2 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 border-l-2 border-t-2 border-gold-light/60 rounded-tl-2xl"></div>
-                </div>
-              </div>
-              <div className="absolute -top-6 -right-6 md:-top-8 md:-right-8 lg:-top-10 lg:-right-10">
-                <div className="relative">
-                  <div className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 border-r-4 border-t-4 border-gold-light rounded-tr-3xl"></div>
-                  <div className="absolute top-2 right-2 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 border-r-2 border-t-2 border-gold-light/60 rounded-tr-2xl"></div>
-                </div>
-              </div>
-              <div className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 lg:-bottom-10 lg:-left-10">
-                <div className="relative">
-                  <div className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 border-l-4 border-b-4 border-gold-light rounded-bl-3xl"></div>
-                  <div className="absolute bottom-2 left-2 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 border-l-2 border-b-2 border-gold-light/60 rounded-bl-2xl"></div>
-                </div>
-              </div>
-              <div className="absolute -bottom-6 -right-6 md:-bottom-8 md:-right-8 lg:-bottom-10 lg:-right-10">
-                <div className="relative">
-                  <div className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 border-r-4 border-b-4 border-gold-light rounded-br-3xl"></div>
-                  <div className="absolute bottom-2 right-2 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 border-r-2 border-b-2 border-gold-light/60 rounded-br-2xl"></div>
-                </div>
-              </div>
-              
-              {/* Premium decorative elements at cardinal points */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4">
-                <div className="w-8 h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg">
-                  <Heart className="text-maroon w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-4">
-                <div className="w-6 h-6 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg">
-                  <Flower className="text-maroon w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-                </div>
-              </div>
-              <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-4">
-                <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg">
-                  <Star className="text-maroon w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
-                </div>
-              </div>
-              <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-4">
-                <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-gold-gradient rounded-full flex items-center justify-center shadow-lg">
-                  <Sparkles className="text-maroon w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
-                </div>
-              </div>
-              
-              {/* Main couple illustration with enhanced luxury styling */}
-              <div className="relative bg-gradient-to-br from-maroon/10 via-transparent to-maroon/10 p-3 md:p-4 lg:p-6 rounded-full">
-                <CoupleIllustration className={cn(
-                  "drop-shadow-2xl relative z-10",
-                  isInIframe ? "w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72" : "w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
-                )} />
-                
-                {/* Enhanced glow effect */}
-                <div className="absolute inset-0 bg-gold-gradient opacity-10 rounded-full blur-2xl animate-pulse"></div>
-                <div className="absolute inset-2 bg-gold-gradient opacity-5 rounded-full blur-xl"></div>
-              </div>
-              
-              {/* Enhanced floating decorative elements */}
-              <div className="absolute -top-4 left-6 md:left-10 lg:left-14 animate-float opacity-70">
-                <Sparkles className="text-gold-light w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
-              </div>
-              <div className="absolute -bottom-4 right-6 md:right-10 lg:right-14 animate-float opacity-70" style={{ animationDelay: '0.5s' }}>
-                <Star className="text-gold-light w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
-              </div>
-              <div className="absolute top-8 -right-2 md:-right-4 lg:-right-6 animate-float opacity-50" style={{ animationDelay: '1s' }}>
-                <Heart className="text-gold-light w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-              </div>
-              <div className="absolute bottom-8 -left-2 md:-left-4 lg:-left-6 animate-float opacity-50" style={{ animationDelay: '1.5s' }}>
-                <Flower className="text-gold-light w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6" />
               </div>
             </div>
           </div>
@@ -766,77 +712,12 @@ const Index = () => {
         </section>
       )}
       
-      {/* Accept Invitation Section */}
+      {/* RSVP Section - Updated with conditional rendering based on platform requirements */}
       <section className="py-8 md:py-10 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {!invitationAccepted ? (
-            <button 
-              className={cn(
-                "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
-                isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
-              )}
-              onClick={handleAcceptInvitation}
-            >
-              <span className="relative z-10 flex items-center">
-                Accept Invitation
-                <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
-              </span>
-              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
-            </button>
-          ) : (
-            <div className="max-w-2xl mx-auto">
-              <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
-                  <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-                  <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-                  <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
-                </div>
-                
-                <div className="relative z-10">
-                  <div className="mb-4">
-                    <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
-                  </div>
-                  
-                  <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
-                    Invitation Accepted!
-                  </h3>
-                  
-                  <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
-                    <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
-                      "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
-                    </p>
-                  </div>
-                  
-                  <div className="mt-6 flex justify-center space-x-2">
-                    <Heart className="text-gold-light animate-heart-beat" size={20} />
-                    <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
-                    <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {renderRSVPSection()}
         </div>
       </section>
-      
-      {/* RSVP Section - Updated with dynamic functionality */}
-      {shouldShowRSVPSection && (
-        <section className="py-8 md:py-10 px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            {renderRSVPSection()}
-          </div>
-        </section>
-      )}
-      
-      {/* Show thank you section if guest has already responded */}
-      {dynamicData.hasResponded && (
-        <section className="py-8 md:py-10 px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            {renderRSVPSection()}
-          </div>
-        </section>
-      )}
       
       {/* Footer with venue and contacts */}
       <footer className="py-8 md:py-10 px-4 relative mt-8 md:mt-10 border-t border-gold-light/30 z-10">
