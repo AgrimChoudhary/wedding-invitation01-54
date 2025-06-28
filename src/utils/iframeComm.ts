@@ -1,3 +1,4 @@
+
 export interface IframeMessage {
   type: string;
   data?: any;
@@ -81,6 +82,29 @@ export interface InvitationEvents {
   };
 }
 
+// Platform to invitation message types
+export interface PlatformMessages {
+  WISH_ADDED: {
+    wish: {
+      id: string;
+      name: string;
+      message: string;
+      timestamp: string;
+      avatar?: string;
+      likes?: number;
+      guestId?: string;
+      eventId?: string;
+    };
+  };
+  WISH_LIKED_UPDATE: {
+    wishId: string;
+    newLikeCount: number;
+  };
+  WISH_DELETED: {
+    wishId: string;
+  };
+}
+
 class IframeMessenger {
   private listeners: Map<string, Function[]> = new Map();
   private guestName: string = '';
@@ -142,12 +166,15 @@ class IframeMessenger {
       return;
     }
     
-    // Auto-fill eventId and guestId if not provided in data
-    const enrichedData = {
-      ...data,
-      eventId: data.eventId || this.eventId || '',
-      guestId: data.guestId || this.guestId || ''
-    };
+    // Auto-fill eventId and guestId for specific message types that support them
+    let enrichedData = data;
+    if (this.isEventMessage(type, data)) {
+      enrichedData = {
+        ...data,
+        eventId: data.eventId || this.eventId || '',
+        guestId: data.guestId || this.guestId || ''
+      };
+    }
     
     const message: IframeMessage = {
       type,
@@ -161,6 +188,10 @@ class IframeMessenger {
     } catch (error) {
       console.error('Failed to send iframe message:', error);
     }
+  }
+  
+  private isEventMessage(type: string, data: any): data is InvitationEvents['INVITATION_VIEWED'] | InvitationEvents['RSVP_ACCEPTED'] | InvitationEvents['RSVP_DETAILED_SUBMITTED'] | InvitationEvents['WISH_SUBMITTED'] | InvitationEvents['WISHES_VIEWED'] | InvitationEvents['WISH_LIKED'] {
+    return ['INVITATION_VIEWED', 'RSVP_ACCEPTED', 'RSVP_DETAILED_SUBMITTED', 'WISH_SUBMITTED', 'WISHES_VIEWED', 'WISH_LIKED'].includes(type);
   }
   
   public onMessage(type: string, callback: Function) {
