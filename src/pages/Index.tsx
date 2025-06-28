@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,6 +15,7 @@ import Diya from '@/components/Diya';
 import FamilyDetailsDialog, { FamilyDetails } from '@/components/FamilyDetailsDialog';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { useToast } from '@/hooks/use-toast';
+import WishingWall from '@/components/WishingWall';
 import { 
   BRIDE_NAME, 
   GROOM_NAME, 
@@ -711,6 +711,9 @@ const Index = () => {
           </div>
         </section>
       )}
+      
+      {/* NEW: Wishing Wall Section */}
+      <WishingWall guestName={guestName} isInIframe={isInIframe} />
       
       {/* RSVP Section - Updated with conditional rendering based on platform requirements */}
       <section className="py-8 md:py-10 px-4 relative z-10">
