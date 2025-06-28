@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
@@ -52,6 +52,38 @@ const Index = () => {
   
   // Get dynamic data from URL parameters
   const dynamicData = getDynamicData();
+  
+  // Parse wishes from URL parameters
+  const parsedWishes = React.useMemo(() => {
+    if (dynamicData.wishes) {
+      try {
+        const wishesData = typeof dynamicData.wishes === 'string' 
+          ? JSON.parse(dynamicData.wishes) 
+          : dynamicData.wishes;
+        
+        if (Array.isArray(wishesData)) {
+          return wishesData.map(wish => ({
+            id: wish.id || Date.now().toString(),
+            name: wish.name || 'Anonymous',
+            message: wish.message || '',
+            timestamp: wish.timestamp || new Date(wish.createdAt || Date.now()).toLocaleDateString(),
+            avatar: wish.photo,
+            likes: wish.likes || 0,
+            guestId: wish.guestId,
+            createdAt: wish.createdAt
+          }));
+        }
+      } catch (error) {
+        console.warn('Failed to parse wishes from URL:', error);
+      }
+    }
+    return [];
+  }, [dynamicData.wishes]);
+  
+  // Determine wishes configuration
+  const allowWishPosting = dynamicData.allowWishPosting !== 'false'; // Default to true
+  const showWishLikes = dynamicData.showWishLikes === 'true'; // Default to false
+  const maxWishLength = parseInt(dynamicData.maxWishLength || '280');
   
   // Determine names order based on groomFirst parameter
   const firstName = dynamicData.groomFirst ? (dynamicData.groomName || GROOM_NAME) : (dynamicData.brideName || BRIDE_NAME);
@@ -712,8 +744,15 @@ const Index = () => {
         </section>
       )}
       
-      {/* NEW: Wishing Wall Section */}
-      <WishingWall guestName={guestName} isInIframe={isInIframe} />
+      {/* Enhanced Wishing Wall Section */}
+      <WishingWall 
+        guestName={guestName} 
+        isInIframe={isInIframe}
+        initialWishes={parsedWishes}
+        allowWishPosting={allowWishPosting}
+        showWishLikes={showWishLikes}
+        maxWishLength={maxWishLength}
+      />
       
       {/* RSVP Section - Updated with conditional rendering based on platform requirements */}
       <section className="py-8 md:py-10 px-4 relative z-10">

@@ -1,4 +1,3 @@
-
 export interface IframeMessage {
   type: string;
   data?: any;
@@ -24,6 +23,26 @@ export interface InvitationEvents {
     guestId?: string;
     eventId?: string;
     timestamp: string;
+  };
+  WISH_SUBMITTED: {
+    eventId: string;
+    guestId: string;
+    wishData: {
+      message: string;
+      photo?: string;
+      timestamp: string;
+      guestName: string;
+    };
+  };
+  WISHES_VIEWED: {
+    eventId: string;
+    guestId: string;
+    totalWishes: number;
+  };
+  WISH_LIKED: {
+    eventId: string;
+    guestId: string;
+    wishId: string;
   };
   invitationViewed: {
     guestName: string;
@@ -123,14 +142,22 @@ class IframeMessenger {
       return;
     }
     
+    // Auto-fill eventId and guestId if not provided in data
+    const enrichedData = {
+      ...data,
+      eventId: data.eventId || this.eventId || '',
+      guestId: data.guestId || this.guestId || ''
+    };
+    
     const message: IframeMessage = {
       type,
-      data,
+      data: enrichedData,
       source: 'wedding-invitation'
     };
     
     try {
       window.parent.postMessage(message, '*');
+      console.log('Message sent to parent:', message);
     } catch (error) {
       console.error('Failed to send iframe message:', error);
     }
@@ -225,6 +252,34 @@ class IframeMessenger {
     this.sendMessage('error', {
       message,
       timestamp: new Date().toISOString()
+    });
+  }
+  
+  // New convenience methods for wish functionality
+  public trackWishSubmitted(wishData: { message: string; photo?: string; guestName: string }) {
+    this.sendMessage('WISH_SUBMITTED', {
+      eventId: this.eventId || '',
+      guestId: this.guestId || '',
+      wishData: {
+        ...wishData,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+  
+  public trackWishesViewed(totalWishes: number) {
+    this.sendMessage('WISHES_VIEWED', {
+      eventId: this.eventId || '',
+      guestId: this.guestId || '',
+      totalWishes
+    });
+  }
+  
+  public trackWishLiked(wishId: string) {
+    this.sendMessage('WISH_LIKED', {
+      eventId: this.eventId || '',
+      guestId: this.guestId || '',
+      wishId
     });
   }
 }

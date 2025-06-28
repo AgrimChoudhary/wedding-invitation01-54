@@ -67,6 +67,23 @@ export interface WeddingData {
       photo?: string;
     }>;
   };
+  
+  // Wishes related parameters
+  wishes?: string | Wish[]; // JSON string or parsed array
+  allowWishPosting?: string; // 'true' | 'false'
+  showWishLikes?: string; // 'true' | 'false'
+  maxWishLength?: string; // e.g., "280"
+}
+
+interface Wish {
+  id: string;
+  name: string;
+  message: string;
+  timestamp?: string;
+  createdAt?: string;
+  photo?: string;
+  likes?: number;
+  guestId?: string;
 }
 
 // Sanitize string input to prevent XSS
@@ -260,6 +277,43 @@ export const parseUrlParams = (): WeddingData => {
       };
     } catch (error) {
       console.warn('Invalid groom family JSON format');
+    }
+  }
+  
+  // Parse wishes data (JSON format expected)
+  if (urlParams.get('wishes')) {
+    try {
+      const wishesData = JSON.parse(decodeURIComponent(urlParams.get('wishes')!));
+      if (Array.isArray(wishesData)) {
+        data.wishes = wishesData.map(wish => ({
+          id: sanitizeString(wish.id || ''),
+          name: sanitizeString(wish.name || ''),
+          message: sanitizeString(wish.message || ''),
+          timestamp: sanitizeString(wish.timestamp || ''),
+          createdAt: sanitizeString(wish.createdAt || ''),
+          photo: isValidUrl(wish.photo) ? wish.photo : undefined,
+          likes: typeof wish.likes === 'number' ? wish.likes : 0,
+          guestId: sanitizeString(wish.guestId || '')
+        })).filter(wish => wish.name && wish.message);
+      }
+    } catch (error) {
+      console.warn('Invalid wishes JSON format');
+    }
+  }
+  
+  // Parse wish configuration parameters
+  if (urlParams.get('allowWishPosting')) {
+    data.allowWishPosting = urlParams.get('allowWishPosting');
+  }
+  
+  if (urlParams.get('showWishLikes')) {
+    data.showWishLikes = urlParams.get('showWishLikes');
+  }
+  
+  if (urlParams.get('maxWishLength')) {
+    const maxLength = urlParams.get('maxWishLength')!;
+    if (/^\d+$/.test(maxLength)) {
+      data.maxWishLength = maxLength;
     }
   }
   
