@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'react-router-dom';
 import AudioPlayer from '@/components/AudioPlayer';
 import MainContent from '@/components/MainContent';
 import WishingWall from '@/components/WishingWall';
@@ -17,18 +18,16 @@ interface Wish {
 }
 
 const Index = () => {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  const urlParams = new URLSearchParams(searchParams);
-
-  const eventId = urlParams.get('eventId') || '659749c98f69c901b4997941';
-  const guestId = urlParams.get('guestId') || '659749c98f69c901b4997942';
-  const guestName = urlParams.get('guestName') || 'Guest';
-  const enableAudio = urlParams.get('enableAudio') !== 'false';
+  const eventId = searchParams.get('eventId') || '659749c98f69c901b4997941';
+  const guestId = searchParams.get('guestId') || '659749c98f69c901b4997942';
+  const guestName = searchParams.get('guestName') || 'Guest';
+  const enableAudio = searchParams.get('enableAudio') !== 'false';
   const enableWishingWall = true; // Force enable for preview
-  const allowWishPosting = urlParams.get('allowWishPosting') !== 'false';
-  const showWishLikes = urlParams.get('showWishLikes') !== 'false';
-  const maxWishLength = parseInt(urlParams.get('maxWishLength') || '280');
+  const allowWishPosting = searchParams.get('allowWishPosting') !== 'false';
+  const showWishLikes = searchParams.get('showWishLikes') !== 'false';
+  const maxWishLength = parseInt(searchParams.get('maxWishLength') || '280');
 
   // Dummy wishes data for preview
   const dummyWishes = [
