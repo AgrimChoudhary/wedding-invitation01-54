@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { X, Camera, Send, User } from 'lucide-react';
+import { X, Send, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface WishingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (wishData: { message: string; photo?: string }) => void;
+  onSubmit: (wishData: { message: string }) => void; // Removed photo from interface
   guestName: string;
   maxWishLength?: number;
 }
@@ -20,27 +20,10 @@ const WishingModal: React.FC<WishingModalProps> = ({
   maxWishLength = 280
 }) => {
   const [message, setMessage] = useState('');
-  const [photo, setPhoto] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  };
-
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert('Photo size should be less than 5MB');
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhoto(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleSubmit = async () => {
@@ -53,13 +36,12 @@ const WishingModal: React.FC<WishingModalProps> = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       onSubmit({ 
-        message: message.trim(), 
-        photo: photo 
+        message: message.trim()
+        // Removed photo parameter
       });
       
       // Reset form
       setMessage('');
-      setPhoto(undefined);
     } catch (error) {
       console.error('Failed to submit wish:', error);
     } finally {
@@ -70,7 +52,6 @@ const WishingModal: React.FC<WishingModalProps> = ({
   const handleClose = () => {
     if (!isSubmitting) {
       setMessage('');
-      setPhoto(undefined);
       onClose();
     }
   };
@@ -105,21 +86,13 @@ const WishingModal: React.FC<WishingModalProps> = ({
 
         {/* Enhanced Content */}
         <div className="p-6 pt-4">
-          {/* Guest Info with enhanced styling */}
+          {/* Guest Info with enhanced styling - Removed photo functionality */}
           <div className="flex items-center mb-6 bg-gold-light/10 rounded-xl p-4 border border-gold-light/20">
             <div className="relative">
               <div className="w-14 h-14 rounded-full bg-gold-gradient flex items-center justify-center mr-4 shadow-lg border-2 border-maroon/10">
-                {photo ? (
-                  <img 
-                    src={photo} 
-                    alt={guestName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-maroon font-bold text-lg font-cormorant">
-                    {getInitials(guestName)}
-                  </span>
-                )}
+                <span className="text-maroon font-bold text-lg font-cormorant">
+                  {getInitials(guestName)}
+                </span>
               </div>
               {/* Decorative ring */}
               <div className="absolute inset-0 rounded-full border-2 border-gold-light/30 scale-110"></div>
@@ -129,17 +102,9 @@ const WishingModal: React.FC<WishingModalProps> = ({
               <h4 className="font-cormorant text-maroon font-bold text-lg mb-1">
                 {guestName}
               </h4>
-              <label className="text-gold-light/80 text-sm cursor-pointer flex items-center hover:text-gold-light transition-colors duration-300 group">
-                <Camera className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
-                {photo ? 'Change photo' : 'Add photo (optional)'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                  disabled={isSubmitting}
-                />
-              </label>
+              <p className="text-gold-light/80 text-sm">
+                Sharing heartfelt wishes
+              </p>
             </div>
           </div>
 

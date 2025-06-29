@@ -19,46 +19,60 @@ interface Wish {
 
 interface WishingWallProps {
   guestName: string;
+  eventId: string;
+  guestId: string;
   isInIframe?: boolean;
   initialWishes?: Wish[];
   allowWishPosting?: boolean;
   showWishLikes?: boolean;
   maxWishLength?: number;
+  wishes?: Wish[];
+  userLikes?: string[];
 }
 
 const WishingWall: React.FC<WishingWallProps> = ({ 
-  guestName, 
+  guestName,
+  eventId,
+  guestId,
   isInIframe = false,
   initialWishes = [],
   allowWishPosting = true,
   showWishLikes = false,
-  maxWishLength = 280
+  maxWishLength = 280,
+  wishes: propWishes = [],
+  userLikes = []
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [wishes, setWishes] = useState<Wish[]>(initialWishes.length > 0 ? initialWishes : [
-    {
-      id: '1',
-      name: 'Agrim',
-      message: 'Wishing you both a lifetime filled with love, laughter, and endless happiness. May your journey together be blessed with joy and prosperity.',
-      timestamp: '13 days ago',
-      likes: 12
-    },
-    {
-      id: '2',
-      name: 'Priya Sharma',
-      message: 'Such a beautiful couple! May your love story continue to inspire others and may you find joy in every moment together.',
-      timestamp: '12 days ago',
-      likes: 8
-    },
-    {
-      id: '3',
-      name: 'Rahul Kumar',
-      message: 'Congratulations on finding your perfect match! Wishing you both all the happiness in the world.',
-      timestamp: '11 days ago',
-      likes: 15
-    }
-  ]);
+  
+  // Use propWishes if provided, otherwise fallback to initialWishes or default wishes
+  const [wishes, setWishes] = useState<Wish[]>(
+    propWishes.length > 0 ? propWishes : 
+    initialWishes.length > 0 ? initialWishes : [
+      {
+        id: '1',
+        name: 'Agrim',
+        message: 'Wishing you both a lifetime filled with love, laughter, and endless happiness. May your journey together be blessed with joy and prosperity.',
+        timestamp: '13 days ago',
+        likes: 12
+      },
+      {
+        id: '2',
+        name: 'Priya Sharma',
+        message: 'Such a beautiful couple! May your love story continue to inspire others and may you find joy in every moment together.',
+        timestamp: '12 days ago',
+        likes: 8
+      },
+      {
+        id: '3',
+        name: 'Rahul Kumar',
+        message: 'Congratulations on finding your perfect match! Wishing you both all the happiness in the world.',
+        timestamp: '11 days ago',
+        likes: 15
+      }
+    ]
+  );
+  
   const [isTransitioning, setIsTransitioning] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -67,6 +81,13 @@ const WishingWall: React.FC<WishingWallProps> = ({
   const totalSlides = wishes.length;
   const canSlideLeft = currentIndex > 0;
   const canSlideRight = currentIndex < totalSlides - 1;
+
+  // Update wishes when propWishes changes
+  useEffect(() => {
+    if (propWishes.length > 0) {
+      setWishes(propWishes);
+    }
+  }, [propWishes]);
 
   // Setup real-time message listeners for platform updates
   useEffect(() => {
@@ -154,30 +175,30 @@ const WishingWall: React.FC<WishingWallProps> = ({
     setTimeout(() => setIsTransitioning(false), 500);
   };
 
-  const handlePostWish = (wishData: { message: string; photo?: string }) => {
+  const handlePostWish = (wishData: { message: string }) => {
     const newWish: Wish = {
       id: Date.now().toString(),
       name: guestName,
       message: wishData.message,
       timestamp: 'Just now',
-      avatar: wishData.photo,
       likes: 0
     };
     
     setWishes(prev => [newWish, ...prev]);
     setIsModalOpen(false);
     
-    // Send wish to parent platform
-    iframeMessenger.sendMessage('WISH_SUBMITTED', {
-      eventId: '', // Will be set by iframeMessenger based on initialization
-      guestId: '', // Will be set by iframeMessenger based on initialization
-      wishData: {
-        message: wishData.message,
-        photo: wishData.photo,
-        timestamp: new Date().toISOString(),
-        guestName: guestName
+    // Send wish to parent platform - photo explicitly set to null
+    window.parent.postMessage({
+      type: 'WISH_SUBMITTED',
+      data: {
+        eventId,
+        guestId,
+        guestName,
+        message: wishData.message.trim(),
+        photo: null, // Explicitly set to null as per requirements
+        timestamp: new Date().toISOString()
       }
-    });
+    }, '*');
 
     // Reset to first slide to show new wish
     setCurrentIndex(0);
@@ -191,29 +212,35 @@ const WishingWall: React.FC<WishingWallProps> = ({
     ));
 
     // Send like event to parent platform
-    iframeMessenger.sendMessage('WISH_LIKED', {
-      eventId: '', // Will be set by iframeMessenger
-      guestId: '', // Will be set by iframeMessenger
-      wishId: wishId
-    });
+    window.parent.postMessage({
+      type: 'WISH_LIKED',
+      data: {
+        eventId,
+        guestId,
+        wishId
+      }
+    }, '*');
   };
 
   // Track wishes viewed
   useEffect(() => {
     if (wishes.length > 0) {
-      iframeMessenger.sendMessage('WISHES_VIEWED', {
-        eventId: '', // Will be set by iframeMessenger
-        guestId: '', // Will be set by iframeMessenger
-        totalWishes: wishes.length
-      });
+      window.parent.postMessage({
+        type: 'WISHES_VIEWED',
+        data: {
+          eventId,
+          guestId,
+          totalWishes: wishes.length
+        }
+      }, '*');
     }
-  }, [wishes.length]);
+  }, [wishes.length, eventId, guestId]);
 
   return (
     <div className="py-10 md:py-12 px-4 relative z-10 bg-gradient-to-b from-transparent via-maroon/5 to-transparent">
       <div className="max-w-6xl mx-auto">
         {/* Enhanced Header with better contrast */}
-        <div className="text-center mb-10 md:mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 mx-auto max-w-2xl border border-gold-light/30 shadow-lg">
+        <div className="text-center mb-10 md:mb-12 bg-white/90 backdrop-blur-sm rounded-2xl p-6 mx-auto max-w-2xl border border-gold-light/30 shadow-lg">
           <div className="flex justify-center items-center mb-4">
             <div className="w-12 h-0.5 bg-gold-gradient"></div>
             <Sparkles className="mx-4 text-gold-light drop-shadow-lg" size={24} />
@@ -331,7 +358,7 @@ const WishingWall: React.FC<WishingWallProps> = ({
           )}
         </div>
 
-        {/* Enhanced Post Wish Button */}
+        {/* Enhanced Post Wish Button - Only show if allowWishPosting is true */}
         {allowWishPosting && (
           <div className="text-center">
             <button
@@ -350,7 +377,7 @@ const WishingWall: React.FC<WishingWallProps> = ({
           </div>
         )}
 
-        {/* Enhanced Wishing Modal */}
+        {/* Enhanced Wishing Modal - Remove photo functionality */}
         <WishingModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

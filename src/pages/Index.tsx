@@ -80,10 +80,11 @@ const Index = () => {
     return [];
   }, [dynamicData.wishes]);
   
-  // Determine wishes configuration
-  const allowWishPosting = dynamicData.allowWishPosting !== 'false'; // Default to true
-  const showWishLikes = dynamicData.showWishLikes === 'true'; // Default to false
-  const maxWishLength = parseInt(dynamicData.maxWishLength || '280');
+  // Read URL parameters for Wishing Wall
+  const enableWishingWall = new URLSearchParams(window.location.search).get('enableWishingWall') === 'true';
+  const allowWishPosting = new URLSearchParams(window.location.search).get('allowWishPosting') === 'true';
+  const showWishLikes = new URLSearchParams(window.location.search).get('showWishLikes') === 'true';
+  const maxWishLength = parseInt(new URLSearchParams(window.location.search).get('maxWishLength') || '500');
   
   // Determine names order based on groomFirst parameter
   const firstName = dynamicData.groomFirst ? (dynamicData.groomName || GROOM_NAME) : (dynamicData.brideName || BRIDE_NAME);
@@ -744,15 +745,23 @@ const Index = () => {
         </section>
       )}
       
-      {/* Enhanced Wishing Wall Section */}
-      <WishingWall 
-        guestName={guestName} 
-        isInIframe={isInIframe}
-        initialWishes={parsedWishes}
-        allowWishPosting={allowWishPosting}
-        showWishLikes={showWishLikes}
-        maxWishLength={maxWishLength}
-      />
+      {/* Conditional Wishing Wall Section - Only show if enableWishingWall is true */}
+      {enableWishingWall && (
+        <section className="py-10 px-4 bg-gray-50">
+          <div className="max-w-2xl mx-auto">
+            <WishingWall
+              guestName={guestName}
+              eventId={dynamicData.eventId || 'default-event'}
+              guestId={dynamicData.guestId || 'default-guest'}
+              isInIframe={isInIframe}
+              allowWishPosting={allowWishPosting}
+              showWishLikes={showWishLikes}
+              maxWishLength={maxWishLength}
+              wishes={parsedWishes}
+            />
+          </div>
+        </section>
+      )}
       
       {/* RSVP Section - Updated with conditional rendering based on platform requirements */}
       <section className="py-8 md:py-10 px-4 relative z-10">
