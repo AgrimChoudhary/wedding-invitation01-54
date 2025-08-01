@@ -14,15 +14,22 @@ export interface InvitationEvents {
   };
   RSVP_ACCEPTED: {
     guestName: string;
-    guestId?: string;
-    eventId?: string;
+    guestId: string;
+    eventId: string;
     timestamp: string;
   };
-  RSVP_DETAILED_SUBMITTED: {
+  RSVP_SUBMITTED: {
     rsvpData: Record<string, any>;
     guestName: string;
-    guestId?: string;
-    eventId?: string;
+    guestId: string;
+    eventId: string;
+    timestamp: string;
+  };
+  RSVP_UPDATED: {
+    rsvpData: Record<string, any>;
+    guestName: string;
+    guestId: string;
+    eventId: string;
     timestamp: string;
   };
   WISH_SUBMITTED: {
@@ -82,8 +89,46 @@ export interface InvitationEvents {
   };
 }
 
+// Platform RSVP payload interface
+export interface PlatformRSVPPayload {
+  eventId: string;
+  guestId: string;
+  status: null | 'accepted' | 'submitted';
+  showAcceptButton: boolean;
+  showSubmitButton: boolean;
+  showEditButton: boolean;
+  rsvpFields: RSVPField[];
+  existingRsvpData?: Record<string, any>;
+  confirmationText?: string;
+}
+
+export interface RSVPField {
+  name: string;
+  label: string;
+  type: string;
+  options?: string[];
+  required?: boolean;
+}
+
 // Platform to invitation message types
 export interface PlatformMessages {
+  INVITATION_LOADED: PlatformRSVPPayload;
+  INVITATION_PAYLOAD_UPDATE: PlatformRSVPPayload;
+  RSVP_ACCEPTED_CONFIRM: {
+    success: boolean;
+    message?: string;
+    payload?: PlatformRSVPPayload;
+  };
+  RSVP_SUBMITTED_CONFIRM: {
+    success: boolean;
+    message?: string;
+    payload?: PlatformRSVPPayload;
+  };
+  RSVP_UPDATED_CONFIRM: {
+    success: boolean;
+    message?: string;
+    payload?: PlatformRSVPPayload;
+  };
   WISH_ADDED: {
     wish: {
       id: string;
@@ -190,8 +235,8 @@ class IframeMessenger {
     }
   }
   
-  private isEventMessage(type: string, data: any): data is InvitationEvents['INVITATION_VIEWED'] | InvitationEvents['RSVP_ACCEPTED'] | InvitationEvents['RSVP_DETAILED_SUBMITTED'] | InvitationEvents['WISH_SUBMITTED'] | InvitationEvents['WISHES_VIEWED'] | InvitationEvents['WISH_LIKED'] {
-    return ['INVITATION_VIEWED', 'RSVP_ACCEPTED', 'RSVP_DETAILED_SUBMITTED', 'WISH_SUBMITTED', 'WISHES_VIEWED', 'WISH_LIKED'].includes(type);
+  private isEventMessage(type: string, data: any): data is InvitationEvents['INVITATION_VIEWED'] | InvitationEvents['RSVP_ACCEPTED'] | InvitationEvents['RSVP_SUBMITTED'] | InvitationEvents['RSVP_UPDATED'] | InvitationEvents['WISH_SUBMITTED'] | InvitationEvents['WISHES_VIEWED'] | InvitationEvents['WISH_LIKED'] {
+    return ['INVITATION_VIEWED', 'RSVP_ACCEPTED', 'RSVP_SUBMITTED', 'RSVP_UPDATED', 'WISH_SUBMITTED', 'WISHES_VIEWED', 'WISH_LIKED'].includes(type);
   }
   
   public onMessage(type: string, callback: Function) {
@@ -220,6 +265,9 @@ class IframeMessenger {
   }
   
   public trackRSVPAccepted() {
+    if (!this.eventId || !this.guestId) {
+      throw new Error('eventId and guestId are required for RSVP_ACCEPTED');
+    }
     this.sendMessage('RSVP_ACCEPTED', {
       guestName: this.guestName,
       guestId: this.guestId,
@@ -228,8 +276,24 @@ class IframeMessenger {
     });
   }
   
-  public trackDetailedRSVPSubmitted(rsvpData: Record<string, any>) {
-    this.sendMessage('RSVP_DETAILED_SUBMITTED', {
+  public trackRSVPSubmitted(rsvpData: Record<string, any>) {
+    if (!this.eventId || !this.guestId) {
+      throw new Error('eventId and guestId are required for RSVP_SUBMITTED');
+    }
+    this.sendMessage('RSVP_SUBMITTED', {
+      rsvpData,
+      guestName: this.guestName,
+      guestId: this.guestId,
+      eventId: this.eventId,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  public trackRSVPUpdated(rsvpData: Record<string, any>) {
+    if (!this.eventId || !this.guestId) {
+      throw new Error('eventId and guestId are required for RSVP_UPDATED');
+    }
+    this.sendMessage('RSVP_UPDATED', {
       rsvpData,
       guestName: this.guestName,
       guestId: this.guestId,

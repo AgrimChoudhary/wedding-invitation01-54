@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -34,7 +34,8 @@ import {
 } from '@/constants/placeholders';
 import ContactCard from '@/components/ContactCard';
 import { getDynamicData } from '@/utils/urlParams';
-import { initIframeComm, iframeMessenger } from '@/utils/iframeComm';
+import { initIframeComm, iframeMessenger, PlatformRSVPPayload, RSVPField } from '@/utils/iframeComm';
+import DynamicRSVPForm from '@/components/DynamicRSVPForm';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -46,8 +47,15 @@ const Index = () => {
   const [selectedFamily, setSelectedFamily] = useState<FamilyDetails | null>(null);
   const [familyDialogOpen, setFamilyDialogOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [invitationAccepted, setInvitationAccepted] = useState(false);
   const [isInIframe, setIsInIframe] = useState(false);
+  
+  // Platform-driven RSVP state (REPLACES all local RSVP logic)
+  const [platformRSVPData, setPlatformRSVPData] = useState<PlatformRSVPPayload | null>(null);
+  const [isWaitingForPlatform, setIsWaitingForPlatform] = useState(true);
+  const [platformTimeout, setPlatformTimeout] = useState(false);
+  const [showRSVPForm, setShowRSVPForm] = useState(false);
+  const [rsvpFormMode, setRSVPFormMode] = useState<'submit' | 'edit'>('submit');
+  
   const { toast } = useToast();
   
   // Get dynamic data from URL parameters
@@ -101,7 +109,25 @@ const Index = () => {
     // Initialize iframe communication with guest name, guestId, and eventId
     const currentGuestName = dynamicData.guestName || GUEST_NAME;
     setGuestName(currentGuestName);
-    initIframeComm(currentGuestName, dynamicData.guestId, dynamicData.eventId);
+    
+    // Validate required IDs for platform compliance
+    const eventId = dynamicData.eventId;
+    const guestId = dynamicData.guestId;
+    
+    if (!eventId || !guestId) {
+      console.error('Missing required eventId or guestId:', { eventId, guestId });
+      // Show fatal error if both platform payload and URL params missing IDs
+      if (!window.location.search.includes('eventId') && !window.location.search.includes('guestId')) {
+        toast({
+          title: "Missing Event Information",
+          description: "Missing event or guest ID – please reload or contact the host.",
+          variant: "destructive",
+          duration: 10000,
+        });
+      }
+    }
+    
+    initIframeComm(currentGuestName, guestId, eventId);
     
     // Track invitation viewed - this is critical for platform tracking
     const trackingTimer = setTimeout(() => {
@@ -159,6 +185,79 @@ const Index = () => {
       if (cleanup) cleanup();
     };
   }, [isMobile, navigate, dynamicData, isInIframe]);
+
+  // Platform message listener for RSVP payloads
+  useEffect(() => {
+    const handlePlatformMessage = (event: MessageEvent) => {
+      try {
+        // Validate origin for security
+        const allowedOrigins = [
+          'http://localhost:3000',
+          'http://localhost:5173', 
+          'https://utsavy2.vercel.app',
+          // Add your main platform domain here
+        ];
+        
+        // Only validate origin if we're in an iframe
+        if (window.parent !== window && !allowedOrigins.includes(event.origin)) {
+          console.warn('Platform message from unauthorized origin:', event.origin);
+          return;
+        }
+        
+        if (event.data && typeof event.data === 'object' && event.data.source === 'parent-platform') {
+          console.log('Received platform message:', event.data);
+          
+          switch (event.data.type) {
+            case 'INVITATION_LOADED':
+            case 'INVITATION_PAYLOAD_UPDATE':
+              const payload = event.data.data as PlatformRSVPPayload;
+              console.log('Platform RSVP payload received:', payload);
+              setPlatformRSVPData(payload);
+              setIsWaitingForPlatform(false);
+              setPlatformTimeout(false);
+              // Close any open forms when new payload arrives
+              setShowRSVPForm(false);
+              break;
+              
+            case 'RSVP_ACCEPTED_CONFIRM':
+            case 'RSVP_SUBMITTED_CONFIRM':
+            case 'RSVP_UPDATED_CONFIRM':
+              const confirmData = event.data.data;
+              if (confirmData.success && confirmData.payload) {
+                setPlatformRSVPData(confirmData.payload);
+                setShowRSVPForm(false); // Close form on successful submission
+              }
+              if (confirmData.message) {
+                toast({
+                  title: confirmData.success ? "Success" : "Error",
+                  description: confirmData.message,
+                  variant: confirmData.success ? "default" : "destructive",
+                });
+              }
+              break;
+          }
+        }
+      } catch (error) {
+        console.error('Error handling platform message:', error);
+      }
+    };
+    
+    window.addEventListener('message', handlePlatformMessage);
+    
+    // 5-second timeout for platform payload
+    const platformTimeoutTimer = setTimeout(() => {
+      if (isWaitingForPlatform) {
+        console.warn('Platform payload not received within 5 seconds, using fallback');
+        setPlatformTimeout(true);
+        setIsWaitingForPlatform(false);
+      }
+    }, 5000);
+    
+    return () => {
+      window.removeEventListener('message', handlePlatformMessage);
+      clearTimeout(platformTimeoutTimer);
+    };
+  }, [toast, isWaitingForPlatform]);
 
   useEffect(() => {
     if (showHearts) {
@@ -218,20 +317,61 @@ const Index = () => {
   };
 
   const handleAcceptInvitation = () => {
-    setInvitationAccepted(true);
     if (!isInIframe) {
       createConfetti();
     }
     
-    // Send RSVP_ACCEPTED postMessage to parent as specified in the platform requirements
-    iframeMessenger.trackRSVPAccepted();
-    
-    toast({
-      title: "Invitation Accepted!",
-      description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
-      variant: "default",
-      duration: 5000,
-    });
+    try {
+      // Send RSVP_ACCEPTED postMessage to parent as specified in the platform requirements
+      iframeMessenger.trackRSVPAccepted();
+      console.log('RSVP_ACCEPTED message sent to platform');
+      
+      // Show temporary success message while waiting for platform confirmation
+      toast({
+        title: "Invitation Accepted!",
+        description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
+        variant: "default",
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error('Failed to send RSVP_ACCEPTED:', error);
+      toast({
+        title: "Error",
+        description: "Failed to accept invitation. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSubmitRSVP = () => {
+    if (!platformRSVPData?.showSubmitButton) return;
+    setRSVPFormMode('submit');
+    setShowRSVPForm(true);
+  };
+
+  const handleEditRSVP = () => {
+    if (!platformRSVPData?.showEditButton) return;
+    setRSVPFormMode('edit');
+    setShowRSVPForm(true);
+  };
+
+  const handleRSVPFormSubmit = async (formData: Record<string, any>) => {
+    try {
+      if (rsvpFormMode === 'edit') {
+        iframeMessenger.trackRSVPUpdated(formData);
+        console.log('RSVP_UPDATED message sent to platform');
+      } else {
+        iframeMessenger.trackRSVPSubmitted(formData);
+        console.log('RSVP_SUBMITTED message sent to platform');
+      }
+    } catch (error) {
+      console.error('Failed to send RSVP form data:', error);
+      throw error; // Re-throw to trigger form error handling
+    }
+  };
+
+  const handleRSVPFormCancel = () => {
+    setShowRSVPForm(false);
   };
 
   // Prepare events data from dynamic data or fallback to constants
@@ -298,89 +438,194 @@ const Index = () => {
     ? dynamicData.contacts 
     : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, phone: contact.CONTACT_NUMBER }));
 
-  // Determine RSVP section display logic based on platform requirements
-  const shouldShowRSVPSection = !dynamicData.hasResponded && !invitationAccepted;
-  
+  // Platform-driven RSVP section rendering (REPLACES all local logic)
   const renderRSVPSection = () => {
-    // If guest has already responded via URL parameter, show their previous response
-    if (dynamicData.hasResponded) {
-      const responseMessage = dynamicData.accepted 
-        ? "Thank you for your response! You have already accepted this invitation."
-        : "You have already responded to this invitation.";
-      
+    // Show RSVP form if open
+    if (showRSVPForm && platformRSVPData) {
       return (
-        <div className="max-w-2xl mx-auto">
-          <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
-            <div className="relative z-10 text-center">
-              <div className="mb-4">
-                <CheckCircle className="mx-auto text-green-400" size={48} />
-              </div>
-              <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
-                Response Recorded
-              </h3>
-              <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
-                {responseMessage}
-              </p>
-            </div>
-          </div>
-        </div>
+        <DynamicRSVPForm
+          fields={platformRSVPData.rsvpFields}
+          guestName={guestName}
+          onSubmit={handleRSVPFormSubmit}
+          onCancel={handleRSVPFormCancel}
+          existingData={platformRSVPData.existingRsvpData}
+          mode={rsvpFormMode}
+          isInIframe={isInIframe}
+        />
       );
     }
     
-    // If guest accepted via button click, show thank you message
-    if (invitationAccepted) {
-      return (
-        <div className="max-w-2xl mx-auto">
-          <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
-              <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-              <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
-              <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
-            </div>
-            
-            <div className="relative z-10">
-              <div className="mb-4">
-                <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
+    // Platform-driven UI (takes precedence over everything)
+    if (platformRSVPData) {
+      console.log('Rendering platform-driven RSVP UI:', platformRSVPData);
+      
+      // Show Accept button if platform says to show it
+      if (platformRSVPData.showAcceptButton) {
+        return (
+          <div className="text-center">
+            <button 
+              className={cn(
+                "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
+                isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+              )}
+              onClick={handleAcceptInvitation}
+            >
+              <span className="relative z-10 flex items-center">
+                Accept Invitation
+                <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+              </span>
+              <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+            </button>
+          </div>
+        );
+      }
+      
+      // Show Thank You message with additional buttons based on platform flags
+      if (platformRSVPData.status === 'accepted' || platformRSVPData.status === 'submitted') {
+        return (
+          <div className="max-w-2xl mx-auto">
+            <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute top-4 right-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute bottom-4 left-4 w-6 h-6 border-2 border-gold-light rounded-full"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-2 border-gold-light rounded-full"></div>
               </div>
               
-              <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
-                Invitation Accepted!
-              </h3>
-              
-              <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
+              <div className="relative z-10">
+                <div className="mb-4">
+                  <CheckCircle className="mx-auto text-green-400 animate-pulse" size={48} />
+                </div>
+                
+                <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                  {platformRSVPData.status === 'submitted' ? 'RSVP Submitted!' : 'Invitation Accepted!'}
+                </h3>
+                
+                <div className="bg-gold-gradient/20 p-6 rounded-xl border border-gold-light/30">
+                  <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
+                    {platformRSVPData.confirmationText || 
+                     `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`}
+                  </p>
+                </div>
+                
+                {/* Platform-driven buttons */}
+                {(platformRSVPData.showSubmitButton || platformRSVPData.showEditButton) && (
+                  <div className="mt-6 space-y-3">
+                    {platformRSVPData.showSubmitButton && (
+                      <button 
+                        className={cn(
+                          "w-full relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
+                          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+                        )}
+                        onClick={handleSubmitRSVP}
+                      >
+                        <span className="relative z-10 flex items-center justify-center">
+                          Submit RSVP
+                          <Send className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+                        </span>
+                        <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+                      </button>
+                    )}
+                    
+                    {platformRSVPData.showEditButton && (
+                      <button 
+                        className={cn(
+                          "w-full relative rounded-full transition-all duration-300 border-2 border-gold-light text-gold-light hover:bg-gold-light/10 font-bold overflow-hidden group transform hover:scale-105",
+                          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+                        )}
+                        onClick={handleEditRSVP}
+                      >
+                        <span className="relative z-10 flex items-center justify-center">
+                          Edit RSVP
+                          <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                )}
+                
+                <div className="mt-6 flex justify-center space-x-2">
+                  <Heart className="text-gold-light animate-heart-beat" size={20} />
+                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
+                  <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      // No UI to show based on platform payload
+      return null;
+    }
+    
+    // Fallback UI when no platform payload (timeout or error)
+    if (platformTimeout) {
+      console.log('Using fallback RSVP UI due to platform timeout');
+      
+      // If guest has already responded via URL parameter, show their previous response
+      if (dynamicData.hasResponded) {
+        const responseMessage = dynamicData.accepted 
+          ? "Thank you for your response! You have already accepted this invitation."
+          : "You have already responded to this invitation.";
+        
+        return (
+          <div className="max-w-2xl mx-auto">
+            <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
+              <div className="relative z-10 text-center">
+                <div className="mb-4">
+                  <CheckCircle className="mx-auto text-green-400" size={48} />
+                </div>
+                <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-4">
+                  Response Recorded
+                </h3>
                 <p className="text-cream text-lg md:text-xl font-cormorant leading-relaxed">
-                  "Thank you dear <span className="gold-text font-bold">{guestName}</span> for accepting our invitation, we are looking forward for you in our wedding celebration"
+                  {responseMessage}
                 </p>
               </div>
-              
-              <div className="mt-6 flex justify-center space-x-2">
-                <Heart className="text-gold-light animate-heart-beat" size={20} />
-                <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.2s' }} />
-                <Heart className="text-gold-light animate-heart-beat" size={20} style={{ animationDelay: '0.4s' }} />
-              </div>
             </div>
           </div>
+        );
+      }
+      
+      // Show accept button as fallback
+      return (
+        <div className="text-center">
+          <div className="mb-4">
+            <p className="text-gold-light/60 text-sm">
+              Platform connection timeout - using basic mode
+            </p>
+          </div>
+          <button 
+            className={cn(
+              "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
+              isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+            )}
+            onClick={handleAcceptInvitation}
+          >
+            <span className="relative z-10 flex items-center">
+              Accept Invitation
+              <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
+            </span>
+            <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
+          </button>
         </div>
       );
     }
     
-    // Show accept button if guest hasn't responded
-    return (
-      <button 
-        className={cn(
-          "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
-          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
-        )}
-        onClick={handleAcceptInvitation}
-      >
-        <span className="relative z-10 flex items-center">
-          Accept Invitation
-          <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
-        </span>
-        <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
-      </button>
-    );
+    // Loading state while waiting for platform
+    if (isWaitingForPlatform) {
+      return (
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gold-light border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gold-light/60 text-sm">
+            Loading RSVP options...
+          </p>
+        </div>
+      );
+    }
+    
+    return null;
   };
 
   return (
