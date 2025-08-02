@@ -76,8 +76,22 @@ window.postMessage({
       showSubmitButton: true,
       showEditButton: false,
       rsvpFields: [
-        { name: 'guests', label: 'Number of Guests', type: 'number', required: true },
-        { name: 'dietary', label: 'Dietary Requirements', type: 'textarea', required: false }
+        {
+          id: "uuid1",
+          field_name: "guests",
+          field_label: "Number of Guests",
+          field_type: "number",
+          is_required: true,
+          display_order: 1
+        },
+        {
+          id: "uuid2", 
+          field_name: "dietary",
+          field_label: "Dietary Requirements",
+          field_type: "textarea",
+          is_required: false,
+          display_order: 2
+        }
       ],
       existingRsvpData: null,
       confirmationText: 'Thank you for accepting! Please provide additional details.'
@@ -101,8 +115,22 @@ window.postMessage({
       showSubmitButton: false,
       showEditButton: true,
       rsvpFields: [
-        { name: 'guests', label: 'Number of Guests', type: 'number', required: true },
-        { name: 'dietary', label: 'Dietary Requirements', type: 'textarea', required: false }
+        {
+          id: "uuid1",
+          field_name: "guests",
+          field_label: "Number of Guests", 
+          field_type: "number",
+          is_required: true,
+          display_order: 1
+        },
+        {
+          id: "uuid2",
+          field_name: "dietary",
+          field_label: "Dietary Requirements",
+          field_type: "textarea", 
+          is_required: false,
+          display_order: 2
+        }
       ],
       existingRsvpData: { guests: '2', dietary: 'Vegetarian' },
       confirmationText: 'RSVP submitted successfully! You can edit your response below.'
@@ -115,45 +143,39 @@ window.postMessage({
 
 The template will send these messages to the platform:
 
-### 1. RSVP_ACCEPTED
+### 1. RSVP_ACCEPTED (CORRECTED - Simplified)
 ```javascript
 {
   type: 'RSVP_ACCEPTED',
   data: {
-    guestName: 'John',
-    guestId: '456',
     eventId: '123',
-    timestamp: '2024-01-01T12:00:00.000Z'
+    guestId: '456'
   },
   source: 'wedding-invitation'
 }
 ```
 
-### 2. RSVP_SUBMITTED
+### 2. RSVP_SUBMITTED (CORRECTED - Simplified)
 ```javascript
 {
   type: 'RSVP_SUBMITTED',
   data: {
-    rsvpData: { guests: '2', dietary: 'Vegetarian' },
-    guestName: 'John',
-    guestId: '456',
     eventId: '123',
-    timestamp: '2024-01-01T12:00:00.000Z'
+    guestId: '456',
+    rsvpData: { guests: '2', dietary: 'Vegetarian' }
   },
   source: 'wedding-invitation'
 }
 ```
 
-### 3. RSVP_UPDATED
+### 3. RSVP_UPDATED (CORRECTED - Simplified)
 ```javascript
 {
   type: 'RSVP_UPDATED',
   data: {
-    rsvpData: { guests: '3', dietary: 'Vegan' },
-    guestName: 'John',
-    guestId: '456',
     eventId: '123',
-    timestamp: '2024-01-01T12:00:00.000Z'
+    guestId: '456',
+    rsvpData: { guests: '3', dietary: 'Vegan' }
   },
   source: 'wedding-invitation'
 }
@@ -161,21 +183,29 @@ The template will send these messages to the platform:
 
 ## Supported RSVP Field Types
 
-- `text`: Standard text input
+- `text`: Standard text input  
+- `email`: Email input
 - `number`: Numeric input
 - `textarea`: Multi-line text area
 - `select`: Dropdown with options array
+- `radio`: Radio button group
+- `checkbox`: Checkbox input
+- `date`: Date picker
 
 Unknown field types will show dev mode warning and be skipped.
 
 ## Key Behavioral Changes
 
-1. **No Local RSVP State**: All UI is driven by platform payload
-2. **5-Second Timeout**: Falls back to basic mode if no platform message
-3. **Required IDs**: eventId and guestId must be present for platform compliance
-4. **Bidirectional Flow**: Template sends action → Platform confirms → UI updates
-5. **Form Integration**: Dynamic RSVP form with edit capabilities
-6. **Error Handling**: Comprehensive validation and fallbacks
+1. **CORRECTED Status Values**: `status` can be `null`, `'viewed'`, `'accepted'`, `'submitted'` (not `"pending"`)
+2. **CORRECTED Button Logic**: `showAcceptButton` ONLY true when `status === null` (not for 'viewed')
+3. **Simplified Message Structure**: Outbound messages contain only `eventId`, `guestId`, and `rsvpData` (no `guestName` or `timestamp`)
+4. **Platform Field Structure**: Uses platform's exact field interface with `field_name`, `field_label`, etc.
+5. **No Local RSVP State**: All UI is driven by platform payload
+6. **5-Second Timeout**: Falls back to basic mode if no platform message
+7. **Required IDs**: eventId and guestId must be present for platform compliance
+8. **Bidirectional Flow**: Template sends action → Platform confirms → UI updates
+9. **Form Integration**: Dynamic RSVP form with edit capabilities
+10. **Error Handling**: Comprehensive validation and fallbacks
 
 ## Testing Checklist
 

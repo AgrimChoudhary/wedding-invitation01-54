@@ -7,30 +7,22 @@ export interface IframeMessage {
 
 export interface InvitationEvents {
   INVITATION_VIEWED: {
-    guestName: string;
-    timestamp: string;
-    guestId?: string;
-    eventId?: string;
+    eventId: string;
+    guestId: string;
   };
   RSVP_ACCEPTED: {
-    guestName: string;
-    guestId: string;
     eventId: string;
-    timestamp: string;
+    guestId: string;
   };
   RSVP_SUBMITTED: {
-    rsvpData: Record<string, any>;
-    guestName: string;
-    guestId: string;
     eventId: string;
-    timestamp: string;
+    guestId: string;
+    rsvpData: Record<string, any>;
   };
   RSVP_UPDATED: {
-    rsvpData: Record<string, any>;
-    guestName: string;
-    guestId: string;
     eventId: string;
-    timestamp: string;
+    guestId: string;
+    rsvpData: Record<string, any>;
   };
   WISH_SUBMITTED: {
     eventId: string;
@@ -89,19 +81,48 @@ export interface InvitationEvents {
   };
 }
 
-// Platform RSVP payload interface
+// Platform RSVP payload interface (corrected to match platform specification)
 export interface PlatformRSVPPayload {
   eventId: string;
   guestId: string;
-  status: null | 'accepted' | 'submitted';
+  status: null | 'viewed' | 'accepted' | 'submitted'; // CORRECTED: Added 'viewed' status
   showAcceptButton: boolean;
   showSubmitButton: boolean;
   showEditButton: boolean;
-  rsvpFields: RSVPField[];
+  rsvpFields: PlatformRSVPField[];
   existingRsvpData?: Record<string, any>;
   confirmationText?: string;
 }
 
+// Extended platform payload interface (includes additional platform data)
+export interface ExtendedPlatformPayload extends PlatformRSVPPayload {
+  // Extended platform data
+  eventDetails?: object;
+  guestAccess?: object;
+  platformData?: {
+    guestName: string;
+    actualStatus: string;
+    hasCustomFields: boolean;
+    allowEdit: boolean;
+  };
+}
+
+// Platform RSVP field interface (matches platform specification exactly)
+export interface PlatformRSVPField {
+  id: string;
+  field_name: string;
+  field_label: string;
+  field_type: "text"|"email"|"textarea"|"select"|"radio"|"checkbox"|"date"|"number";
+  is_required: boolean;
+  field_options?: {
+    options: Array<{label: string, value: string}>
+  };
+  placeholder_text?: string;
+  validation_rules?: object;
+  display_order: number;
+}
+
+// Legacy RSVPField interface (for backward compatibility)
 export interface RSVPField {
   name: string;
   label: string;
@@ -109,6 +130,21 @@ export interface RSVPField {
   options?: string[];
   required?: boolean;
 }
+
+// Mapper function to convert platform fields to template fields
+export const mapPlatformFieldToRSVPField = (platformField: PlatformRSVPField): RSVPField => ({
+  name: platformField.field_name,
+  label: platformField.field_label,
+  type: platformField.field_type,
+  options: platformField.field_options?.options?.map(opt => opt.label),
+  required: platformField.is_required
+});
+
+// Helper to convert platform fields array
+export const mapPlatformFields = (platformFields: PlatformRSVPField[]): RSVPField[] => 
+  platformFields
+    .sort((a, b) => a.display_order - b.display_order)
+    .map(mapPlatformFieldToRSVPField);
 
 // Platform to invitation message types
 export interface PlatformMessages {
@@ -254,13 +290,14 @@ class IframeMessenger {
     }
   }
   
-  // Convenience methods for common events
+  // Convenience methods for common events (simplified to match platform specification)
   public trackInvitationViewed() {
+    if (!this.eventId || !this.guestId) {
+      throw new Error('eventId and guestId are required for INVITATION_VIEWED');
+    }
     this.sendMessage('INVITATION_VIEWED', {
-      guestName: this.guestName,
-      guestId: this.guestId,
       eventId: this.eventId,
-      timestamp: new Date().toISOString()
+      guestId: this.guestId
     });
   }
   
@@ -269,10 +306,8 @@ class IframeMessenger {
       throw new Error('eventId and guestId are required for RSVP_ACCEPTED');
     }
     this.sendMessage('RSVP_ACCEPTED', {
-      guestName: this.guestName,
-      guestId: this.guestId,
       eventId: this.eventId,
-      timestamp: new Date().toISOString()
+      guestId: this.guestId
     });
   }
   
@@ -281,11 +316,9 @@ class IframeMessenger {
       throw new Error('eventId and guestId are required for RSVP_SUBMITTED');
     }
     this.sendMessage('RSVP_SUBMITTED', {
-      rsvpData,
-      guestName: this.guestName,
-      guestId: this.guestId,
       eventId: this.eventId,
-      timestamp: new Date().toISOString()
+      guestId: this.guestId,
+      rsvpData
     });
   }
 
@@ -294,11 +327,9 @@ class IframeMessenger {
       throw new Error('eventId and guestId are required for RSVP_UPDATED');
     }
     this.sendMessage('RSVP_UPDATED', {
-      rsvpData,
-      guestName: this.guestName,
-      guestId: this.guestId,
       eventId: this.eventId,
-      timestamp: new Date().toISOString()
+      guestId: this.guestId,
+      rsvpData
     });
   }
   
@@ -386,12 +417,14 @@ export const iframeMessenger = new IframeMessenger();
 export const initIframeComm = (guestName: string, guestId?: string, eventId?: string) => {
   iframeMessenger.setGuestInfo(guestName, guestId, eventId);
   
-  // Track initial page view with proper message type
-  iframeMessenger.trackInvitationViewed();
+  // Track initial page view with proper message type (only if IDs are available)
+  if (guestId && eventId) {
+    iframeMessenger.trackInvitationViewed();
+  }
   
   // Track page visibility changes
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
+    if (!document.hidden && guestId && eventId) {
       iframeMessenger.trackInvitationViewed();
     }
   });

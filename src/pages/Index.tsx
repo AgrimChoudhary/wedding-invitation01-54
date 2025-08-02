@@ -34,7 +34,7 @@ import {
 } from '@/constants/placeholders';
 import ContactCard from '@/components/ContactCard';
 import { getDynamicData } from '@/utils/urlParams';
-import { initIframeComm, iframeMessenger, PlatformRSVPPayload, RSVPField } from '@/utils/iframeComm';
+import { initIframeComm, iframeMessenger, PlatformRSVPPayload, RSVPField, mapPlatformFields } from '@/utils/iframeComm';
 import DynamicRSVPForm from '@/components/DynamicRSVPForm';
 
 const Index = () => {
@@ -129,10 +129,12 @@ const Index = () => {
     
     initIframeComm(currentGuestName, guestId, eventId);
     
-    // Track invitation viewed - this is critical for platform tracking
+    // Track invitation viewed - this is critical for platform tracking (only if IDs available)
     const trackingTimer = setTimeout(() => {
-      iframeMessenger.trackInvitationViewed();
-      console.log('INVITATION_VIEWED message sent to parent platform');
+      if (eventId && guestId) {
+        iframeMessenger.trackInvitationViewed();
+        console.log('INVITATION_VIEWED message sent to parent platform');
+      }
     }, 1000); // Wait 1 second to ensure content is rendered and visible
     
     // Disable animations in iframe for better performance and setup cursor glitter
@@ -444,7 +446,7 @@ const Index = () => {
     if (showRSVPForm && platformRSVPData) {
       return (
         <DynamicRSVPForm
-          fields={platformRSVPData.rsvpFields}
+          fields={mapPlatformFields(platformRSVPData.rsvpFields)}
           guestName={guestName}
           onSubmit={handleRSVPFormSubmit}
           onCancel={handleRSVPFormCancel}
@@ -459,8 +461,8 @@ const Index = () => {
     if (platformRSVPData) {
       console.log('Rendering platform-driven RSVP UI:', platformRSVPData);
       
-      // Show Accept button if platform says to show it
-      if (platformRSVPData.showAcceptButton) {
+      // Show Accept button ONLY when platform status is null (pending guest)
+      if (platformRSVPData.showAcceptButton && platformRSVPData.status === null) {
         return (
           <div className="text-center">
             <button 
