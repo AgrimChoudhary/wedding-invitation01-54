@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone } from 'lucide-react';
+import { Calendar, Flower, Heart, Music, Paintbrush, Sparkles, Star, Info, Sparkle, CheckCircle, ExternalLink, MapPin, Phone, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EventCard from '@/components/EventCard';
 import PhotoCarousel from '@/components/PhotoCarousel';
