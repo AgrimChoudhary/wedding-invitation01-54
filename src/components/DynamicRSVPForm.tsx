@@ -21,9 +21,6 @@ interface DynamicRSVPFormProps {
   fields: RSVPField[];
   guestName: string;
   onSubmit: (formData: Record<string, any>) => void;
-  onCancel?: () => void;
-  existingData?: Record<string, any>;
-  mode?: 'submit' | 'edit';
   isInIframe?: boolean;
   className?: string;
 }
@@ -32,20 +29,12 @@ const DynamicRSVPForm: React.FC<DynamicRSVPFormProps> = ({
   fields,
   guestName,
   onSubmit,
-  onCancel,
-  existingData = {},
-  mode = 'submit',
   isInIframe = false,
   className
 }) => {
-  const [formData, setFormData] = useState<Record<string, any>>(existingData);
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
-  // Update form data when existingData changes
-  React.useEffect(() => {
-    setFormData(existingData);
-  }, [existingData]);
 
   const handleInputChange = (fieldName: string, value: any) => {
     setFormData(prev => ({
@@ -76,13 +65,9 @@ const DynamicRSVPForm: React.FC<DynamicRSVPFormProps> = ({
     try {
       await onSubmit(formData);
       
-      const successMessage = mode === 'edit' 
-        ? `Thank you ${guestName}! Your RSVP has been updated successfully.`
-        : `Thank you ${guestName} for your detailed response. We look forward to celebrating with you!`;
-      
       toast({
-        title: mode === 'edit' ? "RSVP Updated Successfully!" : "RSVP Submitted Successfully!",
-        description: successMessage,
+        title: "RSVP Submitted Successfully!",
+        description: `Thank you ${guestName} for your detailed response. We look forward to celebrating with you!`,
         variant: "default",
         duration: 5000,
       });
@@ -215,13 +200,10 @@ const DynamicRSVPForm: React.FC<DynamicRSVPFormProps> = ({
               <CheckCircle className="mx-auto text-gold-light" size={48} />
             </div>
             <h3 className="font-cormorant text-2xl md:text-3xl gold-text font-bold mb-2">
-              {mode === 'edit' ? 'Edit Your RSVP' : 'Complete Your RSVP'}
+              Complete Your RSVP
             </h3>
             <p className="text-cream/80 text-sm md:text-base">
-              {mode === 'edit' 
-                ? 'Update your response below'
-                : 'Please provide the following details to help us plan better for you'
-              }
+              Please provide the following details to help us plan better for you
             </p>
           </div>
 
@@ -229,8 +211,8 @@ const DynamicRSVPForm: React.FC<DynamicRSVPFormProps> = ({
           <form onSubmit={handleSubmit} className="space-y-4">
             {fields.map(renderField)}
             
-            {/* Action Buttons */}
-            <div className="pt-4 space-y-3">
+            {/* Submit Button */}
+            <div className="pt-4">
               <Button
                 type="submit"
                 disabled={isSubmitting}
@@ -240,28 +222,11 @@ const DynamicRSVPForm: React.FC<DynamicRSVPFormProps> = ({
                 )}
               >
                 <span className="relative z-10 flex items-center justify-center">
-                  {isSubmitting 
-                    ? (mode === 'edit' ? "Updating..." : "Submitting...")
-                    : (mode === 'edit' ? "Update RSVP" : "Submit RSVP")
-                  }
+                  {isSubmitting ? "Submitting..." : "Submit RSVP"}
                   <Send className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
                 </span>
                 <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
               </Button>
-              
-              {onCancel && (
-                <Button
-                  type="button"
-                  onClick={onCancel}
-                  variant="outline"
-                  className={cn(
-                    "w-full border-gold-light/30 text-gold-light hover:bg-gold-light/10",
-                    isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
-                  )}
-                >
-                  Cancel
-                </Button>
-              )}
             </div>
           </form>
         </div>
