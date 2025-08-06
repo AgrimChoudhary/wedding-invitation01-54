@@ -306,8 +306,10 @@ const Index = () => {
   
   const renderRSVPSection = () => {
     // If guest has already responded via URL parameter, show their previous response
-    if (dynamicData.hasResponded && !dynamicData.accepted) {
-      const responseMessage = "You have already responded to this invitation.";
+    if (dynamicData.hasResponded) {
+      const responseMessage = dynamicData.accepted 
+        ? "Thank you for your response! You have already accepted this invitation."
+        : "You have already responded to this invitation.";
       
       return (
         <div className="max-w-2xl mx-auto">
@@ -328,8 +330,8 @@ const Index = () => {
       );
     }
     
-    // If guest accepted via button click OR platform sent accepted status, show thank you message
-    if (invitationAccepted || dynamicData.accepted) {
+    // If guest accepted via button click, show thank you message
+    if (invitationAccepted) {
       return (
         <div className="max-w-2xl mx-auto">
           <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
