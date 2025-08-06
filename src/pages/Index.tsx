@@ -218,7 +218,10 @@ const Index = () => {
   };
 
   const handleAcceptInvitation = () => {
+    // Immediately set the state to true to prevent double-clicking
     setInvitationAccepted(true);
+    
+    // Show confetti only if not in iframe
     if (!isInIframe) {
       createConfetti();
     }
@@ -226,6 +229,7 @@ const Index = () => {
     // Send RSVP_ACCEPTED postMessage to parent as specified in the platform requirements
     iframeMessenger.trackRSVPAccepted();
     
+    // Show toast notification
     toast({
       title: "Invitation Accepted!",
       description: `Thank you dear ${guestName} for accepting our invitation, we are looking forward for you in our wedding celebration`,
@@ -298,15 +302,12 @@ const Index = () => {
     ? dynamicData.contacts 
     : CONTACTS.map(contact => ({ name: contact.CONTACT_NAME, phone: contact.CONTACT_NUMBER }));
 
-  // Determine RSVP section display logic based on platform requirements
-  const shouldShowRSVPSection = !dynamicData.hasResponded && !invitationAccepted;
+  // RSVP section will always be rendered, logic is handled inside renderRSVPSection()
   
   const renderRSVPSection = () => {
     // If guest has already responded via URL parameter, show their previous response
-    if (dynamicData.hasResponded) {
-      const responseMessage = dynamicData.accepted 
-        ? "Thank you for your response! You have already accepted this invitation."
-        : "You have already responded to this invitation.";
+    if (dynamicData.hasResponded && !dynamicData.accepted) {
+      const responseMessage = "You have already responded to this invitation.";
       
       return (
         <div className="max-w-2xl mx-auto">
@@ -327,8 +328,8 @@ const Index = () => {
       );
     }
     
-    // If guest accepted via button click, show thank you message
-    if (invitationAccepted) {
+    // If guest accepted via button click OR platform sent accepted status, show thank you message
+    if (invitationAccepted || dynamicData.accepted) {
       return (
         <div className="max-w-2xl mx-auto">
           <div className="relative bg-maroon/60 p-6 md:p-8 rounded-2xl gold-border overflow-hidden">
@@ -370,12 +371,14 @@ const Index = () => {
       <button 
         className={cn(
           "relative rounded-full transition-all duration-300 bg-gold-gradient hover:shadow-gold text-maroon font-bold overflow-hidden group transform hover:scale-105",
-          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg"
+          isInIframe ? "px-6 py-3 text-base" : "px-8 py-4 text-lg",
+          invitationAccepted && "opacity-50 cursor-not-allowed"
         )}
         onClick={handleAcceptInvitation}
+        disabled={invitationAccepted}
       >
         <span className="relative z-10 flex items-center">
-          Accept Invitation
+          {invitationAccepted ? "Accepting..." : "Accept Invitation"}
           <CheckCircle className="ml-2 transition-transform duration-300 group-hover:scale-125" size={isInIframe ? 18 : 20} />
         </span>
         <span className="absolute inset-0 bg-gold-light/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></span>
