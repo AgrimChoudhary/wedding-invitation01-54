@@ -18,8 +18,6 @@ const Welcome = () => {
   const [showParticles, setShowParticles] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadingText, setLoadingText] = useState('');
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [isPageReady, setIsPageReady] = useState(false);
   
   const guestName = GUEST_NAME;
   const orderedNames = getOrderedNames();
@@ -42,68 +40,19 @@ const Welcome = () => {
     }
   }, [showParticles, guestName]);
 
-  // Track user interactions to prevent automatic navigation
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      setHasUserInteracted(true);
-    };
-
-    // Listen for various user interaction events
-    document.addEventListener('click', handleUserInteraction, { once: true });
-    document.addEventListener('touchstart', handleUserInteraction, { once: true });
-    document.addEventListener('keydown', handleUserInteraction, { once: true });
-
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
-  }, []);
-
-  // Set page as ready after a delay to prevent immediate automatic navigation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPageReady(true);
-    }, 2000); // Wait 2 seconds before allowing any navigation
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleEnterClick = (event: React.MouseEvent) => {
-    // Prevent any automatic triggering
-    if (!event || !event.isTrusted) {
-      console.log('⚠️ handleEnterClick: Untrusted event, ignoring');
-      return;
-    }
-    
     // Prevent multiple clicks
     if (isEntering) {
       return;
     }
     
-    // Check if page is ready for navigation
-    if (!isPageReady) {
-      console.log('⚠️ handleEnterClick: Page not ready yet, ignoring');
-      return;
-    }
-    
-    // Mark that user has interacted
-    setHasUserInteracted(true);
-    
     setIsEntering(true);
     setLoadingText(`${guestName}, Wait we are opening invitation...`);
     
-    // Only navigate when user explicitly clicks the button
+    // Navigate after a short delay for better UX
     setTimeout(() => {
-      // Double-check that user has actually interacted
-      if (!hasUserInteracted) {
-        console.log('⚠️ handleEnterClick: No user interaction detected, canceling navigation');
-        setIsEntering(false);
-        return;
-      }
-      
       navigate('/invitation');
-    }, 1200);
+    }, 800);
   };
 
   // Create decorative particle effect
@@ -274,25 +223,13 @@ const Welcome = () => {
               
               <button
                 onClick={handleEnterClick}
-                disabled={isEntering || !isPageReady}
-                className={`group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto ${
-                  !isPageReady ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                disabled={isEntering}
+                className="group bg-gold-gradient text-maroon px-8 py-3 rounded-full font-medium transition-all hover:shadow-gold hover:scale-105 flex items-center justify-center mx-auto"
               >
-                {!isPageReady ? (
-                  <span className="flex items-center">
-                    Loading...
-                    <svg className="animate-spin ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </span>
-                ) : (
-                  <>
-                    Enter Invitation
-                    <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
-                  </>
-                )}
+                <>
+                  Enter Invitation
+                  <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
+                </>
               </button>
             </div>
           )}
